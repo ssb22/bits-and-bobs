@@ -1,0 +1,17 @@
+# -*- mode: shell-script -*-
+
+# Set up aliases to change Mac OS X system voice from the command line
+# Silas S. Brown 2013,2014 - public domain
+# Source this from your .bashrc or whatever
+
+alias restart-synth-server="killall SpeechSynthesisServer ; open /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app"
+
+alias get-voice-settings='echo "defaults write com.apple.speech.voice.prefs SelectedVoiceName -string $(defaults read com.apple.speech.voice.prefs SelectedVoiceName) ; defaults write com.apple.speech.voice.prefs SelectedVoiceID -int $(defaults read com.apple.speech.voice.prefs SelectedVoiceID) ; defaults write com.apple.speech.voice.prefs SelectedVoiceCreator -int $(defaults read com.apple.speech.voice.prefs SelectedVoiceCreator);restart-synth-server;echo System voice set to $(defaults read com.apple.speech.voice.prefs SelectedVoiceName)"'
+
+# First, set the settings you want in System Preferences
+# Then run get-voice-settings, and save what it says.
+# For example on OS X 10.7 (and sometimes on 10.9):
+alias british-voice="defaults write com.apple.speech.voice.prefs SelectedVoiceName -string Daniel ; defaults write com.apple.speech.voice.prefs SelectedVoiceID -int 185 ; defaults write com.apple.speech.voice.prefs SelectedVoiceCreator -int 1919902066;restart-synth-server;echo System voice set to Daniel"
+alias mandarin-voice="defaults write com.apple.speech.voice.prefs SelectedVoiceName -string Ting-Ting ; defaults write com.apple.speech.voice.prefs SelectedVoiceID -int 966 ; defaults write com.apple.speech.voice.prefs SelectedVoiceCreator -int 1919902066;restart-synth-server;echo System voice set to Ting-Ting"
+alias cantonese-voice="defaults write com.apple.speech.voice.prefs SelectedVoiceName -string Sin-Ji ; defaults write com.apple.speech.voice.prefs SelectedVoiceID -int 866 ; defaults write com.apple.speech.voice.prefs SelectedVoiceCreator -int 1919902066;restart-synth-server;echo System voice set to Sin-Ji"
+# End of examples
