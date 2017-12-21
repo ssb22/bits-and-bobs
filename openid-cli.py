@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-print "OpenID Command-line Authoriser, Silas S. Brown 2017 (public domain)\n"
+print "OpenID Command-line Authoriser v1.1, Silas S. Brown 2017 (public domain)\n"
 
 from openid_config import local_addr, public_endpoint_url, profile
 
@@ -38,7 +38,7 @@ class Handler(BaseHTTPRequestHandler):
         elif req.mode in ["checkid_immediate", "checkid_setup"]: self.checkID(req)
         else: self.encodeAndSend(OpenID.handleRequest(req))
     def checkID(self, req):
-        print "\nGot",req.mode,"request for",req.identity
+        print "\nGot",req.mode,"request for",req.identity,"via",self.client_address[0] # (must include client_address to protect against somebody else staging a login to the same site at the same time)
         yn = ''
         while not yn.lower() in ['y','n']:
             print "Send this ID to "+req.trust_root+"? (y/n): ",
