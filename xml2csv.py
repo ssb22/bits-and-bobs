@@ -1,15 +1,10 @@
-# Simple XML to "CSV" (actually tab-separated text)
+# Simple XML to CSV
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
 # Silas S. Brown 2017 - public domain
 
 max_chars_per_cell = 80
-# LibreOffice sc/source/ui/docshell/impex.cxx lcl_appendLineData
-# uses SAL_MAX_UINT16 (previously STRING_MAXLEN, both 0xFFFF bytes)
-# but LibreOffice 4.2 and 5.1.6 can give "maximum number
-# of characters per cell" warnings in other circumstances
-# even if the above is set quite low (TODO: find out why)
 
-import sys
+import sys, csv
 from xml.parsers import expat
 
 items = {}
@@ -47,12 +42,15 @@ parser.EndElementHandler = EndElementHandler
 parser.CharacterDataHandler = CharacterDataHandler
 parser.Parse(sys.stdin.read(),1)
 
-curX=curY=0
+curX=curY=0 ; curRow = [""]
+o = csv.writer(sys.stdout)
 for y,x in sorted(items.keys()):
     while y > curY:
-        sys.stdout.write("\n")
+        o.writerow(curRow)
+        curRow = [""]
         curY += 1 ; curX = 0
     while x > curX:
-        sys.stdout.write("\t")
+        curRow.append("")
         curX += 1
-    sys.stdout.write(' '.join(items[(y,x)].split()).encode('utf-8'))
+    curRow[-1] = ' '.join(items[(y,x)].split()).encode('utf-8')
+o.writerow(curRow)
