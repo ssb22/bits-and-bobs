@@ -4,6 +4,9 @@
 
 max_chars_per_cell = 80
 
+# set max_chars_per_cell = None for unlimited,
+# but note many spreadsheet programs will have problems
+
 import sys, csv
 from xml.parsers import expat
 
@@ -29,7 +32,8 @@ def CharacterDataHandler(data):
     x,y,curDir,maxX,maxY = cursorStack.pop()
     while data:
         data = items.get((y,x),"") + data.replace("\n"," ").replace("\r","")
-        data, dataRest = data[:max_chars_per_cell],data[max_chars_per_cell:]
+        if max_chars_per_cell: data, dataRest = data[:max_chars_per_cell],data[max_chars_per_cell:]
+        else: dataRest = ""
         if dataRest and len(data.split())>1 and data[-1].split() and dataRest[0].split(): data,dataRest = data.rsplit(None,1)[0],data.rsplit(None,1)[1]+dataRest # word wrap on spaces
         items[(y,x)] = data
         data = dataRest
