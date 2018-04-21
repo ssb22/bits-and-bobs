@@ -3,18 +3,20 @@
 # Silas S. Brown 2018, public domain
 
 import sys, pprint, os
+if sys.stdin.isatty(): sys.stderr.write("Waiting for input on stdin...\n")
 from xml.parsers import expat
 
 os.system('rm -rf /tmp/txtout')
 os.mkdir('/tmp/txtout')
 os.chdir('/tmp/txtout')
 
+def ignore(name): return name.startswith("html:") and not name=="html:p"
+
 writingTo = [] ; writingStack = [] ; countsStack = [{}]
 def StartElementHandler(name,attrs):
     try: name = str(name)
     except UnicodeEncodeError: pass
-    if name.startswith("html:"): # just treat as data
-        return CharacterDataHandler("<"+name[5:]+">")
+    if ignore(name): return CharacterDataHandler("<"+name[5:]+">")
     newL = []
     global writingTo
     writingTo.append(("%s(%d)"%(name,countsStack[-1].get(name,1)),newL))
@@ -23,8 +25,7 @@ def StartElementHandler(name,attrs):
     countsStack[-1][name]=countsStack[-1].get(name,1)+1
     countsStack.append({})
 def EndElementHandler(name):
-    if name.startswith("html:"): # just treat as data
-        return CharacterDataHandler("</"+name[5:]+">")
+    if ignore(name): return CharacterDataHandler("</"+name[5:]+">")
     global writingTo
     writtenTo,writingTo = writingTo,writingStack.pop()
     for k,v in countsStack.pop().items():
