@@ -1,10 +1,15 @@
+# Simple XML to files in "band"-like notation
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
-# public domain
+# Silas S. Brown 2018, public domain
 
-import sys, pprint
+import sys, pprint, os
 from xml.parsers import expat
 
-writingTo = [] ; writingStack = []
+os.system('rm -rf /tmp/txtout')
+os.mkdir('/tmp/txtout')
+os.chdir('/tmp/txtout')
+
+writingTo = [] ; writingStack = [] ; countsStack = [{}]
 def StartElementHandler(name,attrs):
     try: name = str(name)
     except UnicodeEncodeError: pass
@@ -12,41 +17,45 @@ def StartElementHandler(name,attrs):
         return CharacterDataHandler("<"+name[5:]+">")
     newL = []
     global writingTo
-    writingTo.append((name,newL))
+    writingTo.append(("%s(%d)"%(name,countsStack[-1].get(name,1)),newL))
     writingStack.append(writingTo)
     writingTo = newL
+    countsStack[-1][name]=countsStack[-1].get(name,1)+1
+    countsStack.append({})
 def EndElementHandler(name):
-    try: name = str(name)
-    except UnicodeEncodeError: pass
     if name.startswith("html:"): # just treat as data
         return CharacterDataHandler("</"+name[5:]+">")
     global writingTo
     writtenTo,writingTo = writingTo,writingStack.pop()
-    assert name==writingTo[-1][0], "tag mismatch"
-    if all(type(x)==tuple for x in writtenTo) and len(set(n for n,_ in writtenTo))==1:
-        # all sub-names are identical: probably redundant
-        writingTo[-1]=(name,[x[1] for x in writtenTo])
-        if all(type(x)==dict and len(x.keys())==2 and set(x.keys())==set(writingTo[-1][1][0].keys()) for x in writingTo[-1][1]):
-            # e.g. {'db':X,'key':Y},{'db':X,'key':Y,...}
-            # the 'db' and 'key' headings prob redundant
-            writingTo[-1]=(name,[(sorted(i.items())[0][1],sorted(i.items())[1][1]) for i in writingTo[-1][1]])
-    elif all(type(x)==tuple for x in writtenTo) and len(set(n for n,_ in writtenTo))==len(writtenTo):
-        # all sub-names are unique: can be a dict
-        writingTo[-1]=(name,dict(writtenTo))
-        for k,v in writingTo[-1][1].items()[:]:
-            if type(v)==list and all(type(i)==tuple and len(i)==2 and not i[0] in writingTo[-1][1] and len(i[0])<20 for i in v):
-                # list of (k,v) could just go in the dict
-                del writingTo[-1][1][k]
-                for i0,i1 in v:
-                    writingTo[-1][1][i0] = i1
-            elif type(v)==list and len(v)==1:
-                # list of 1 item: don't need wrap in list
-                writingTo[-1][1][k] = v[0]
-    elif len(writtenTo)==1 and type(writtenTo[0]) in [str,unicode]:
-        # (name, ["string"]) -> (name, "string")
-        writingTo[-1] = (name,writtenTo[0])
-    if not writingStack:
-        pprint.PrettyPrinter(indent=2).pprint(writingTo)
+    for k,v in countsStack.pop().items():
+        if v==2: # only one: can strip out number
+            for i in xrange(len(writtenTo)):
+                if writtenTo[i][0].startswith(k+"(1)"):
+                    writtenTo[i]=(k+writtenTo[i][0][writtenTo[i][0].index(')')+1:],writtenTo[i][1])
+    if all(type(i)==tuple for i in writtenTo):
+        # (name1,[(name2,..),(name3,..)] -> (name1/name2,..),(name1/name3,..)
+        writingTo = writingTo[:-1] + [(writingTo[-1][0]+"/"+i[0],i[1]) for i in writtenTo]
+    if not writingStack: # top-level close: final output
+        lastFname = None
+        for k,v in writingTo:
+            k = k[k.find('/')+1:] # ignore top-level tag name (this is a no-op in trivial case where no slash)
+            if type(v)==list and len(v)==1: v = v[0]
+            if type(v)==unicode: v=v.encode('utf-8')
+            if '/' in k:
+                fname,band = k.split('/',1)
+                if not fname == lastFname:
+                    v2 = v.replace(' ','-').replace('/','-')
+                    fn = fname.split('(')[0]+'/'+v2
+                    if os.path.exists(fn): fn=fname+'/'+v2
+                    try: os.mkdir(fn[:fn.index('/')])
+                    except: pass # exists
+                    sys.stdout = open(fn,'w')
+                    lastFname = fname
+                k = band
+                if '/' in k:
+                    k0,k1 = k.split('/',1)
+                    if k0.startswith(k1[:min((k1+'/').index('/'),(k1+'(').index('('))]) or ('/' in k1 and k0.endswith("-list")): k = k1 # simplify band names x-list/x(1) etc
+            print k+":",v
 def CharacterDataHandler(data):
     try: data = str(data)
     except UnicodeEncodeError: pass
