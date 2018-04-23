@@ -2,7 +2,7 @@
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
 # Silas S. Brown 2018, public domain
 
-import sys, pprint, os
+import sys, pprint, os, unicodedata
 if sys.stdin.isatty(): sys.stderr.write("Waiting for input on stdin...\n")
 from xml.parsers import expat
 
@@ -42,12 +42,14 @@ def EndElementHandler(name):
             k = k[k.find('/')+1:] # ignore top-level tag name (this is a no-op in trivial case where no slash)
             if type(v)==list and len(v)==1: v = v[0]
             if type(v)==unicode: v=v.encode('utf-8')
+            if type(k)==unicode: k=k.encode('utf-8')
             if '/' in k:
                 fname,band = k.split('/',1)
                 if not fname == lastFname:
                     v2 = v.replace(' ','-').replace('/','-')
-                    fn = fname.split('(')[0]+'/'+v2
-                    if os.path.exists(fn): fn=fname+'/'+v2
+                    def zapAccents(f): return u''.join((c for c in unicodedata.normalize('NFD',f.decode('utf-8')) if not unicodedata.category(c).startswith('M'))).encode('utf-8') # accents in filenames confuse some emacs grep setups
+                    fn = zapAccents(fname.split('(')[0]+'/'+v2)
+                    if os.path.exists(fn): fn=zapAccents(fname+'/'+v2)
                     try: os.mkdir(fn[:fn.index('/')])
                     except: pass # exists
                     sys.stdout = open(fn,'w')
