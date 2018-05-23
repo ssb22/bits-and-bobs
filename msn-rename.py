@@ -1,4 +1,4 @@
-# Python script to rename/block MSN contacts in Skype 6
+# Python 2 script to rename/block MSN contacts in Skype 6
 # Silas S. Brown 2013, Version 1.1, Public Domain
 # Usual disclaimers apply: don't blame me for any damage
 # (I suggest you back up your data before trying this).

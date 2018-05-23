@@ -21,7 +21,7 @@
 # Uncomment the following line and set it to the RISC PC's IP:
 # risc_ip = "192.168.142.2"
 # This script should then be run on another machine
-# (any platform that supports Python) with a correct clock
+# (any platform that supports Python 2) with a correct clock
 # and the RISC PC should be running a Telnet server.
 
 # To set the time on a dual-boot Raspberry Pi
