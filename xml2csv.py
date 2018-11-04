@@ -2,6 +2,10 @@
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
 # Silas S. Brown 2017 - public domain
 
+# Bugs: may not correctly handle descriptions that mix
+# tags with inline text on the same level.
+# FOR EXPLORATORY USE ONLY.
+
 max_chars_per_cell = 80
 
 # set max_chars_per_cell = None for unlimited,
