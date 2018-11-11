@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 print "OpenID Command-line Authoriser v1.1, Silas S. Brown 2017 (public domain)\n"
 

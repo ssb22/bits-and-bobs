@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # flatplan 1.0 (c) 2016 Silas S. Brown.
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """Simple "Buddy Pounce" script for Skype using Clisk.
 Silas S. Brown 2013, Public domain.

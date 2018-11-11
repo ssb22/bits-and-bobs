@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """Simple "call record" script for Skype using Clisk.
 Silas S. Brown 2013, Public domain.

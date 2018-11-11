@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # offline-updater v1.01 (c) 2013 Silas S. Brown
 # License: GPL

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # cdrdao track padder (c) 2012 Silas S. Brown. License: GPL
 # Version 1.1
