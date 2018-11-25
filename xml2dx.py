@@ -22,7 +22,7 @@ def candidate_phrases(words):
             w = words[start:start+phraseLen]
             if phraseLen>1 and not(all(x[0].isalpha() and x[-1].isalpha() for x in w)): continue # don't cut across starting quotes, commas, etc (but hyphens in middle OK)
             if not all(any(x.isalpha() for x in ww) for ww in w): continue # every word must have at least one alphabetical char for the phrase to make sense
-            if all(keywordify(ww) in stop_words for ww in w): continue
+            if any(keywordify(ww) in stop_words for ww in w[:1]+w[-1:]): continue
             yield (start,phraseLen)
 
 def capsInitial(w):
