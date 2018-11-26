@@ -7,11 +7,13 @@
 
 # Silas S. Brown 2018 - public domain
 
+index_only_inside = r"<html>.*?</html>" # or "" for all
 mark_down_xml = True
+lineNos_only = True
 wordContext = 3 # num words on each side
 max_phraseLen = 3
 min_records_multiPhrase = 2 # multi-word phrase must match at least this number of different records to be indexed
-stop_words = set(["a","all","are","an","and","at","be","but","by","for","if","in","the","this","to","too","some"]) # etc
+stop_words = set(["a","all","are","an","and","as","at","be","but","by","can","for","have","if","in","of","on","that","the","this","to","too","some","usually","very","with"]) # etc
 assert all(x==x.lower() for x in stop_words)
 
 import sys, re
@@ -23,6 +25,7 @@ def candidate_phrases(words):
             if phraseLen>1 and not(all(x[0].isalpha() and x[-1].isalpha() for x in w)): continue # don't cut across starting quotes, commas, etc (but hyphens in middle OK)
             if not all(any(x.isalpha() for x in ww) for ww in w): continue # every word must have at least one alphabetical char for the phrase to make sense
             if any(keywordify(ww) in stop_words for ww in w[:1]+w[-1:]): continue
+            if any("://" in ww for ww in w): continue # URLs
             yield (start,phraseLen)
 
 def capsInitial(w):
@@ -54,8 +57,10 @@ def context(words,wordNo,phraseLen=1):
 
 mDict = {}    
 lines = sys.stdin.read().decode('utf-8').split('\n')
-if mark_down_xml: lines2 = [re.sub("<[A-Za-z/][^>]*>","",l) for l in lines]
-else: lines2 = lines
+lines2 = lines
+if index_only_inside: lines2 = [" ".join(re.findall(index_only_inside,l)) for l in lines]
+if mark_down_xml: lines2 = [re.sub("<[A-Za-z/][^>]*>","",l) for l in lines2]
+if lineNos_only: lines = [str(x) for x in xrange(len(lines))]
 for kwds,orig in zip(lines2,lines):
     kwds = kwds.split()
     for start,phraseLen in candidate_phrases(kwds):
