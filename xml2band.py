@@ -10,13 +10,15 @@ os.system('rm -rf /tmp/txtout')
 os.mkdir('/tmp/txtout')
 os.chdir('/tmp/txtout')
 
-def ignore(name): return name.startswith("html:") and not name=="html:p"
+def ignore(name):
+    if name.startswith("html:") and not name=="html:p":
+        return name[5:]
 
 writingTo = [] ; writingStack = [] ; countsStack = [{}]
 def StartElementHandler(name,attrs):
     try: name = str(name)
     except UnicodeEncodeError: pass
-    if ignore(name): return CharacterDataHandler("<"+name[5:]+">")
+    if ignore(name): return CharacterDataHandler("<"+ignore(name)+">")
     newL = []
     global writingTo
     writingTo.append(("%s(%d)"%(name,countsStack[-1].get(name,1)),newL))
@@ -25,7 +27,7 @@ def StartElementHandler(name,attrs):
     countsStack[-1][name]=countsStack[-1].get(name,1)+1
     countsStack.append({})
 def EndElementHandler(name):
-    if ignore(name): return CharacterDataHandler("</"+name[5:]+">")
+    if ignore(name): return CharacterDataHandler("</"+ignore(name)+">")
     global writingTo
     writtenTo,writingTo = writingTo,writingStack.pop()
     for k,v in countsStack.pop().items():
