@@ -3,7 +3,7 @@
 # Script to make Safari's "Reader" mode narrower for use with Zoom
 # and to change Reader mode's colours.
 
-# Silas S. Brown 2012 - public domain
+# Silas S. Brown 2012 - public domain - no warranty
 
 if test "a$FgCol" == a; then
   echo -n "HTML foreground colour (default black): "

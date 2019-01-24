@@ -5,7 +5,7 @@
 # with SOCKS port-forwarding and decent terminal settings
 # (Linux users: remove the '--' on the first line)
 
-# Silas S. Brown 2014-2015, public domain
+# Silas S. Brown 2014-2015, public domain, no warranty
 
 # Assumes ~/.ssh/known_hosts already has the host you're
 # trying to connect to.  (If it doesn't, you might need to

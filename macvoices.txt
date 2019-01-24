@@ -1,7 +1,7 @@
 # -*- mode: shell-script -*-
 
 # Set up aliases to change Mac OS X system voice from the command line
-# Silas S. Brown 2013,2014 - public domain
+# Silas S. Brown 2013,2014 - public domain - no warranty
 # Source this from your .bashrc or whatever
 
 alias restart-synth-server="killall SpeechSynthesisServer ; open /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app"

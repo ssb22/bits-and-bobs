@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-print "OpenID Command-line Authoriser v1.1, Silas S. Brown 2017 (public domain)\n"
+print "OpenID Command-line Authoriser v1.1, Silas S. Brown 2017 (public domain, no warranty)\n"
 
 from openid_config import local_addr, public_endpoint_url, profile
 

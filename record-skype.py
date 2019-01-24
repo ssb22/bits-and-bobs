@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 """Simple "call record" script for Skype using Clisk.
-Silas S. Brown 2013, Public domain.
+Silas S. Brown 2013, Public domain, no warranty.
 
 Must go in the same directory as clisk.  You can get
 clisk from http://www.dlee.org/skype/clisk/ (correct as
