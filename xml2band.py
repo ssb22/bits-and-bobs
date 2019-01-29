@@ -1,6 +1,6 @@
 # Simple XML to files in "band"-like notation
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
-# Silas S. Brown 2018, public domain
+# Silas S. Brown 2018, public domain - no warranty
 
 import sys, pprint, os, unicodedata
 if sys.stdin.isatty(): sys.stderr.write("Waiting for input on stdin...\n")

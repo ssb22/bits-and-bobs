@@ -5,7 +5,7 @@
 # for a word index into that data.  Some of the entries
 # will be of low quality and should be deleted.
 
-# Silas S. Brown 2018 - public domain
+# Silas S. Brown 2018 - public domain - no warranty
 
 index_only_inside = r"<html>.*?</html>" # or "" for all
 mark_down_xml = True

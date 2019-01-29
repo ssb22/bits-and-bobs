@@ -1,6 +1,6 @@
 # Simple XML to CSV
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
-# Silas S. Brown 2017 - public domain
+# Silas S. Brown 2017 - public domain - no warranty
 
 # Bugs: may not correctly handle descriptions that mix
 # tags with inline text on the same level.
