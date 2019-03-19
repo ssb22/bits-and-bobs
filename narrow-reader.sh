@@ -3,23 +3,23 @@
 # Script to make Safari's "Reader" mode narrower for use with Zoom
 # and to change Reader mode's colours.
 
-# Silas S. Brown 2012 - public domain - no warranty
+# Silas S. Brown 2012,2019 - public domain - no warranty
 
-if test "a$FgCol" == a; then
+if [ ! "$FgCol" ]; then
   echo -n "HTML foreground colour (default black): "
   read FgCol
-  if test "a$FgCol" == a; then export FgCol=black; fi
+  if [ ! "$FgCol" ]; then export FgCol=black; fi
 fi
-if test "a$BgCol" == a; then
+if [ ! "$BgCol" ]; then
   echo -n "HTML background colour (default grey): "
   read BgCol
-  if test "a$BgCol" == a; then export BgCol=grey; fi
+  if [! "$BgCol" ]; then export BgCol=grey; fi
   # (might be easier on the eyes than white if you don't
   # want to invert the colours.  Inverting the colours might
   # require a different selection of fonts for readability.)
 fi
 
-if test "a$1" == a; then
+if [ ! "$1" ]; then
   # Try to find Reader.html
   export Found=0
 

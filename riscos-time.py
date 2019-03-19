@@ -2,7 +2,7 @@
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.
-# Version 1.2 (c) 2007, 2014, 2017 Silas S. Brown.
+# Version 1.21 (c) 2007, 2014, 2017, 2019 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
 # /dev/mmcblk0p5 /riscos-fat vfat defaults
 # (then mkdir /riscos-fat and mount /riscos-fat )
 # and put this line into /etc/default/fake-hwclock (changing /path-to) :
-# if ! test "a$1" = "astart"; then python /path-to/riscos-time.py; fi
+# if ! [ "$1" = "start" ]; then python /path-to/riscos-time.py; fi
 # (use = not == as it'll be running under /bin/sh not /bin/bash)
 
 # Then on RISC OS, create a file with the line:
