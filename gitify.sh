@@ -18,7 +18,7 @@ if test "a$1" == "a--rewrite"; then
     git init
     mv /tmp/old-git-config .git/config
 elif test "a$1" == "a--add"; then
-    if ! test -d .git; then git init; elif git diff; then echo "ERROR: Commit these diffs first"; exit 1; fi
+    if ! test -d .git; then git init; elif git diff | grep . >/dev/null; then git diff; echo "ERROR: Commit these diffs first"; exit 1; fi
 else
     echo "Run with --rewrite to delete existing history and rewrite from scratch"
     echo "(in case you've already created a git repo w/out this script)"
