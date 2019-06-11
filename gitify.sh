@@ -3,6 +3,8 @@
 # Gitify - add files to a Git repo, one file per commit,
 # backdating the commit to the file's modification time.
 
+# The reverse of Rodrigo Silva's "git-restore-mtime" script.
+
 # Might be useful for "git"ifying historical code, as at
 # least the file's modification time should put an upper
 # limit on when each part was written.
