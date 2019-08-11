@@ -13,14 +13,14 @@
 
 # Silas S. Brown 2019 - public domain - no warranty.
 
-if test "a$1" == "a--rewrite"; then
+if test "a$1" == "a--rewrite"; then # (must be run at top-level of the repo)
     mv -i .git/config /tmp/old-git-config || exit 1
     mv -i .git /tmp/old.git
     rm -rf /tmp/old.git &
     git init
     mv /tmp/old-git-config .git/config
-elif test "a$1" == "a--add"; then
-    if ! test -d .git; then git init; elif git diff | grep . >/dev/null; then git diff; echo "ERROR: Commit these diffs first"; exit 1; fi
+elif test "a$1" == "a--add"; then # (this one may also be run in a subdirectory)
+    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then git init; elif git diff | grep . >/dev/null; then git diff; echo "ERROR: Commit these diffs first"; exit 1; fi
 else
     echo "Run with --rewrite to delete existing history and rewrite from scratch"
     echo "(in case you've already created a git repo w/out this script)"
