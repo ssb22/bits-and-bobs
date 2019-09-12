@@ -11,7 +11,7 @@ while ! test "a$1" == a; do
   if ! test -d "$N"; then shift; continue; fi # so you can run with * in a dir with files as well
   # Otherwise put the settings in on an already-cloned repo:
   cd $N || exit 1
-  git remote set-url origin --push --delete . || true
+  git remote set-url origin --push --delete . 2>/dev/null >/dev/null || true
   git remote set-url origin --push git@github.com:ssb22/$N.git || exit 1
   git remote set-url origin --push --add git@gitlab.com:ssb22/$N.git || exit 1
   git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
