@@ -1,4 +1,4 @@
 # bits-and-bobs
-Miscellaneous scripts etc from http://people.ds.cam.ac.uk/ssb22
+Miscellaneous scripts etc from http://ssb22.user.srcf.net
 
-(also mirrored at http://ssb22.gitlab.io/ as the Cambridge "DS-Web" server sometimes gets taken down for several days of maintenance)
+(also mirrored at http://ssb22.gitlab.io/ just in case)
