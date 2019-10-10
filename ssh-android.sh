@@ -3,9 +3,9 @@
 
 # Mac and Linux script to SSH to a host via Android adb
 # with SOCKS port-forwarding and decent terminal settings
-# (Linux users: remove the '--' on the first line)
+# (Linux users: remove the '--' on the first line above)
 
-# Silas S. Brown 2014-2015, public domain, no warranty
+# Silas S. Brown 2014-2015, 2019, public domain, no warranty
 
 # Assumes ~/.ssh/known_hosts already has the host you're
 # trying to connect to.  (If it doesn't, you might need to
@@ -64,7 +64,12 @@ system "$ADB_PATH" -d forward tcp:$SOCKS_PORT tcp:$SOCKS_PORT
 send_user "Spawning a local ssh...\n"
 set old_id $spawn_id
 spawn /bin/bash -c "ssh -o IdentityFile=/not/exist -o ProxyCommand='`which nc` -x localhost:$SOCKS_PORT %h %p' $argv"
-# (using IdentityFile=/not/exist to force password so the following always works)
+# (using IdentityFile=/not/exist to force password so the following 'expect assword:' always works; could also use expect { ... } with some other string e.g. "Last login" as an alternative)
+trap {
+    set rows [stty rows]
+    set cols [stty columns]
+    stty rows $rows columns $cols < $spawn_out(slave,name)
+} WINCH
 expect assword:
 send_user "(sending password)\n"
 send_user "SOCKS port is localhost:$SOCKS_PORT; will be closed when this session exits"
