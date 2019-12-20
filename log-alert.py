@@ -3,11 +3,15 @@
 # Apache log alerts, Silas S. Brown 2019, public domain.
 
 # In late 2019, various IP addresses in China started downloading
-# the complete (3M+) CedPane file 30,000 times (40x/day/IP), probably
+# the complete (~3M) CedPane file 30,000 times (40x/day/IP), probably
 # due to somebody writing an application very badly.
-# I had to redirect that user-agent on that file to a
+# (Some of the requests stopped short of the full file, so my guess is
+# it's a search application and the full downloads were failed queries.
+# To anyone who writes these: PLEASE STORE THE FILE LOCALLY.)
+# I had to redirect their "Chrome/51" user-agent on that file to a
 # "please be nice to my server" message (which may or may
-# not have been read by a human).
+# not have been read by a human, but I'm hoping the developer will
+# eventually take a look).
 
 # This script is meant to check through Apache log files
 # and alert of any similar behaviour earlier.
@@ -27,7 +31,7 @@ for l in open(log_file):
     if time.time()-time.mktime(time.strptime(date[1:],"%d/%b/%Y:%H:%M:%S")) > max_age: continue
     ipBytes[ip]=ipBytes.get(ip,0)+int(size)
     ipReqs[ip]=ipReqs.get(ip,0)+1
-    ipURLCounts.setdefault(ip,{})[url]=ipURLCounts.setdefault(ip,{}).get(url,0)+1
+    if not ipURLCounts.setdefault(ip,{}).setdefault(url,0) or not code=="206": ipURLCounts[ip][url] += 1
     ipLog.setdefault(ip,[]).append(l.strip())
 o = []
 for ip in ipBytes.keys():
