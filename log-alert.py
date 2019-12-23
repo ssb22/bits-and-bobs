@@ -42,5 +42,5 @@ for ip in ipBytes.keys():
     if ipReqs[ip] < min_requests_to_report: continue
     if all(v<min_sameFile_to_report for v in ipURLCounts[ip].values()): continue
     if all((sum(v)<min_sameFile_size or ipURLCounts[ip][k]<min_sameFile_to_report) for k,v in ipURLSizes[ip].items()): continue
-    o.append("\n".join(ipLog[ip]))
+    o.append("\n".join(["%s fetched %d bytes:" % (ip,ipBytes[ip])]+ipLog[ip]))
 if o: sys.stdout.write("\n\n".join(o)+"\n")
