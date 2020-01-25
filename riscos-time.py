@@ -1,8 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# (works on both Python 2 and Python 3)
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.
-# Version 1.21 (c) 2007, 2014, 2017, 2019 Silas S. Brown.
+# Version 1.22 (c) 2007, 2014, 2017, 2019-20 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +22,7 @@
 # Uncomment the following line and set it to the RISC PC's IP:
 # risc_ip = "192.168.142.2"
 # This script should then be run on another machine
-# (any platform that supports Python 2) with a correct clock
+# (any platform that supports Python 2 or 3) with a correct clock
 # and the RISC PC should be running a Telnet server.
 
 # To set the time on a dual-boot Raspberry Pi
@@ -53,7 +54,12 @@
 
 import time
 def risc_time(extra_secs=0):
-  h = int((time.time()+extra_secs)*100) + 0x336E93EBE4L # hundreths of a sec since 1900
+  try:
+    long # Python 2
+    offset = (long(0x33) << 32) + 0x6E93EBE4 # or on 2.2+, 0x336E93EBE4L
+  except: # Python 3 drops long, and L is a syntax error
+    offset = (0x33 << 32) + 0x6E93EBE4
+  h = int((time.time()+extra_secs)*100) + offset # hundreths of a sec since 1900
   if time.localtime()[-1]: h += 360000 # BST/DST
   return (h&255, (h>>8)&255, (h>>16)&255, (h>>24)&255, (h>>32)&255)
 try: risc_ip
@@ -62,9 +68,10 @@ if risc_ip:
   import socket
   s=socket.socket()
   s.connect((risc_ip,23)) # (or whichever port you're running it on; 23 is default)
-  def slowsend(str):
-    for c in str:
-      s.send(c) ; s.recv(100)
+  def slowsend(bytestr):
+    if type(bytestr)==type(u""): bytestr==bytestr.encode('utf-8') # Python 3
+    for b in bytestr:
+      s.send(b) ; s.recv(100)
   slowsend('basic\n')
   slowsend('SYS "Territory_SetTime",CHR$(%d)+CHR$(%d)+CHR$(%d)+CHR$(%d)+CHR$(%d)\n' % risc_time())
 else: # Raspberry Pi dual-boot
@@ -75,4 +82,6 @@ else: # Raspberry Pi dual-boot
   except IOError: # maybe the shutdown process mounted it read-only
     os.system("umount "+filesystem+" 2>/dev/null ; mount "+filesystem+" -o rw")
     o=open(filesystem+'/timecode','w')
-  o.write('%c%c%c%c%c' % risc_time(30)) # (allows 30secs for the reboot)
+  try: buf = o.buffer # Python 3
+  except: buf = o # Python 2
+  buf.write((u'%c%c%c%c%c'.encode('utf-8')) % risc_time(30)) # (allows 30secs for the reboot)
