@@ -1,7 +1,12 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# (should work in either Python 2 or Python 3)
 
 """Simple "Buddy Pounce" script for Skype using Clisk.
 Silas S. Brown 2013, Public domain, no warranty.
+
+(Note: Only Skype 7 and below supported the API that Clisk used.
+Microsoft's support for Skype 7 ended in November 2018 and I have
+no idea if it can even connect to the Skype network anymore.)
 
 Must go in the same directory as clisk.  You can get
 clisk from http://www.dlee.org/skype/clisk/ (correct as
@@ -39,7 +44,12 @@ if not os.path.exists(cmd):
     sys.stderr.write("Cannot find the clisk program.  Please put it in the current directory.\n")
     sys.exit(1)
 
-cin,cout = os.popen4(cmd,bufsize=0)
+try: cin,cout = os.popen4(cmd,bufsize=0)
+except: # Python 3
+    import subprocess
+    p = subprocess.Popen(cmd, shell=True, bufsize=0,
+                         stdin=PIPE, stdout=PIPE, close_fds=True)
+    cin,cout = p.stdin, p.stdout
 cin.write("aa * w\n") ; cin.flush() # but do not close
 def buffer_flushing_thread():
     # Need to do this because the standard libraries used
@@ -59,7 +69,7 @@ def buffer_flushing_thread():
 thread.start_new_thread(buffer_flushing_thread,())
 for line in cout:
   if sys.argv[1] in line:
-    print "\a"+line.strip()
+    print ("\a"+line.strip())
     cin.close() ; cin=None ; cout.close()
     window=Tkinter.Tk()
     window.attributes("-topmost", True)
