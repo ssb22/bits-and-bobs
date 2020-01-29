@@ -2,7 +2,7 @@
 # (should work in either Python 2 or Python 3)
 
 # Convert ASCII Portable Bitmap (.pbm) files to BBC Micro VDU 23 sequences
-# Silas S. Brown - public domain - no warranty
+# Silas S. Brown - Version 1.2 - public domain - no warranty
 
 screenWidth = 40 # text columns (e.g. Mode 4)
 # (If using 20 or 80, might want to account for non-square pixels)
@@ -68,7 +68,8 @@ for yStart in range(0,height,8):
         out.append(C(224+defs.index(charDef)))
     out = B('').join(out)
     if not out.replace(B(' '),B('')): out = newline
-    elif out[-1:]==B(' '): out = out.rstrip()+B('\r\n')
+    elif len(out)<screenWidth or out[-2:]==B('  '):
+      out = out.rstrip()+B('\r\n')
     # else exact fit for screenWidth
     if mode=="basic":
       o = []
