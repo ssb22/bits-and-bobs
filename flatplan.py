@@ -1,6 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# (should work in either Python 2 or Python 3)
 
-# flatplan 1.0 (c) 2016 Silas S. Brown.
+# flatplan 1.3 (c) 2016, 2020 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -114,6 +115,8 @@ minX-=margin_cm ; maxX+=margin_cm ; minY-=margin_cm ; maxY+=margin_cm
 xOffset = -minX ; yOffset = -minY
 minX += xOffset ; maxX += xOffset
 minY += yOffset ; maxY += yOffset
+try: xrange
+except: xrange = range # Python 3
 for i in xrange(len(lines)):
     a,b,c,d = lines[i]
     a += xOffset ; c += xOffset
@@ -149,38 +152,39 @@ while fillQ:
 area = sum(sum(x) for x in inside) / 10000.0
 totalLineLen /= 100.0
 maxDP = 1 # max 1 decimal place
-area = ((u"%%.%dg m\u00b2" % (len(str(int(area)))+maxDP)) % area).encode('utf-8')
+area = (u"%%.%dg m\u00b2" % (len(str(int(area)))+maxDP)) % area
+if not type(u"")==type(""): area = area.encode('utf-8') # Python 2
 area += (("; walls = %%.%dg m" % (len(str(int(totalLineLen)))+maxDP)) % totalLineLen)
 a,b,c,d = errorLine
 import math ; err = math.sqrt((c-a)*(c-a) + (d-b)*(d-b))
 if err: area += (("; error = %%.%dg cm" % (len(str(int(err)))+maxDP)) % err)
 
 # SVG:
-print """<?xml version="1.0"?>
+print ("""<?xml version="1.0"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" width="%g" height="%g" viewbox="%g %g %g %g">""" % (maxX-minX,maxY-minY,minX,minY,maxX,maxY)
+<svg xmlns="http://www.w3.org/2000/svg" width="%g" height="%g" viewbox="%g %g %g %g">""" % (maxX-minX,maxY-minY,minX,minY,maxX,maxY))
 
 # grid lines:
 def doGrid(colour,step):
-    print """<g stroke="%s" stroke-dasharray="1,2">""" % colour
+    print ("""<g stroke="%s" stroke-dasharray="1,2">""" % colour)
     for x in xrange(int(minX),int(maxX),step):
-        print """<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % (x,minY,x,maxY)
+        print ("""<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % (x,minY,x,maxY))
     for y in xrange(int(minY),int(maxY),step):
-        print """<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % (minX,y,maxX,y)
-    print "</g>"
+        print ("""<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % (minX,y,maxX,y))
+    print ("</g>")
 if include_grid_lines:
     doGrid("cyan",10) ; doGrid("red",100)
 
 # the wall itself:
-print """<g stroke="black">"""
-for l in lines: print """<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % l
-print "</g>"
+print ("""<g stroke="black">""")
+for l in lines: print ("""<line x1="%g" y1="%g" x2="%g" y2="%g" stroke-width="1" />""" % l)
+print ("</g>")
 
 if include_doors:
-    for x1,y1,r,sweep,x2,y2,cx,cy in doors: print """<path d="M%g,%g A%g,%g 0 0,%d %g,%g L%g,%g L%g,%g" fill="none" stroke="green" />""" % (x1,y1,r,r,sweep,x2,y2,cx,cy,x1,y1)
+    for x1,y1,r,sweep,x2,y2,cx,cy in doors: print ("""<path d="M%g,%g A%g,%g 0 0,%d %g,%g L%g,%g L%g,%g" fill="none" stroke="green" />""") % (x1,y1,r,r,sweep,x2,y2,cx,cy,x1,y1)
 
 if include_area_summary:
-    print """<text x="25" y="75" font-family="Verdana" font-size="30">Area = %s</text>""" % area
+    print ("""<text x="25" y="75" font-family="Verdana" font-size="30">Area = %s</text>""" % area)
 
-print "</svg>"
+print ("</svg>")
