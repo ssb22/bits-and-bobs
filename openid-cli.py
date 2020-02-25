@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# (should work in eithepr Python 2 or Python 3)
+# (should work in either Python 2 or Python 3)
 
 print ("OpenID Command-line Authoriser v1.3, Silas S. Brown 2017, 2020")
 print ("(public domain, no warranty)\n")
