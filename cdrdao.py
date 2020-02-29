@@ -1,7 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# (should work in either Python 2 or Python 3)
 
-# cdrdao track padder (c) 2012 Silas S. Brown. License: GPL
-# Version 1.1
+# cdrdao track padder (c) 2012, 2020 Silas S. Brown. License: GPL
+# Version 1.3
 
 cd_frames = 359845 # 79min 57sec 70/75 frames, typical for 700M "80min" CDs
 
@@ -9,7 +10,7 @@ absolute_minimum_silent_frames = 2 * 75
 
 import os,sys,os.path
 if len(sys.argv) < 2:
-    print "Syntax: cdrdao.py sound-files"
+    print ("Syntax: cdrdao.py sound-files")
     sys.exit(1)
 
 filelist = []
@@ -17,7 +18,7 @@ frames_this_cd = 0 ; cd_starts = [] # 1st try: pack them as they come
 total_frames = 0
 for f in sys.argv[1:]:
     f2 = "rawfile%d" % len(filelist)
-    print "Converting",f
+    print ("Converting "+f)
     ret = os.system("sox \"%s\" -t raw -B -b 16 -e signed-integer -c 2 -r 44100 %s" % (f,f2))
     assert not ret, "sox error"
     frames = int((os.stat(f2).st_size+2351)/2352) # round up
@@ -31,7 +32,7 @@ for f in sys.argv[1:]:
     if '.' in f: f=f[:f.rindex('.')]
     filelist.append((frames,f2,f))
 
-print "Fitting onto %d CDs" % len(cd_starts)
+print ("Fitting onto %d CDs" % len(cd_starts))
 
 average_frames = total_frames/len(cd_starts)
 i = len(cd_starts)-1 ; topF = len(filelist)
@@ -66,5 +67,5 @@ for i in range(len(cd_starts)):
     o.close()
     if cd_starts[i]: trackinfo="-%d" % cd_starts[i]
     else: trackinfo=""
-    print "You can now do: cdrdao write",fn,"# (%d to %d, track=number%s)" % (cd_starts[i]+1,topF,trackinfo)
-print "When finished, you can do: rm *.toc rawfile*"
+    print ("You can now do: cdrdao write "+fn+(" # (%d to %d, track=number%s)" % (cd_starts[i]+1,topF,trackinfo)))
+print ("When finished, you can do: rm *.toc rawfile*")
