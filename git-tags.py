@@ -5,7 +5,7 @@
 # (TODO: tags for other programs in same repository e.g. annogen in adjuster?)
 
 # If there are multiple commits per version, then the tag for each version is put on the LAST commit in which the code had that version.
-# BUT you will need "git push -f --tags" (which may complicate the checkouts of others) if you've made an additional commit without changing a version number that has previously been _pushed_ as a tag.  So for new versions we may have to take "first commit with version number" rather than "last" (see homepage/Makefile)
+# BUT you will need "git push -f --tags" (which may complicate the checkouts of others) if you've made an additional commit without changing a version number that has previously been _pushed_ as a tag.  So for new versions we may have to take "first commit with version number" rather than "last" (see homepage/Makefile and homepage/_doGit2.sh)
 
 # Uncomment one of these:
 # version_regex = "v([0-9.]*).*Silas" # jianpu-ly
