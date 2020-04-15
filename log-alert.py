@@ -16,6 +16,11 @@
 # This script is meant to check through Apache log files
 # and alert of any similar behaviour earlier.
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 log_file = "/var/log/apache2/user/ssb22/access.log"
 
 min_bytes_to_report = 5000000 # less than this per IP = IP won't be reported no matter how many requests

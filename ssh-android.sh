@@ -7,6 +7,11 @@
 
 # Silas S. Brown 2014-2015, 2019, public domain, no warranty
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 # Assumes ~/.ssh/known_hosts already has the host you're
 # trying to connect to.  (If it doesn't, you might need to
 # add code to recognise the fingerprint and answer yes.)

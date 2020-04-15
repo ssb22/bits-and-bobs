@@ -7,6 +7,11 @@
 
 # Silas S. Brown 2018 - public domain - no warranty
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 index_only_inside = r"<html>.*?</html>" # or "" for all
 mark_down_xml = True
 lineNos_only = True

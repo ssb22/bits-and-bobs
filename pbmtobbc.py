@@ -4,6 +4,11 @@
 # Convert ASCII Portable Bitmap (.pbm) files to BBC Micro VDU 23 sequences
 # Silas S. Brown - Version 1.2 - public domain - no warranty
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 screenWidth = 40 # text columns (e.g. Mode 4)
 # (If using 20 or 80, might want to account for non-square pixels)
 

@@ -19,6 +19,11 @@
 # total thermal conductance (watts per kelvin)
 # try 15 for the oil rad (as heats up quite a lot while delivering 400W), 200 for the room
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 def simulate_heating_element(watts,onTemp,offTemp,medium,seconds=3600):
     # (NB onTemp,offTemp specified as deltas above 0=start)
     on = False ; totalOut = 0

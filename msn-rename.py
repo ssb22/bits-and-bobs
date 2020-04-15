@@ -8,6 +8,11 @@
 # (and 6.2), and bringing contacts over from Adium 2.0
 # (but this can easily be changed)
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 import os
 
 # You can set blist_file to a blist.xml file used by a libpurple application

@@ -31,6 +31,11 @@ Note also that this script does not currently check the
 status of a contact on startup; it reports status CHANGES.
 """
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 import sys,os,Tkinter,tkMessageBox,thread,time
 
 if not len(sys.argv)==2:

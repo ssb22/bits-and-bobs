@@ -57,6 +57,11 @@ include_essential = 0
 # distribution (but it's probably not a good idea to
 # run one of those offline).
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 import commands, os, re, sys
 
 def installed_list(packagename):

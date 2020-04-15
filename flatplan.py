@@ -70,6 +70,11 @@ include_area_summary = True
 include_doors = True
 include_grid_lines = True
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 # -------------------------------------------------------
 
 xd=0;yd=-1 # start pointing up (SVG origin is top left)

@@ -2,6 +2,11 @@
 # e.g. for https://ghr.nlm.nih.gov/download/ghr-summaries.xml
 # Silas S. Brown 2018, public domain - no warranty
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 import sys, pprint, os, unicodedata
 if sys.stdin.isatty(): sys.stderr.write("Waiting for input on stdin...\n")
 from xml.parsers import expat

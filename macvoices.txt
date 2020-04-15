@@ -4,6 +4,11 @@
 # Silas S. Brown 2013,2014 - public domain - no warranty
 # Source this from your .bashrc or whatever
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 alias restart-synth-server="killall SpeechSynthesisServer ; open /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app"
 
 alias get-voice-settings='echo "defaults write com.apple.speech.voice.prefs SelectedVoiceName -string $(defaults read com.apple.speech.voice.prefs SelectedVoiceName) ; defaults write com.apple.speech.voice.prefs SelectedVoiceID -int $(defaults read com.apple.speech.voice.prefs SelectedVoiceID) ; defaults write com.apple.speech.voice.prefs SelectedVoiceCreator -int $(defaults read com.apple.speech.voice.prefs SelectedVoiceCreator);restart-synth-server;echo System voice set to $(defaults read com.apple.speech.voice.prefs SelectedVoiceName)"'

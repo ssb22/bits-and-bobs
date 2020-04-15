@@ -6,6 +6,11 @@
 # tags with inline text on the same level.
 # FOR EXPLORATORY USE ONLY.
 
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+
 max_chars_per_cell = 80
 
 # set max_chars_per_cell = None for unlimited,
