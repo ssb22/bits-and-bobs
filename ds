@@ -1,0 +1,18 @@
+#!/usr/bin/expect
+
+# Expect script to log in to the ds server
+# (assumed to be set up in .ssh/config)
+# and send the password
+# (because its CIFS mount can't do .ssh/authorized_keys)
+
+spawn ssh ds
+trap {
+    set rows [stty rows]
+    set cols [stty columns]
+    stty rows $rows columns $cols < $spawn_out(slave,name)
+} WINCH
+expect {
+    "assword: " {send "********\r"}
+    "Last login"
+}
+interact
