@@ -1,9 +1,24 @@
 #!/usr/bin/expect
 
 # Expect script to log in to the ds server
-# (assumed to be set up in .ssh/config)
 # and send the password
 # (because its CIFS mount can't do .ssh/authorized_keys)
+
+# Assumes ds is set up in .ssh/config,
+# with password written into .ssh/ds
+# (can be modified to hard-code it here)
+
+# Silas S. Brown 2020, public domain, no warranty
+# Use/modify/keep passwords at your own risk
+
+# Uncomment if you want to keep the password here:
+# set pass "********"
+# Comment out if you don't want to read from .ssh/ds:
+set fp [open ~/.ssh/ds r]
+set pass [read -nonewline $fp]
+close $fp
+
+# Now ready to go:
 
 spawn ssh ds
 trap {
@@ -12,7 +27,7 @@ trap {
     stty rows $rows columns $cols < $spawn_out(slave,name)
 } WINCH
 expect {
-    "assword: " {send "********\r"}
+    "assword: " {send "$pass\r"}
     "Last login"
 }
 interact
