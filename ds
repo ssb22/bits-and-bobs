@@ -22,10 +22,37 @@ set fp [open ~/.ssh/ds r]
 set pass [read -nonewline $fp]
 close $fp
 
+# This should be set to the location of mosh-server in
+# the remote home directory:
+set moshServer bin/mosh/bin/mosh-server
+
 # Now ready to go.
-# First, find out if Mosh is installed on the local system:
+# First, find out if we're running in Termux on Android,
+if { [file exists "/data/data/com.termux/files/usr/bin"] } {
+    # in which case we'll need a different PATH setting, and we
+    # need to use mosh.pl for --experimental-remote-ip (so it
+    # works with ControlPath)
+    set ::env(PATH) "/data/data/com.termux/files/usr/bin"
+    set mosh mosh.pl
+    set tmp /data/data/com.termux/files/home/.ssh
+} else { if { [file exists /Volumes] } {
+    # on a Mac, we cannot fork (because both native and MacPorts
+    # tcl seems to be compiled with threads or something and we
+    # get "Tcl_WaitForEvent: Notifier not initialized" after
+    # fork / spawn / expect for the background ssh).
+    # For now, we have to say "no mosh on a mac" :-(
+    set mosh this-script-cannot-use-mosh-on-a-Mac
+} else {
+    set mosh mosh
+    if { [file exists "/dev/shm"] } {
+        set tmp /dev/shm
+    } else {
+        set tmp /tmp
+    }
+} }
+# Then find out if Mosh is installed on the local system:
 log_user 0
-spawn /bin/bash -c "which mosh 2>/dev/null;echo"
+spawn /bin/bash -c "which $mosh 2>/dev/null;echo"
 expect -re "(.*)\r"
 set MoshPath "$expect_out(1,string)"
 log_user 1
@@ -34,10 +61,10 @@ if {$MoshPath != ""} {
     # but we MUST keep ssh at the same time to prevent the
     # CIFS system from terminating mosh server on SSH logout
     set pid [pid]
-    system mkfifo /dev/shm/$pid
+    system mkfifo $tmp/$pid
     set childPid [fork]
     if {$childPid == 0} { # we are the child: keep an SSH going
-        spawn ssh ds -o ControlMaster=auto -o ControlPath=/dev/shm/.dspath
+        spawn ssh ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
         set timeout -1
         expect {
             "assword: " {send "$pass\r"}
@@ -48,25 +75,25 @@ if {$MoshPath != ""} {
         expect -re "H:(.*)\r"
         set ds "$expect_out(1,string)"
         log_user 0
-        set fp [open /dev/shm/$pid w]
+        set fp [open $tmp/$pid w]
         puts $fp "$ds"
         close $fp
         while {1} {
             expect eof
             system sleep 10
-            spawn ssh $ds -o ControlMaster=auto -o ControlPath=/dev/shm/.dspath
+            spawn ssh $ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
             expect {
                 "assword: " {send "$pass\r"}
                 "Last login"
             }
         }
     } else {
-        set fp [open /dev/shm/$pid r]
+        set fp [open $tmp/$pid r]
         set ds [read -nonewline $fp]
         close $fp
-        system rm /dev/shm/$pid
+        system rm $tmp/$pid
         system echo "Read from $pid: $ds"
-        spawn bash -c "mosh --server=bin/mosh/bin/mosh-server --experimental-remote-ip=remote --ssh='ssh -o ControlPath=/dev/shm/.dspath' $ds"
+        spawn bash -c "$mosh --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$tmp/.dspath' $ds"
         trap {
             set rows [stty rows]
             set cols [stty columns]
