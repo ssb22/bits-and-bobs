@@ -35,13 +35,6 @@ if { [file exists "/data/data/com.termux/files/usr/bin"] } {
     set ::env(PATH) "/data/data/com.termux/files/usr/bin"
     set mosh mosh.pl
     set tmp /data/data/com.termux/files/home/.ssh
-} else { if { [file exists /Volumes] } {
-    # on a Mac, we cannot fork (because both native and MacPorts
-    # tcl seems to be compiled with threads or something and we
-    # get "Tcl_WaitForEvent: Notifier not initialized" after
-    # fork / spawn / expect for the background ssh).
-    # For now, we have to say "no mosh on a mac" :-(
-    set mosh this-script-cannot-use-mosh-on-a-Mac
 } else {
     set mosh mosh
     if { [file exists "/dev/shm"] } {
@@ -49,45 +42,48 @@ if { [file exists "/data/data/com.termux/files/usr/bin"] } {
     } else {
         set tmp /tmp
     }
-} }
-# Then find out if Mosh is installed on the local system:
-log_user 0
-spawn /bin/bash -c "which $mosh 2>/dev/null;echo"
-expect -re "(.*)\r"
-set MoshPath "$expect_out(1,string)"
-log_user 1
-if {$MoshPath != ""} {
-    # we can use mosh with home-directory install on ds server
-    # but we MUST keep ssh at the same time to prevent the
-    # CIFS system from terminating mosh server on SSH logout
-    set pid [pid]
-    system mkfifo $tmp/$pid
-    set childPid [fork]
-    if {$childPid == 0} { # we are the child: keep an SSH going
-        spawn ssh ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
-        set timeout -1
+}
+# Then find out if Mosh is installed on the local system.
+# We can use mosh with home-directory install on ds server
+# but we MUST keep ssh at the same time to prevent the
+# CIFS system from terminating mosh server on SSH logout.
+# Do this without fork, for maximum compatibility:
+if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
+    # we are the child: keep an SSH going
+    spawn ssh ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
+    set timeout -1
+    expect {
+        "assword: " {send "$pass\r"}
+        "Last login"
+    }
+    expect "\\\$"
+    send "echo -n H;echo -n :;hostname -f\r"
+    expect -re "H:(.*)\r"
+    set ds "$expect_out(1,string)"
+    log_user 0
+    set fp [open [lindex $argv 0] w]
+    puts $fp "$ds"
+    close $fp
+    while {1} {
+        expect eof
+        system sleep 10
+        spawn ssh $ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
         expect {
             "assword: " {send "$pass\r"}
             "Last login"
         }
-        expect "\\\$"
-        send "echo -n H;echo -n :;hostname -f\r"
-        expect -re "H:(.*)\r"
-        set ds "$expect_out(1,string)"
-        log_user 0
-        set fp [open $tmp/$pid w]
-        puts $fp "$ds"
-        close $fp
-        while {1} {
-            expect eof
-            system sleep 10
-            spawn ssh $ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
-            expect {
-                "assword: " {send "$pass\r"}
-                "Last login"
-            }
-        }
-    } else {
+    }
+} else {
+    # we are not the child, check if mosh is installed
+    log_user 0
+    spawn /bin/bash -c "which $mosh 2>/dev/null;echo"
+    expect -re "(.*)\r"
+    set MoshPath "$expect_out(1,string)"
+    log_user 1
+    if {$MoshPath != ""} {
+        set pid [pid]
+        system mkfifo $tmp/$pid
+        set childPid [lindex [ exec [info script] $tmp/$pid & ] 0 ]
         set fp [open $tmp/$pid r]
         set ds [read -nonewline $fp]
         close $fp
@@ -100,19 +96,19 @@ if {$MoshPath != ""} {
             stty rows $rows columns $cols < $spawn_out(slave,name)
         } WINCH
         interact
-        system kill $childPid
+        system bash -c "kill $childPid ; clear"
+    } else {
+        # no mosh: just interact with plain ssh
+        spawn ssh ds
+        expect {
+            "assword: " {send "$pass\r"}
+            "Last login"
+        }
+        trap {
+            set rows [stty rows]
+            set cols [stty columns]
+            stty rows $rows columns $cols < $spawn_out(slave,name)
+        } WINCH
+        interact
     }
-} else {
-    # no mosh: just interact with plain ssh
-    spawn ssh ds
-    expect {
-        "assword: " {send "$pass\r"}
-        "Last login"
-    }
-    trap {
-        set rows [stty rows]
-        set cols [stty columns]
-        stty rows $rows columns $cols < $spawn_out(slave,name)
-    } WINCH
-    interact
 }
