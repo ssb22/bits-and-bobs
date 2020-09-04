@@ -75,12 +75,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
     }
 } else {
     # we are not the child, check if mosh is installed
-    log_user 0
-    spawn /bin/bash -c "which $mosh 2>/dev/null;echo"
-    expect -re "(.*)\r"
-    set MoshPath "$expect_out(1,string)"
-    log_user 1
-    if {$MoshPath != ""} {
+    if { [catch { exec which $mosh >/dev/null 2>/dev/null } ] == 0 } {
         set pid [pid]
         system mkfifo $tmp/$pid
         set childPid [lindex [ exec [info script] $tmp/$pid & ] 0 ]
@@ -89,14 +84,15 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
         close $fp
         system rm $tmp/$pid
         system echo "Read from $pid: $ds"
-        spawn bash -c "$mosh --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$tmp/.dspath' $ds"
+        # Use --no-init = local scrollback sometimes works (except when server sends text so fast Mosh has to drop some)
+        spawn bash -c "$mosh --no-init --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$tmp/.dspath' $ds"
         trap {
             set rows [stty rows]
             set cols [stty columns]
             stty rows $rows columns $cols < $spawn_out(slave,name)
         } WINCH
         interact
-        system bash -c "kill $childPid ; clear"
+        system bash -c "kill $childPid 2>/dev/null >/dev/null || true"
     } else {
         # no mosh: just interact with plain ssh
         spawn ssh ds
