@@ -8,6 +8,7 @@
 # on GitHub at https://github.com/ssb22/bits-and-bobs
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+# and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 
 cd_frames = 359845 # 79min 57sec 70/75 frames, typical for 700M "80min" CDs
 

@@ -61,6 +61,7 @@ include_essential = 0
 # on GitHub at https://github.com/ssb22/bits-and-bobs
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+# and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 
 import commands, os, re, sys
 

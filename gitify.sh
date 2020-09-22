@@ -30,6 +30,7 @@
 # on GitHub at https://github.com/ssb22/bits-and-bobs
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+# and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 
 unset Day
 if test "a$1" == "a--day"; then export Day=1; shift; fi

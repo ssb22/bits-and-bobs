@@ -8,6 +8,7 @@
 # on GitHub at https://github.com/ssb22/bits-and-bobs
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+# and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 
 alias restart-synth-server="killall SpeechSynthesisServer ; open /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesisServer.app"
 
