@@ -26,6 +26,10 @@ close $fp
 # the remote home directory:
 set moshServer bin/mosh/bin/mosh-server
 
+# Symlink this script from "ds1" or "ds2" if one of the
+# two servers is down and we should specify the other.
+set dsN [regsub {.*/} $argv0 ""]
+
 # Now ready to go.
 # First, find out if we're running in Termux on Android,
 if { [file exists "/data/data/com.termux/files/usr/bin"] } {
@@ -43,6 +47,7 @@ if { [file exists "/data/data/com.termux/files/usr/bin"] } {
         set tmp /tmp
     }
 }
+set dsNpath "$tmp/.${dsN}path"
 # Then find out if Mosh is installed on the local system.
 # We can use mosh with home-directory install on ds server
 # but we MUST keep ssh at the same time to prevent the
@@ -50,7 +55,7 @@ if { [file exists "/data/data/com.termux/files/usr/bin"] } {
 # Do this without fork, for maximum compatibility:
 if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
     # we are the child: keep an SSH going
-    spawn ssh ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
+    spawn ssh $dsN -o ControlMaster=auto -o ControlPath=$dsNpath
     set timeout -1
     expect {
         "assword: " {send "$pass\r"}
@@ -67,7 +72,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
     while {1} {
         expect eof
         system sleep 10
-        spawn ssh $ds -o ControlMaster=auto -o ControlPath=$tmp/.dspath
+        spawn ssh "$ds" -o ControlMaster=auto -o ControlPath=$dsNpath
         expect {
             "assword: " {send "$pass\r"}
             "Last login"
@@ -85,7 +90,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
         system rm $tmp/$pid
         system echo "Read from $pid: $ds"
         # Use --no-init = local scrollback sometimes works (except when server sends text so fast Mosh has to drop some)
-        spawn bash -c "$mosh --no-init --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$tmp/.dspath' $ds"
+        spawn bash -c "$mosh --no-init --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$dsNpath' $ds"
         trap {
             set rows [stty rows]
             set cols [stty columns]
@@ -95,7 +100,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
         system bash -c "kill $childPid 2>/dev/null >/dev/null || true"
     } else {
         # no mosh: just interact with plain ssh
-        spawn ssh ds
+        spawn ssh $dsN
         expect {
             "assword: " {send "$pass\r"}
             "Last login"
