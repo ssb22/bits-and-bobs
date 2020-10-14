@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# cdrdao track padder (c) 2012, 2020 Silas S. Brown. License: GPL
-# Version 1.3
+# cdrdao track padder, 2012, 2020 Silas S. Brown. Public domain.
+# Version 1.4
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
