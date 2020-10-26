@@ -70,7 +70,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
     puts $fp "$ds"
     close $fp
     while {1} {
-        expect eof
+        catch { expect eof } ; catch { close }
         system sleep 10
         spawn ssh "$ds" -o ControlMaster=auto -o ControlPath=$dsNpath
         expect {
@@ -88,7 +88,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
         set ds [read -nonewline $fp]
         close $fp
         system rm $tmp/$pid
-        system echo "Read from $pid: $ds"
+        send_user "Read from $pid: $ds\n"
         # Use --no-init = local scrollback sometimes works (except when server sends text so fast Mosh has to drop some)
         spawn bash -c "$mosh --no-init --server=$moshServer --experimental-remote-ip=remote --ssh='ssh -o ControlPath=$dsNpath' $ds"
         trap {
@@ -97,7 +97,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
             stty rows $rows columns $cols < $spawn_out(slave,name)
         } WINCH
         interact
-        system bash -c "kill $childPid 2>/dev/null >/dev/null || true"
+        system bash -c "'kill $childPid 2>/dev/null >/dev/null || true'"
     } else {
         # no mosh: just interact with plain ssh
         spawn ssh $dsN
