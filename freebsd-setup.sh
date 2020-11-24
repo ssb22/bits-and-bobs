@@ -35,9 +35,12 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ca_root_nss desktop-installer firefox
+pkg install -y wget subversion joe ca_root_nss desktop-installer firefox otter-browser
 desktop-installer
+rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
+
 ln -s /usr/local/bin/bash /bin/bash
+
 cat >> /usr/local/etc/slim.conf <<EOF
 default_user root
 auto_login yes
@@ -71,28 +74,63 @@ cat >/root/.x-start <<EOF
 xrdb + .Xresources
 setxkbmap dvorak
 firefox &
-# firefox -P profile
-firefox --profile .mozilla/firefox/css0.default &
-firefox --profile .mozilla/firefox/css25.default &
-firefox --profile .mozilla/firefox/nocss.default &
+otter-browser &
 EOF
-# TODO: do we really want the above, or would 'toggle / restart' scripts on the menus be better?  (latter would mean can't use Private Mode so history/autocomplete gets cluttered unless remember to clean up)
-# how to set window titles?  (KDE has --caption)
-# or use different browser (which would also have the advantage of not requiring the manual step below)
-# 'pkg install konqueror' = 116 packages, 720 MB and it doesn't apply CSS files (thankfully 'pkg autoremove' works afterwards)
-# 'pkg install midori' gets Midori 9 which doesn't have user-CSS functionality
-# (might just need to set up Web Adjuster)
-# 'pkg install otter-browser' ok
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
-mkdir -p .mozilla/firefox/css0.default/chrome
-mkdir -p .mozilla/firefox/css25.default/chrome
-mkdir -p .mozilla/firefox/nocss.default
-wget -O .mozilla/firefox/css0.default/chrome/userContent.css http://ssb22.user.srcf.net/css/0.css
-wget -O .mozilla/firefox/css25.default/chrome/userContent.css http://ssb22.user.srcf.net/css/25.css
 
-# This won't work: you have to do it by hand in about.config:
-# mkdir -p .mozilla/firefox/css0.default/datareporting
-# echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);' > .mozilla/firefox/css0.default/datareporting/session-state.json
+wget http://ssb22.user.srcf.net/css/25.css
+mkdir -p .config/otter/keyboard
+cat > .config/otter/otter.conf <<EOF
+[Browser]
+HomePage=http://ssb22.user.srcf.net/
+Migrations=keyboardAndMouseProfilesIniToJson, optionsRename, searchEnginesStorage, sessionsIniToJson
+StartupBehavior=startHomePage
+[Content]
+UserStyleSheet=/root/25.css
+EOF
+cat > .config/otter/keyboard/default.json <<EOF
+// Title: Default
+// Description: Default configuration
+// Type: keyboard-profile
+// Take out 'space = fast forward',
+// we want space to just page down
+// TODO: BROKEN : results in NO shortcuts being read
+[{"actions":[
+    {"action": "NewTab", "shortcuts":["Ctrl+T"]},
+    {"action": "NewTabPrivate","shortcuts":["Ctrl+Shift+P"]},
+    {"action": "NewWindow","shortcuts":["Ctrl+N"]},
+    {"action": "NewWindowPrivate","shortcuts": ["Ctrl+Shiftt+N"]},
+    {"action": "Open","shortcuts": ["Ctrl+O"]},
+    {"action": "Save","shortcuts": ["Ctrl+S"]},
+    {"action": "CloseTab","shortcuts": ["Ctrl+W"]},
+    {"action": "ReopenTab","shortcuts": ["Ctrl+Shift+T"]},
+    {"action": "ReopenWindow","shortcuts": ["Ctrl+Shift+N"]},
+    {"action": "FillPassword","shortcuts": ["Ctrl+Return"]},
+    {"action": "Reload","shortcuts": ["Ctrl+R"]},
+    {"action": "ReloadAndBypassCache","shortcuts": ["Ctrl+Shift+R"]},
+    {"action": "Undo","shortcuts": ["Ctrl+Z"]},
+    {"action": "Redo","shortcuts": ["Ctrl+Shift+Z"]},
+    {"action": "Cut","shortcuts": ["Ctrl+X"]},
+    {"action": "Paste","shortcuts": ["Ctrl+V"]},
+    {"action": "Delete","shortcuts": ["Del"]},
+    {"action": "SelectAll","shortcuts": ["Ctrl+A"]},
+    {"action": "Find","shortcuts": ["Ctrl+F"]},
+    {"action": "FindNext","shortcuts": ["Ctrl+G"]},
+    {"action": "QuickFind","shortcuts": ["/"]},
+    {"action": "ZoomIn","shortcuts": ["Ctrl++","Ctrl+="]},
+    {"action": "ZoomOut","shortcuts": ["Ctrl+-"]},
+    {"action": "ZoomOriginal","shortcuts": ["Ctrl+0"]},
+    {"action": "Print","shortcuts": ["Ctrl+P"]},
+    {"action": "Bookmarks","shortcuts": ["Ctrl+Shift+B"]},
+    {"action": "ViewSource","shortcuts": ["Ctrl+U"]},
+    {"action": "InspectPage","shortcuts": ["Ctrl+Shift+I"]},
+    {"action": "FullScreen","shortcuts": ["F11"]},
+    {"action": "History","shortcuts": ["Ctrl+H"]},
+    {"action": "Exit","shortcuts": ["Ctrl+Q"]}],
+  "context": "Generic"
+ }
+]
+EOF
 
 echo 'sshd_enable="YES"' >> /etc/rc.conf
