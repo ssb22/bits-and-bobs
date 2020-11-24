@@ -7,13 +7,17 @@
 # Setup:
 # https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.2/FreeBSD-12.2-RELEASE-amd64-bootonly.iso.xz
 # 8G virtual hdd
+# 3D acceleration = enabled
+# shared clipboard = bidirectional
+# NAT port forwarding = 22022 to 22
+# shared folders 'mac' to /
 # Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot
 
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
 # TODO: Firefox PDF export ?
 # TODO: how much of the install can we do from pkg only? or are /usr/ports really essential?  (rm after = save 1.7G)
-# TODO: mount fs ; ssh in and start browser on a file/url?
+# TODO: ssh in and start browser on a file/url via /mac ?
 
 cd
 cat > auto-ask-responses.txt <<EOF
@@ -39,6 +43,8 @@ pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer firefox ot
 # subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
+
+mkdir /mac
 
 ln -s /usr/local/bin/bash /bin/bash
 
@@ -72,6 +78,8 @@ EOF
 
 cat >/root/.x-start <<EOF
 #!/bin/sh
+mount_vboxvfs -w mac /mac   # TODO: doesn't get /mac/tmp
+              # + attempt to ls -l /mac = reboot freebsd ?
 xrdb + .Xresources
 setxkbmap dvorak
 xclipboard &
