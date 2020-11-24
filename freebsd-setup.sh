@@ -11,9 +11,9 @@
 
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
-# TODO: copy FROM Firefox doesn't go to host, unless go via featherpad or sthg
 # TODO: Firefox PDF export ?
-# TODO: how much of the install can we do from pkg only? or are /usr/ports really essential?
+# TODO: how much of the install can we do from pkg only? or are /usr/ports really essential?  (rm after = save 1.7G)
+# TODO: mount fs ; ssh in and start browser on a file/url?
 
 cd
 cat > auto-ask-responses.txt <<EOF
@@ -35,7 +35,8 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ca_root_nss desktop-installer firefox otter-browser
+pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer firefox otter-browser xclipboard
+# subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
@@ -73,6 +74,7 @@ cat >/root/.x-start <<EOF
 #!/bin/sh
 xrdb + .Xresources
 setxkbmap dvorak
+xclipboard &
 firefox &
 otter-browser &
 EOF
@@ -91,11 +93,11 @@ UserStyleSheet=/root/25.css
 EOF
 cat > .config/otter/keyboard/default.json <<EOF
 // Title: Default
-// Description: Default configuration
+// Description: 
 // Type: keyboard-profile
-// Take out 'space = fast forward',
-// we want space to just page down
-// TODO: BROKEN : results in NO shortcuts being read
+// Author: 
+// Version: 
+
 [{"actions":[
     {"action": "NewTab", "shortcuts":["Ctrl+T"]},
     {"action": "NewTabPrivate","shortcuts":["Ctrl+Shift+P"]},
