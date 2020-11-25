@@ -4,13 +4,14 @@
 # for Mac VirtualBox with screen magnification
 # Silas S. Brown 2020, public domain
 
+export User=ssb22
+
 # Setup:
 # https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.2/FreeBSD-12.2-RELEASE-amd64-bootonly.iso.xz
 # 8G virtual hdd
 # 3D acceleration = enabled
 # shared clipboard = bidirectional
 # NAT port forwarding = 22022 to 22
-# shared folders 'mac' to /
 # Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot
 
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
@@ -39,12 +40,23 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer firefox otter-browser xclipboard
+pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer firefox otter-browser xclipboard fusefs-sshfs
 # subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
+echo 10.0.2.2 mac >> /etc/hosts
+mkdir -p .ssh
+ssh-keygen -f .ssh/id_rsa -N ""
+(echo Host mac;echo User $User) > .ssh/con
+fig
+cat .ssh/id_rsa.pub | ssh mac 'cat >> .ssh/authorized_keys'
+ssh mac cat .ssh/id_rsa.pub > .ssh/authorized_keys
+if ! ssh mac cat .ssh/config | grep 'Host freebsd'; then (echo;echo Host freebsd;echo User root;echo HostName localhost;echo Port 22022) | ssh mac 'cat >> .ssh/config'; fi
+echo PermitRootLogin yes >> /etc/ssh/sshd_config
+echo 'sshd_enable="YES"' >> /etc/rc.conf
+ln -s /mac/Users/$User/Downloads
 
 ln -s /usr/local/bin/bash /bin/bash
 
@@ -78,11 +90,10 @@ EOF
 
 cat >/root/.x-start <<EOF
 #!/bin/sh
-mount_vboxvfs -w mac /mac   # TODO: doesn't get /mac/tmp
-              # + attempt to ls -l /mac = reboot freebsd ?
+sshfs mac:/ /mac
 xrdb + .Xresources
 setxkbmap dvorak
-xclipboard &
+xclipboard &     # TODO: this auto-rm's Unicode characters from the HOST clipboard, even host to host.  Fix.
 firefox &
 otter-browser &
 EOF
@@ -142,5 +153,3 @@ cat > .config/otter/keyboard/default.json <<EOF
  }
 ]
 EOF
-
-echo 'sshd_enable="YES"' >> /etc/rc.conf
