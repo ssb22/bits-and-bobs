@@ -8,7 +8,7 @@ export User=ssb22
 
 # Setup:
 # https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.2/FreeBSD-12.2-RELEASE-amd64-bootonly.iso.xz
-# 8G virtual hdd
+# 8G virtual hdd, 2G RAM (1G insufficient for Firefox on some websites)
 # 3D acceleration = enabled
 # shared clipboard = bidirectional
 # NAT port forwarding = 22022 to 22
@@ -40,7 +40,7 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer firefox otter-browser xclipboard fusefs-sshfs
+pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer bsdstats firefox otter-browser fusefs-sshfs xclip py37-xlib
 # subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
@@ -65,7 +65,57 @@ default_user root
 auto_login yes
 EOF
 rm .xinitrc # save confusion (isn't used by slim)
-mkdir -p .config/autostart
+mkdir -p .config/autostart .config/lxqt .config/fontconfig
+cat > .config/fontconfig/fonts.conf <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<!-- created by lxqt-config-appearance (DO NOT EDIT!) -->
+<fontconfig>
+  <include ignore_missing="yes">conf.d</include>
+  <match target="font">
+    <edit name="antialias" mode="assign">
+      <bool>false</bool>
+    </edit>
+  </match>
+  <match target="font">
+    <edit name="rgba" mode="assign">
+      <const>rgb</const>
+    </edit>
+  </match>
+  <match target="font">
+    <edit name="lcdfilter" mode="assign">
+      <const>lcddefault</const>
+    </edit>
+  </match>
+  <match target="font">
+    <edit name="hinting" mode="assign">
+      <bool>true</bool>
+    </edit>
+  </match>
+  <match target="font">
+    <edit name="hintstyle" mode="assign">
+      <const>hintslight</const>
+    </edit>
+  </match>
+  <match target="font">
+    <edit name="autohint" mode="assign">
+      <bool>false</bool>
+    </edit>
+  </match>
+  <match target="pattern">
+    <edit name="dpi" mode="assign">
+      <double>96</double>
+    </edit>
+  </match>
+</fontconfig>
+EOF
+cat > .config/lxqt/panel.conf <<EOF
+[quicklaunch]
+apps\1\desktop=/usr/local/share/applications/firefox.desktop
+apps\2\desktop=/usr/local/share/applications/otter-browser.desktop
+apps\3\desktop=/usr/local/share/applications/qterminal.desktop
+apps\size=3
+EOF
 cat > .config/autostart/script.desktop <<EOF
 [Desktop Entry]
 Encoding=UTF-8
@@ -88,14 +138,18 @@ cat > .config/lxqt/globalkeyshortcuts.conf <<EOF
 Enabled=false
 EOF
 
-cat >/root/.x-start <<EOF
+wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
+sed -ie "s/print('SetSelectionOwner.*/raise SystemExit/" xfixes-selection-notify.py
+mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
+cat >.x-start <<EOF
 #!/bin/sh
 sshfs mac:/ /mac
 xrdb + .Xresources
 setxkbmap dvorak
-xclipboard &     # TODO: this auto-rm's Unicode characters from the HOST clipboard, even host to host.  Fix.
 firefox &
 otter-browser &
+# Work around bug copying browser text to host clipboard:
+while true ; do python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null ; xclip -o | xclip -i -selection clipboard; done
 EOF
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
@@ -133,6 +187,7 @@ cat > .config/otter/keyboard/default.json <<EOF
     {"action": "Undo","shortcuts": ["Ctrl+Z"]},
     {"action": "Redo","shortcuts": ["Ctrl+Shift+Z"]},
     {"action": "Cut","shortcuts": ["Ctrl+X"]},
+    {"action": "Copy","shortcuts": ["Ctrl+C"]},
     {"action": "Paste","shortcuts": ["Ctrl+V"]},
     {"action": "Delete","shortcuts": ["Del"]},
     {"action": "SelectAll","shortcuts": ["Ctrl+A"]},
