@@ -4,6 +4,10 @@
 # for Mac VirtualBox with screen magnification
 # Silas S. Brown 2020, public domain
 
+# Tested on Mac OS 10.7.5, VirtualBox 4.3.4
+# We install 2 browsers (one with CSS, one without)
+# because old Mac OS X can't run latest browsers.
+
 export User=ssb22
 
 # Setup:
@@ -163,7 +167,16 @@ Migrations=keyboardAndMouseProfilesIniToJson, optionsRename, searchEnginesStorag
 StartupBehavior=startHomePage
 [Content]
 UserStyleSheet=/root/25.css
+[Search]
+DefaultSearchEngine=google
 EOF
+# can't say [Backends] / Web=qtwebengine to get Chrome 80+
+# instead of Webkit 602 (Safari 10 equivalent), as Chrome
+# stops our user CSS from being applied.  We could do CSS
+# in Firefox and non-CSS in Otter, but then would need to
+# somehow get it to read a new user.js with
+# user_pref("toolkit.legacyUserProfileCustomizations.stylesheets","false");
+# could try firefox -CreateProfile CSS25 (but will have to find where it went via profiles.ini) , firefox -P CSS25
 cat > .config/otter/keyboard/default.json <<EOF
 // Title: Default
 // Description: 
