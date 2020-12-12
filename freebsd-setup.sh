@@ -5,7 +5,7 @@
 # Silas S. Brown 2020, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4
-# We install 2 browsers (one with CSS, one without)
+# We install 2 Firefox profiles (one with CSS, one w/out)
 # because old Mac OS X can't run latest browsers.
 
 export User=ssb22
@@ -18,6 +18,7 @@ export User=ssb22
 # NAT port forwarding = 22022 to 22
 # Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot
 
+# Then run:
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
 # TODO: Firefox PDF export ?
@@ -44,7 +45,7 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer bsdstats firefox otter-browser fusefs-sshfs xclip py37-xlib
+pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
 # subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
@@ -113,18 +114,45 @@ cat > .config/fontconfig/fonts.conf <<EOF
   </match>
 </fontconfig>
 EOF
+# firefox -CreateProfile is not available on FreeBSD version, but we can do it ourselves
+mkdir -p .mozilla/firefox/25.CSS25/chrome
+wget -O .mozilla/firefox/25.CSS25/chrome/userContent.css http://ssb22.user.srcf.net/css/25.css
+cat > .mozilla/firefox/25.CSS25/prefs.js <<EOF
+user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+user_pref("browser.startup.homepage", "about:blank");
+user_pref("browser.newtabpage.enabled", false);
+EOF
+mkdir -p .mozilla/firefox/0.default
+cat > .mozilla/firefox/0.default/prefs.js <<EOF
+user_pref("browser.startup.homepage", "about:blank");
+user_pref("browser.newtabpage.enabled", false);
+EOF
+cat > .mozilla/firefox/profiles.ini <<EOF
+[Profile1]
+Name=CSS25
+IsRelative=1
+Path=25.CSS25
+
+[Profile0]
+Name=default
+IsRelative=1
+Path=0.default
+Default=1
+EOF
+sed -e 's/Exec=firefox.*/Exec=firefox -P default/' -e 's/Name=Firefox.*/Name=Firefox no-css/' < /usr/local/share/applications/firefox.desktop > /usr/local/share/applications/firefoxNoCSS.desktop
+sed -e 's/Exec=firefox.*/Exec=firefox -P CSS25/' -e 's/Name=Firefox.*/Name=Firefox 25.css/' < /usr/local/share/applications/firefox.desktop > /usr/local/share/applications/firefox25.desktop
 cat > .config/lxqt/panel.conf <<EOF
 [quicklaunch]
-apps\1\desktop=/usr/local/share/applications/firefox.desktop
-apps\2\desktop=/usr/local/share/applications/otter-browser.desktop
+apps\1\desktop=/usr/local/share/applications/firefoxNoCSS.desktop
+apps\2\desktop=/usr/local/share/applications/firefox25.desktop
 apps\3\desktop=/usr/local/share/applications/qterminal.desktop
 apps\size=3
 EOF
 cat > .config/autostart/script.desktop <<EOF
 [Desktop Entry]
 Encoding=UTF-8
-Name="Random wallpaper"
-GenericName="Random wallpaper"
+Name="Startup script"
+GenericName="Startup script"
 Comment=""
 Exec=/root/.x-start
 Terminal=false
@@ -150,74 +178,9 @@ cat >.x-start <<EOF
 sshfs mac:/ /mac
 xrdb + .Xresources
 setxkbmap dvorak
-firefox &
-otter-browser &
+firefox -P CSS25 &
 # Work around bug copying browser text to host clipboard:
 while true ; do python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null ; xclip -o | xclip -i -selection clipboard; done
 EOF
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
-
-wget http://ssb22.user.srcf.net/css/25.css
-mkdir -p .config/otter/keyboard
-cat > .config/otter/otter.conf <<EOF
-[Browser]
-HomePage=http://ssb22.user.srcf.net/
-Migrations=keyboardAndMouseProfilesIniToJson, optionsRename, searchEnginesStorage, sessionsIniToJson
-StartupBehavior=startHomePage
-[Content]
-UserStyleSheet=/root/25.css
-[Search]
-DefaultSearchEngine=google
-EOF
-# can't say [Backends] / Web=qtwebengine to get Chrome 80+
-# instead of Webkit 602 (Safari 10 equivalent), as Chrome
-# stops our user CSS from being applied.  We could do CSS
-# in Firefox and non-CSS in Otter, but then would need to
-# somehow get it to read a new user.js with
-# user_pref("toolkit.legacyUserProfileCustomizations.stylesheets","false");
-# could try firefox -CreateProfile CSS25 (but will have to find where it went via profiles.ini) , firefox -P CSS25
-cat > .config/otter/keyboard/default.json <<EOF
-// Title: Default
-// Description: 
-// Type: keyboard-profile
-// Author: 
-// Version: 
-
-[{"actions":[
-    {"action": "NewTab", "shortcuts":["Ctrl+T"]},
-    {"action": "NewTabPrivate","shortcuts":["Ctrl+Shift+P"]},
-    {"action": "NewWindow","shortcuts":["Ctrl+N"]},
-    {"action": "NewWindowPrivate","shortcuts": ["Ctrl+Shiftt+N"]},
-    {"action": "Open","shortcuts": ["Ctrl+O"]},
-    {"action": "Save","shortcuts": ["Ctrl+S"]},
-    {"action": "CloseTab","shortcuts": ["Ctrl+W"]},
-    {"action": "ReopenTab","shortcuts": ["Ctrl+Shift+T"]},
-    {"action": "ReopenWindow","shortcuts": ["Ctrl+Shift+N"]},
-    {"action": "FillPassword","shortcuts": ["Ctrl+Return"]},
-    {"action": "Reload","shortcuts": ["Ctrl+R"]},
-    {"action": "ReloadAndBypassCache","shortcuts": ["Ctrl+Shift+R"]},
-    {"action": "Undo","shortcuts": ["Ctrl+Z"]},
-    {"action": "Redo","shortcuts": ["Ctrl+Shift+Z"]},
-    {"action": "Cut","shortcuts": ["Ctrl+X"]},
-    {"action": "Copy","shortcuts": ["Ctrl+C"]},
-    {"action": "Paste","shortcuts": ["Ctrl+V"]},
-    {"action": "Delete","shortcuts": ["Del"]},
-    {"action": "SelectAll","shortcuts": ["Ctrl+A"]},
-    {"action": "Find","shortcuts": ["Ctrl+F"]},
-    {"action": "FindNext","shortcuts": ["Ctrl+G"]},
-    {"action": "QuickFind","shortcuts": ["/"]},
-    {"action": "ZoomIn","shortcuts": ["Ctrl++","Ctrl+="]},
-    {"action": "ZoomOut","shortcuts": ["Ctrl+-"]},
-    {"action": "ZoomOriginal","shortcuts": ["Ctrl+0"]},
-    {"action": "Print","shortcuts": ["Ctrl+P"]},
-    {"action": "Bookmarks","shortcuts": ["Ctrl+Shift+B"]},
-    {"action": "ViewSource","shortcuts": ["Ctrl+U"]},
-    {"action": "InspectPage","shortcuts": ["Ctrl+Shift+I"]},
-    {"action": "FullScreen","shortcuts": ["F11"]},
-    {"action": "History","shortcuts": ["Ctrl+H"]},
-    {"action": "Exit","shortcuts": ["Ctrl+Q"]}],
-  "context": "Generic"
- }
-]
-EOF
