@@ -116,7 +116,9 @@ cat > .config/fontconfig/fonts.conf <<EOF
 EOF
 # firefox -CreateProfile is not available on FreeBSD version, but we can do it ourselves
 mkdir -p .mozilla/firefox/25.CSS25/chrome
-wget -O .mozilla/firefox/25.CSS25/chrome/userContent.css http://ssb22.user.srcf.net/css/25.css
+cd .mozilla/firefox/25.CSS25/chrome
+ln -s 25.css userContent.css
+cd
 cat > .mozilla/firefox/25.CSS25/prefs.js <<EOF
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 user_pref("browser.startup.homepage", "about:blank");
@@ -178,6 +180,7 @@ cat >.x-start <<EOF
 sshfs mac:/ /mac
 xrdb + .Xresources
 setxkbmap dvorak
+cd .mozilla/firefox/25.CSS25/chrome && wget -N http://ssb22.user.srcf.net/css/25.css ; cd
 firefox -P CSS25 &
 # Work around bug copying browser text to host clipboard:
 while true ; do python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null ; xclip -o | xclip -i -selection clipboard; done
