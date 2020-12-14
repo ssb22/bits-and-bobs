@@ -62,7 +62,7 @@ if { [lindex $argv 0] != "" && [file exists [lindex $argv 0] ] } {
         "Last login"
     }
     expect "\\\$"
-    send "echo -n H;echo -n :;hostname -f\r"
+    send "unset HISTFILE;echo -n H;echo -n :;hostname -f\r"
     expect -re "H:(.*)\r"
     set ds "$expect_out(1,string)"
     log_user 0
