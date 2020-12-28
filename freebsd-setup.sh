@@ -173,7 +173,7 @@ Enabled=false
 EOF
 
 wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
-sed -ie "s/print('SetSelectionOwner.*/raise SystemExit/" xfixes-selection-notify.py
+sed -ie "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
 cat >.x-start <<EOF
 #!/bin/sh
@@ -182,8 +182,24 @@ xrdb + .Xresources
 setxkbmap dvorak
 cd .mozilla/firefox/25.CSS25/chrome && wget -N http://ssb22.user.srcf.net/css/25.css ; cd
 firefox -P CSS25 &
-# Work around bug copying browser text to host clipboard:
-while true ; do python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null ; xclip -o | xclip -i -selection clipboard; done
+
+# Work around bug copying browser text to host clipboard
+# - it seems host won't take it from CLIPBOARD set by browser, but will take it from CLIPBOARD set by xclip.
+# So we watch for SetSelectionOwnerNotify on CLIPBOARD,
+# and then copy PRIMARY (which should be the same) to
+# CLIPBOARD via xclip.
+# (Our patch to x-selection-notify.py causes it to exit
+# only if the owner is not set by 'main' i.e. the host.
+# This avoids an unwanted side-effect of reacting to any
+# change in clipboard on the host side also, when vbox
+# copies host to guest: if both plain text and another
+# format like RTF are available on the host side, we
+# probably don't want the vbox to take over as owner and
+# make it plain-text only.)
+while true ; do
+  python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null
+  xclip -o | xclip -i -selection clipboard
+done
 EOF
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
