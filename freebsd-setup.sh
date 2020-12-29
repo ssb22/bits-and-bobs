@@ -188,8 +188,8 @@ firefox -P CSS25 &
 # So we watch for SetSelectionOwnerNotify on CLIPBOARD,
 # and then copy PRIMARY (which should be the same) to
 # CLIPBOARD via xclip.
-# (Our patch to x-selection-notify.py causes it to exit
-# only if the owner is not set by 'main' i.e. the host.
+# (Our patch to xfixes-selection-notify.py causes it to
+# exit only if owner is not set by 'main' i.e. the host.
 # This avoids an unwanted side-effect of reacting to any
 # change in clipboard on the host side also, when vbox
 # copies host to guest: if both plain text and another
