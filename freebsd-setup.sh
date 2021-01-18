@@ -4,7 +4,7 @@
 # for Mac VirtualBox with screen magnification
 # Silas S. Brown 2020, public domain
 
-# Tested on Mac OS 10.7.5, VirtualBox 4.3.4
+# Tested on Mac OS 10.7.5, VirtualBox 4.3.4 & 4.3.40
 # We install 2 Firefox profiles (one with CSS, one w/out)
 # because old Mac OS X can't run latest browsers.
 
@@ -21,9 +21,33 @@ export User=ssb22
 # Then run:
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
-# TODO: Firefox PDF export ?
+# Notes on Zoom Cloud Meetings (does NOT work well) :
+# with Virtualbox Oracle Extensions installed,
+# at runtime: menubar Devices / Webcams / (select one)
+#  (do not just add the USB device on USB 2: that works
+#   for audio but not for video, ditto in Debian 10 if
+#   it's a device like 0ac8:3420),
+#pkg install v4l-utils
+#echo 'cuse_load="YES"' >> /boot/loader.conf
+#echo 'webcamd_enable="YES"' >> /etc/rc.conf
+#service webcamd start
+# then in Firefox with no CSS, go to
+# https://zoom.us/j/<meeting ID goes here>
+# (tries to download Zoom client: scroll down to reveal
+# a link to join from browser instead), CAPTCHA,
+# (as of 2021-01) worked with both audio and video,
+# BUT cpu (2.3GHz i5) cannot keep up with either
+# (and the Firefox tab periodically crashes).
+# Increase 1 CPU to 2 CPUs = no noticeable improvement.
+# Native Zoom client on a separate Debian 10 VM (2 CPU,
+# with 'apt install lxqt-panel' from minimum, ~3G HDD)
+# managed to broadcast 4 to 5 frames/sec with no audio.
+# Zoom say 2.5GHz hard-minimum (before virtualisation),
+# and it's not documented what accelerations they use,
+# so old i5 at 2.3GHz with virtualisation is not enough.
+
 # TODO: how much of the install can we do from pkg only? or are /usr/ports really essential?  (rm after = save 1.7G)
-# TODO: ssh in and start browser on a file/url via /mac ?
+# TODO: script to ssh in and start browser on a file/url via /mac ?
 
 cd
 cat > auto-ask-responses.txt <<EOF
