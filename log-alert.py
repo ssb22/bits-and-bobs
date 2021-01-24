@@ -1,6 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# (should work in either Python 2 or Pythno 3)
 
-# Apache log alerts, Silas S. Brown 2019, public domain.
+# Apache log alerts, Silas S. Brown 2019/21, public domain.
 
 # In late 2019, various IP addresses in China started downloading
 # the complete (~3M) CedPane file 30,000 times (40x/day/IP), probably
@@ -31,6 +32,8 @@ min_sameFile_size = 1000000 # and in total across all attempts (ignore browsers 
 max_age = 25*3600 # ignore log lines older than this
 
 import sys,time
+try: from commands import getoutput # Python 2
+except ImportError: from subprocess import getoutput # Python 3
 
 ipBytes,ipReqs,ipURLCounts,ipURLSizes,ipLog = {},{},{},{},{}
 for l in open(log_file):
@@ -48,5 +51,5 @@ for ip in ipBytes.keys():
     if ipReqs[ip] < min_requests_to_report: continue
     if all(v<min_sameFile_to_report for v in ipURLCounts[ip].values()): continue
     if all((sum(v)<min_sameFile_size or ipURLCounts[ip][k]<min_sameFile_to_report) for k,v in ipURLSizes[ip].items()): continue
-    o.append("\n".join(["%s fetched %d bytes:" % (ip,ipBytes[ip])]+ipLog[ip]))
+    o.append("\n".join(["%s fetched %d bytes in %d reqs:" % (ip,ipBytes[ip],len(ipLog[ip]))]+[getoutput("whois '"+ip.replace("'","")+"'|egrep '^(orgname|descr):'").strip()]+ipLog[ip]))
 if o: sys.stdout.write("\n\n".join(["Potential cause for concern: %d IP(s)" % len(o)]+o)+"\n")
