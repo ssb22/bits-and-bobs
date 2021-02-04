@@ -7,12 +7,11 @@
 # the complete (~3M) CedPane file 30,000 times (40x/day/IP), probably
 # due to somebody writing an application very badly.
 # (Some of the requests stopped short of the full file, so my guess is
-# it's a search application and the full downloads were failed queries.
-# To anyone who writes these: PLEASE STORE THE FILE LOCALLY.)
-# I had to redirect their "Chrome/51" user-agent on that file to a
-# "please be nice to my server" message (which may or may
-# not have been read by a human, but I'm hoping the developer will
-# eventually take a look).
+# it's a search application and the full downloads were failed queries.)
+# Furthermore, this client would not negotiate gzip with the HTTP server
+# so it was doing full uncompressed traffic every time.
+# I eventually changed the download into a zip file
+# (and divided up the HTML version) to discourage this.
 
 # This script is meant to check through Apache log files
 # and alert of any similar behaviour earlier.
