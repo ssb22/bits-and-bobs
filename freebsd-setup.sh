@@ -22,7 +22,7 @@ export User=ssb22
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
 # Notes on Zoom Cloud Meetings (does NOT work well) :
-# with Virtualbox Oracle Extensions installed,
+# with Virtualbox Oracle Extensions installed on 4.3.40,
 # at runtime: menubar Devices / Webcams / (select one)
 #  (do not just add the USB device on USB 2: that works
 #   for audio but not for video, ditto in Debian 10 if
