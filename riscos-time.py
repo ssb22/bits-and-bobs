@@ -3,7 +3,7 @@
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.
-# Version 1.22 (c) 2007, 2014, 2017, 2019-20 Silas S. Brown.
+# Version 1.3 (c) 2007, 2014, 2017, 2019-21 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,13 +28,30 @@
 # To set the time on a dual-boot Raspberry Pi
 # -------------------------------------------
 # If you used NOOBS to install both RISC OS and Raspbian,
-# you'll probably find the RISC OS FAT is on partition 5,
-# so add this line to /etc/fstab:
+# you'll probably find the RISC OS FAT is on partition 5 or 6,
+# so add a line like this to /etc/fstab:
 # /dev/mmcblk0p5 /riscos-fat vfat defaults
 # (then mkdir /riscos-fat and mount /riscos-fat )
 # and put this line into /etc/default/fake-hwclock (changing /path-to) :
 # if ! [ "$1" = "start" ]; then python /path-to/riscos-time.py; fi
 # (use = not == as it'll be running under /bin/sh not /bin/bash)
+
+# On newer versions of Raspbian, /etc/init.d/fake-hwclock is
+# bypassed by /lib/systemd/system/fake-hwclock.service so you won't
+# be able to add commands to /etc/default/fake-hwclock in this way,
+# and adding directly to /sbin/fake-hwclock doesn't always work.
+# You could create /etc/systemd/system/riscos-time.service with:
+# 
+# [Unit]
+# Descrption=Set RISC OS time
+# [Service]
+# Type=oneshot
+# RemainAfterExit=true
+# ExecStop=/usr/local/riscos-time.py
+# [Install]
+# WantedBy=multi-user.target
+# 
+# and do "systemctl daemon-reload" and "systemctl enable riscos-time --now"
 
 # Then on RISC OS, create a file with the line:
 # DIM b% 5 : OSCLI("LOAD $.!Boot.Loader.timecode "+STR$~b%) : SYS "Territory_SetTime",b%
@@ -62,11 +79,10 @@ import time
 def risc_time(extra_secs=0):
   try:
     long # Python 2
-    offset = (long(0x33) << 32) + 0x6E93EBE4 # or on 2.2+, 0x336E93EBE4L
+    offset = (long(0x33) << 32) + 0x6E93F9F3 # or on 2.2+, 0x336E93F9F3L
   except: # Python 3 drops long, and L is a syntax error
-    offset = (0x33 << 32) + 0x6E93EBE4
+    offset = (0x33 << 32) + 0x6E93F9F3
   h = int((time.time()+extra_secs)*100) + offset # hundreths of a sec since 1900
-  if time.localtime()[-1]: h += 360000 # BST/DST
   return (h&255, (h>>8)&255, (h>>16)&255, (h>>24)&255, (h>>32)&255)
 try: risc_ip
 except NameError: risc_ip=0
