@@ -56,6 +56,7 @@
 # Then on RISC OS, create a file with the line:
 # DIM b% 5 : OSCLI("LOAD $.!Boot.Loader.timecode "+STR$~b%) : SYS "Territory_SetTime",b%
 # and save it as $.!Boot.Choices.Boot.Tasks.SetClock with type BASIC
+# (and enable auto DST changes in Alarm, otherwise you may get GMT only)
 
 # (if you wish, you can also create an Obey file in Tasks with
 # WimpTask Resources:$.Apps.!Alarm
