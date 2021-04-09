@@ -3,7 +3,7 @@
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.
-# Version 1.31 (c) 2007, 2014, 2017, 2019-21 Silas S. Brown.
+# Version 1.32 (c) 2007, 2014, 2017, 2019-21 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ def risc_time(extra_secs=0):
     offset = (long(0x33) << 32) + 0x6E9952EF # or on 2.2+, 0x336E9952EFL
   except: # Python 3 drops long, and L is a syntax error
     offset = (0x33 << 32) + 0x6E9952EF
-  h = int((time.time()+extra_secs)*100) + offset # hundreths of a sec since 1900
+  h = int((time.time()+extra_secs)*100) + offset # hundredths of a sec since 1900
   return (h&255, (h>>8)&255, (h>>16)&255, (h>>24)&255, (h>>32)&255)
 try: risc_ip
 except NameError: risc_ip=0
@@ -101,11 +101,9 @@ else: # Raspberry Pi dual-boot
   filesystem = "/riscos-fat"
   import sys,commands,os
   sys.stderr.write("Writing Territory_SetTime call to $.!Boot.Loader ("+filesystem+") timecode\n")
-  try: o=open(filesystem+'/timecode','w')
+  try: o=open(filesystem+'/timecode','wb')
   except IOError: # maybe the shutdown process mounted it read-only
     os.system("umount "+filesystem+" 2>/dev/null ; mount "+filesystem+" -o rw")
-    o=open(filesystem+'/timecode','w')
-  try: buf = o.buffer # Python 3
-  except: buf = o # Python 2
-  buf.write((u'%c%c%c%c%c'.encode('utf-8')) % risc_time(30)) # (allows 30secs for the reboot)\
-  o.close() ; os.system("sync") # just in case
+    o=open(filesystem+'/timecode','wb')
+  o.write((u'%c%c%c%c%c'.encode('latin1')) % risc_time(30)) # (allows 30secs for the reboot)
+  o.close() ; os.system("umount "+filesystem+"||sync;sleep 3") # just in case (RPi SD card etc)
