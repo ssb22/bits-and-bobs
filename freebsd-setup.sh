@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020, public domain
+# Silas S. Brown 2020-2021, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4 & 4.3.40
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -72,6 +72,7 @@ EOF
 pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
 # subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
 desktop-installer
+pkg remove cabextract poppler e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
@@ -226,3 +227,8 @@ done
 EOF
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
+
+echo
+echo "To security-patch later:"
+echo "pkg upgrade firefox" # not enough disk space to upgrade all, but need firefox upgrade
+echo "rm /var/cache/pkg/*.txz"
