@@ -228,7 +228,18 @@ EOF
 chmod +x /root/.x-start
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
 
-echo
-echo "To security-patch later:"
-echo "pkg upgrade firefox" # not enough disk space to upgrade all, but need firefox upgrade
-echo "rm /var/cache/pkg/*.txz"
+cat > upgrade.sh <<EOF
+rm -rf /var/cache/pkg/*.txz /root/*.core /root/.cache
+freebsd-update fetch
+freebsd-update install
+pkg upgrade ; pkg clean
+# and again, in case ran out of disk space the first time:
+pkg upgrade ; pkg clean
+# and just in case:
+pkg upgrade ; pkg upgrade
+# (1st might get "pkg: librsvg2-rust-2.50.3_2 conflicts with librsvg2-2.40.21 (installs files into the same place).  Problematic file: /usr/local/bin/rsvg-convert" but 2nd ok)
+pkg clean
+rm /var/cache/pkg/*.txz
+EOF
+chmod +x upgrade.sh
+echo "Use ./upgrade.sh for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
