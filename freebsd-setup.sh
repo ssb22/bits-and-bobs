@@ -57,7 +57,7 @@ latest-packages|n
 update-system|n
 disable-write-cache|n
 build-from-source|n
-desktop-selection|11
+desktop-selection|7
 install-wireless|n
 guest-additions|y
 use-moused|y
@@ -69,10 +69,10 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget subversion joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
-# subversion might be needed for an 'svn clean' in /usr/ports if your Internet connection glitches during desktop-installer
+pkg install -y wget joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
 desktop-installer
-pkg remove cabextract poppler e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
+pkg remove cabextract e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
+pkg install virtualbox-ose-additions-legacy ; pkg remove virtualbox-ose-additions # (as it's for FreeBSD 13 and we're still on 12)
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
@@ -94,11 +94,11 @@ default_user root
 auto_login yes
 EOF
 rm .xinitrc # save confusion (isn't used by slim)
-mkdir -p .config/autostart .config/lxqt .config/fontconfig
+chmod +x /usr/local/share/desktop-installer/ICEWM/xinitrc
+mkdir -p .config/autostart .icewm .config/fontconfig
 cat > .config/fontconfig/fonts.conf <<EOF
 <?xml version="1.0"?>
 <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-<!-- created by lxqt-config-appearance (DO NOT EDIT!) -->
 <fontconfig>
   <include ignore_missing="yes">conf.d</include>
   <match target="font">
@@ -165,47 +165,24 @@ IsRelative=1
 Path=0.default
 Default=1
 EOF
-sed -e 's/Exec=firefox.*/Exec=firefox -P default/' -e 's/Name=Firefox.*/Name=Firefox no-css/' < /usr/local/share/applications/firefox.desktop > /usr/local/share/applications/firefoxNoCSS.desktop
-sed -e 's/Exec=firefox.*/Exec=firefox -P CSS25/' -e 's/Name=Firefox.*/Name=Firefox 25.css/' < /usr/local/share/applications/firefox.desktop > /usr/local/share/applications/firefox25.desktop
-cat > .config/lxqt/panel.conf <<EOF
-[quicklaunch]
-apps\1\desktop=/usr/local/share/applications/firefoxNoCSS.desktop
-apps\2\desktop=/usr/local/share/applications/firefox25.desktop
-apps\3\desktop=/usr/local/share/applications/qterminal.desktop
-apps\size=3
-EOF
-cat > .config/autostart/script.desktop <<EOF
-[Desktop Entry]
-Encoding=UTF-8
-Name="Startup script"
-GenericName="Startup script"
-Comment=""
-Exec=/root/.x-start
-Terminal=false
-OnlyShowIn=GNOME
-Type=Application
-StartupNotify=false
-X-GNOME-Autostart=true
-EOF
-
-# Work around "up arrow gives Print Screen" bug
-# https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=244290
-mkdir -p .config/lxqt
-cat > .config/lxqt/globalkeyshortcuts.conf <<EOF
-[Print.30]
-Enabled=false
+cat > .icewm/toolbar <<EOF
+prog " 0 " - firefox -P default
+prog " 25 " - firefox -P CSS25
+prog " sh " - /usr/local/bin/xterm
 EOF
 
 wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
 sed -ie "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
-cat >.x-start <<EOF
+cat >.icewm/startup <<EOF
 #!/bin/sh
 sshfs mac:/ /mac
 xrdb + .Xresources
 setxkbmap dvorak
+VBoxClient --clipboard # NOT -all (a kernel mismatch can stop mouse working after --vmsvga, which doesn't work anyway on our setup)
 cd .mozilla/firefox/25.CSS25/chrome && wget -N http://ssb22.user.srcf.net/css/25.css ; cd
 firefox -P CSS25 &
+xsetroot -solid darkblue # .icewm/preferences DesktopBackgroundImage="" doesn't work ?
 
 # Work around bug copying browser text to host clipboard
 # - it seems host won't take it from CLIPBOARD set by browser, but will take it from CLIPBOARD set by xclip.
@@ -225,21 +202,7 @@ while true ; do
   xclip -o | xclip -i -selection clipboard
 done
 EOF
-chmod +x /root/.x-start
+chmod +x .icewm/startup
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
 
-cat > upgrade.sh <<EOF
-rm -rf /var/cache/pkg/*.txz /root/*.core /root/.cache
-freebsd-update fetch
-freebsd-update install
-pkg upgrade ; pkg clean
-# and again, in case ran out of disk space the first time:
-pkg upgrade ; pkg clean
-# and just in case:
-pkg upgrade ; pkg upgrade
-# (1st might get "pkg: librsvg2-rust-2.50.3_2 conflicts with librsvg2-2.40.21 (installs files into the same place).  Problematic file: /usr/local/bin/rsvg-convert" but 2nd ok)
-pkg clean
-rm /var/cache/pkg/*.txz
-EOF
-chmod +x upgrade.sh
-echo "Use ./upgrade.sh for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
+echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
