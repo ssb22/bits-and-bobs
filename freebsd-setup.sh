@@ -72,7 +72,7 @@ EOF
 pkg install -y wget joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
 desktop-installer
 pkg remove cabextract e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
-pkg install virtualbox-ose-additions-legacy ; pkg remove virtualbox-ose-additions # (as it's for FreeBSD 13 and we're still on 12)
+pkg install virtualbox-ose-additions-legacy ; pkg remove virtualbox-ose-additions # (Mar2021 main package went to version 6; seems we need version 5 or older for VirtualBox version 4)
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
@@ -170,6 +170,7 @@ prog " 0 " - firefox -P default
 prog " 25 " - firefox -P CSS25
 prog " sh " - /usr/local/bin/xterm
 EOF
+echo 'WorkspaceNames=""' > .icewm/preferences # save taskbar space + accidental clicks; doesn't seem possible to disable workspaces altogether though
 
 wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
 sed -ie "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
