@@ -60,7 +60,12 @@
 
 # (if you wish, you can also create an Obey file in Tasks with
 # WimpTask Resources:$.Apps.!Alarm
-# or whatever to launch a time display at startup)
+# or whatever to launch a time display at startup;
+# you might also want to put other startup files here,
+# e.g. if a small child will be using the machine and
+# might press F12, Michael Borcherds' Ctrlf12 module:
+# https://web.archive.org/web/20210128155544/http://www.borcherds.co.uk/binaries/ctrlf12.zip
+# use lynx not wget for archive.org)
 
 # After this, any boot into RISC OS should set the clock
 # to the clock time that Raspbian last saved on shutdown.
