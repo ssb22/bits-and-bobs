@@ -12,6 +12,7 @@
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
+# and in China: https://gitee.com/ssb22/bits-and-bobs
 
 index_only_inside = r"<html>.*?</html>" # or "" for all
 mark_down_xml = True
