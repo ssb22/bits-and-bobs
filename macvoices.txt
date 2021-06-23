@@ -2,7 +2,8 @@
 
 # Set up aliases to change Mac OS X system voice from the command line
 # Silas S. Brown 2013,2014 - public domain - no warranty
-# Source this from your .bashrc or whatever
+# Source this from your .bashrc: . macvoices.txt
+# or .zshrc: source macvoices.txt
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
