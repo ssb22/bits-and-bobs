@@ -58,17 +58,25 @@
 # and save it as $.!Boot.Choices.Boot.Tasks.SetClock with type BASIC
 # (and enable auto DST changes in Alarm, otherwise you may get GMT only)
 
-# (if you wish, you can also create an Obey file in Tasks with
+# If you're having FAT corruption issues, you might prefer to use
+# the timestamp of the timecode file itself instead of its data.
+# You can set the clock to the file timestamp from BASIC:
+# DIM b% 5 : SYS "OS_File",5,"$.!Boot.Loader.timecode" TO r0%,r1%,r2%,r3% : b%?4=r2% AND &FF : !b%=r3% : SYS "Territory_SetTime",b%
+# and then instead of this script, use a shell script with:
+# touch -t "$(date +"%Y%m%d%H%M.%S" --date="+30 seconds")" /riscos-fat/timecode
+# (after verifying /riscos-boot is mounted, and unmount afterwards)
+
+# After this, any boot into RISC OS should set the clock
+# to the clock time that Raspbian last saved on shutdown.
+
+# If you wish, you can also create an Obey file in Tasks with
 # WimpTask Resources:$.Apps.!Alarm
 # or whatever to launch a time display at startup;
 # you might also want to put other startup files here,
 # e.g. if a small child will be using the machine and
 # might press F12, Michael Borcherds' Ctrlf12 module:
 # https://web.archive.org/web/20210128155544/http://www.borcherds.co.uk/binaries/ctrlf12.zip
-# use lynx not wget for archive.org)
-
-# After this, any boot into RISC OS should set the clock
-# to the clock time that Raspbian last saved on shutdown.
+# use lynx not wget for archive.org
 
 # (TODO: script does not currently provide a way to save
 # the clock when moving from RISC OS back into Raspbian)
