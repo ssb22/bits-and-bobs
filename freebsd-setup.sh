@@ -173,7 +173,7 @@ EOF
 echo 'WorkspaceNames=""' > .icewm/preferences # save taskbar space + accidental clicks; doesn't seem possible to disable workspaces altogether though
 
 wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
-sed -ie "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
+sed -i '' "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
 cat >.icewm/startup <<EOF
 #!/bin/sh
