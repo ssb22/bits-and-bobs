@@ -5,15 +5,16 @@
 
 # The reverse of Rodrigo Silva's "git-restore-mtime" script.
 
-# v1.4, Silas S. Brown 2019-20, public domain, no warranty
+# v1.5, Silas S. Brown 2019-21, public domain, no warranty
 
 # Might be useful for "git"ifying historical code, as at
 # least the file's modification time should put an upper
 # limit on when each part was written.
 
-# Top-level dotfiles will NOT be added (so .git itself won't be)
+# Top-level dotfiles will NOT be added (so .git itself won't be).
+# Changed files will be "added" as changes (unless using --rewrite).
 
-# Use --add to add files to an existing repository,
+# Use --add to add to an existing repository,
 # or --rewrite to rewrite all.
 
 # Use --addpush to behave like --add but do a "git push"
@@ -43,9 +44,9 @@ if test "a$1" == "a--rewrite"; then # (must be run at top-level of the repo)
     git init
     mv /tmp/old-git-config .git/config
 elif test "a$1" == "a--add"; then # (this one may also be run in a subdirectory)
-    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then git init; elif git diff | grep . >/dev/null; then git diff; echo "ERROR: Commit these diffs first"; exit 1; fi
+    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then git init; fi
 elif test "a$1" == "a--addpush"; then # (this one may also be run in a subdirectory)
-    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then echo "ERROR: --addpush requires an already-existing repository"; exit 1; elif git diff | grep . >/dev/null; then git diff; echo "ERROR: Commit these diffs first"; exit 1; fi
+    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then echo "ERROR: --addpush requires an already-existing repository"; exit 1; fi
 else
     echo "Run with --rewrite to delete existing history and rewrite from scratch"
     echo "(in case you've already created a git repo w/out this script)"
