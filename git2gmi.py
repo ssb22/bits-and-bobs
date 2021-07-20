@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-"git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021, public domain"
+"""git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
+Silas S. Brown 2021, public domain"""
 
 from urllib.request import urlopen
 import re, json, sys
