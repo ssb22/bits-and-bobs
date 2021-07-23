@@ -17,7 +17,7 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
         date = fullDate[:fullDate.index('T')]
         message = commit["commit"]["message"]
         url = commit["html_url"]
-        commitList.append((date,fullDate,"=> https://github.com%s %s %s: %s" % (url,date,repository,message)))
+        commitList.append((date,fullDate,"=> %s %s %s: %s" % (url,date,repository,message)))
     if not max_earliest_date: max_earliest_date = date
     elif date: max_earliest_date = max(date,max_earliest_date)
 print ("# Recent commits to "+user+"'s GitHub repositories\n"+"\n".join(x[-1] for x in reversed(sorted(commitList)) if x[0] >= max_earliest_date))
