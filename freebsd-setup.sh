@@ -80,7 +80,7 @@ echo 10.0.2.2 mac >> /etc/hosts
 mkdir -p .ssh
 ssh-keygen -f .ssh/id_rsa -N ""
 (echo Host mac;echo User $User) > .ssh/config
-cat .ssh/id_rsa.pub | ssh mac 'cat >> .ssh/authorized_keys'
+ssh mac 'cat >> .ssh/authorized_keys' < .ssh/id_rsa.pub
 ssh mac cat .ssh/id_rsa.pub > .ssh/authorized_keys
 if ! ssh mac cat .ssh/config | grep 'Host freebsd'; then (echo;echo Host freebsd;echo User root;echo HostName localhost;echo Port 22022) | ssh mac 'cat >> .ssh/config'; fi
 echo PermitRootLogin yes >> /etc/ssh/sshd_config

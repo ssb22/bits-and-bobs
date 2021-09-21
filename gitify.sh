@@ -5,7 +5,7 @@
 
 # The reverse of Rodrigo Silva's "git-restore-mtime" script.
 
-# v1.5, Silas S. Brown 2019-21, public domain, no warranty
+# v1.51, Silas S. Brown 2019-21, public domain, no warranty
 
 # Might be useful for "git"ifying historical code, as at
 # least the file's modification time should put an upper
@@ -63,9 +63,9 @@ if test "a$2" == "a--day"; then export Day=1; fi
 export Branch="$(git branch | grep '^\*' | sed -e 's/..//')"
 if test "a$Day" == a1; then
   if test "a$1" == "a--addpush"; then export ExtraCmd="git push -u origin $Branch"; else unset ExtraCmd; fi
-  find * -type f -not -name '*~' -not -name .DS_Store -exec python -c 'import os;print(str(os.stat("{}").st_mtime)+" {}")' ';' 2>/dev/null|python -c $'import sys,time,os,pipes\ndef cond(a,b,c):\n if a: return b\n return c\ndf,dt={},{}\nfor d,t,f in sorted([(int(float(l.split()[0])/(24*3600)),float(l.split()[0]),l.split(None,1)[1].rstrip()) for l in sys.stdin]):\n if not d in df: df[d],dt[d]=set(),0\n df[d].add(f);dt[d]=max(dt[d],t)\nfor d in sorted(df.keys()):\n os.environ["GIT_COMMITTER_DATE"]=time.asctime(time.localtime(dt[d]))\n for x in sorted(df[d]): os.system("git add -v "+pipes.quote(x))\n r=os.system("git commit --date=\\"$GIT_COMMITTER_DATE\\" -am \\"add %s\\"" % (cond(len(df[d])>5,"%d files" % len(df[d]),", ".join(sorted(df[d]))),))\n if "ExtraCmd" in os.environ and not r and os.system(os.environ["ExtraCmd"]): raise Exception("git push failed or interrupted")'
+  find -- * -type f -not -name '*~' -not -name .DS_Store -exec python -c 'import os,sys;a=sys.argv[1];print(str(os.stat(a).st_mtime)+" "+a)' '{}' ';' 2>/dev/null|python -c $'import sys,time,os,pipes\ndef cond(a,b,c):\n if a: return b\n return c\ndf,dt={},{}\nfor d,t,f in sorted([(int(float(l.split()[0])/(24*3600)),float(l.split()[0]),l.split(None,1)[1].rstrip()) for l in sys.stdin]):\n if not d in df: df[d],dt[d]=set(),0\n df[d].add(f);dt[d]=max(dt[d],t)\nfor d in sorted(df.keys()):\n os.environ["GIT_COMMITTER_DATE"]=time.asctime(time.localtime(dt[d]))\n for x in sorted(df[d]): os.system("git add -v "+pipes.quote(x))\n r=os.system("git commit --date=\\"$GIT_COMMITTER_DATE\\" -am \\"add %s\\"" % (cond(len(df[d])>5,"%d files" % len(df[d]),", ".join(sorted(df[d]))),))\n if "ExtraCmd" in os.environ and not r and os.system(os.environ["ExtraCmd"]): raise Exception("git push failed or interrupted")'
   # (if files already added, 'git commit' will fail and 'git push' won't happen; if one 'git push' fails, next one will be larger, so we check for fail so interrupt / resume is easier)
 else
   if test "a$1" == "a--addpush"; then export Extras="-exec git push -u origin $Branch ;"; else unset Extras; fi
-  find * -type f -not -name '*~' -not -name .DS_Store -exec git add '{}' ';' -exec bash -c 'export D="$(date -r "{}" 2>/dev/null || stat -f %Sm "{}")";GIT_COMMITTER_DATE="$D" git commit --date="$D" -am "add {}"' ';' $Extras
+  find -- * -type f -not -name '*~' -not -name .DS_Store -exec bash -c 'git add "$1"||exit 1;export D="$(date -r "$1" 2>/dev/null || stat -f %Sm "$1")";GIT_COMMITTER_DATE="$D" git commit --date="$D" -am "add $1"' . '{}' ';' $Extras
 fi && if test "a$1" == "a--rewrite"; then git push -f; fi; exit
