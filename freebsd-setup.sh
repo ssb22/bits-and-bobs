@@ -53,7 +53,7 @@ cd
 cat > auto-ask-responses.txt <<EOF
 inodes-ok|y
 configure-firewall|n
-latest-packages|n
+latest-packages|y
 update-system|n
 disable-write-cache|n
 build-from-source|n
@@ -69,7 +69,8 @@ forward-x11-trusted|n
 accept-x11-forward|y
 enable-slim|y
 EOF
-pkg install -y wget joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib
+pkg install -y wget joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib telegram-desktop
+# if later want to remove telegram-desktop, can pkg remove alsa-lib enchant2 freeglut glibmm gstreamer1 gstreamer1-plugins hunspell iso-codes jasper lcms libGLU libdbusmenu-qt5 libinotify libmng libmysofa libsigc++ libusrsctp minizip openal-soft openh264 orc pipewire qr-code-generator qt5-declarative qt5-imageformats qt5-sql qt5-wayland rnnoise telegram-desktop webrtc-audio-processing0
 desktop-installer
 pkg remove cabextract e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
 pkg install virtualbox-ose-additions-legacy ; pkg remove virtualbox-ose-additions # (Mar2021 main package went to version 6; seems we need version 5 or older for VirtualBox version 4)
