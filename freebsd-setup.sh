@@ -10,8 +10,16 @@
 
 export User=ssb22
 
-# Setup:
+# Setup source:
 # https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.2/FreeBSD-12.2-RELEASE-amd64-bootonly.iso.xz
+# To update from 12.2 to 12.3, it seems sufficient to do
+# the following AFTER running this script:
+# freebsd-update fetch && freebsd-update install ; freebsd-update upgrade -r 12.3-RELEASE && freebsd-update install && shutdown -r now
+# Can then save space with:
+# rm -r /var/db/freebsd-update/files /var/cache/pkg/*.pkg
+# pkg remove lumina-themes # not sure how that got in
+
+# Setup:
 # 8G virtual hdd, 2G RAM (1G insufficient for Firefox on some websites)
 # 3D acceleration = enabled
 # shared clipboard = bidirectional
@@ -208,3 +216,4 @@ chmod +x .icewm/startup
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
 
 echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
+echo "(see also freebsd-update comments in script)"
