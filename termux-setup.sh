@@ -7,8 +7,7 @@ echo alias ls=exa >.bash_profile &&
 cd /data/data/com.termux/files/usr/bin &&
 wget -O ds https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/ds &&
 chmod +x ds &&
-ln -s ds ds1 &&
-ln -s ds ds2 &&
+for N in ds1 ds2 ds-ssh ds1-ssh ds2-ssh; do ln -s ds $N; done &&
 cd &&
 ssh-keygen &&
 cat .ssh/id_rsa.pub &&
