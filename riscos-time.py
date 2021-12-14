@@ -68,6 +68,10 @@
 
 # After this, any boot into RISC OS should set the clock
 # to the clock time that Raspbian last saved on shutdown.
+# (But don't boot Raspbian to set the time and immediately switch to
+# RISC OS: Raspbian's NTP process runs in the background and might
+# not be complete by the time the login prompt shows, so some extra
+# delay is needed before typing reboot and going into RISC OS.)
 
 # If you wish, you can also create an Obey file in Tasks with
 # WimpTask Resources:$.Apps.!Alarm
