@@ -27,7 +27,7 @@
 
 # To set the time on a dual-boot Raspberry Pi
 # -------------------------------------------
-# If you used NOOBS to install both RISC OS and Raspbian,
+# If you used NOOBS to install both RISC OS and Raspbian / Raspberry Pi OS,
 # you'll probably find the RISC OS FAT is on partition 5 or 6,
 # so add a line like this to /etc/fstab:
 # /dev/mmcblk0p5 /riscos-fat vfat defaults
@@ -36,7 +36,7 @@
 # if ! [ "$1" = "start" ]; then python /path-to/riscos-time.py; fi
 # (use = not == as it'll be running under /bin/sh not /bin/bash)
 
-# On newer versions of Raspbian, /etc/init.d/fake-hwclock is
+# On newer versions of Raspbian/PiOS, /etc/init.d/fake-hwclock is
 # bypassed by /lib/systemd/system/fake-hwclock.service so you won't
 # be able to add commands to /etc/default/fake-hwclock in this way,
 # and adding directly to /sbin/fake-hwclock doesn't always work.
@@ -67,9 +67,9 @@
 # (after verifying /riscos-boot is mounted, and unmount afterwards)
 
 # After this, any boot into RISC OS should set the clock
-# to the clock time that Raspbian last saved on shutdown.
-# (But don't boot Raspbian to set the time and immediately switch to
-# RISC OS: Raspbian's NTP process runs in the background and might
+# to the clock time that Raspbian/PiOS last saved on shutdown.
+# (But don't boot Raspbian/PiOS to set the time and immediately switch to
+# RISC OS: Raspbian/PiOS's NTP process runs in the background and might
 # not be complete by the time the login prompt shows, so some extra
 # delay is needed before typing reboot and going into RISC OS.)
 
@@ -83,7 +83,7 @@
 # use lynx not wget for archive.org
 
 # (TODO: script does not currently provide a way to save
-# the clock when moving from RISC OS back into Raspbian)
+# the clock when moving from RISC OS back into Raspbian/PiOS)
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
