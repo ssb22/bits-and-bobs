@@ -31,8 +31,11 @@ while True:
     os.write(master,' python2 imapfix.py; exit\r')
     last_activity = time.time()
     while True:
-        r=os.read(master,1024) ; log(r)
-        if r: last_activity = time.time()
+        r=os.read(master,1024)
+        if r:
+          if time.time()>last_activity+300: log(" [time=%02d:%02d] " % time.localtime()[3:5])
+          log(r)
+          last_activity = time.time()
         elif time.time() > last_activity + 2000: raise Exception("No activity for some time longer than IMAP IDLE timeout: stuck?") # assumes imapfix_config quiet=False
         time.sleep(5)
         if not os.path.exists('dspath'): raise Exception("Not exists from loop")
