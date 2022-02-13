@@ -2,7 +2,7 @@
 
 pkg up &&
 pkg install openssh wget mosh expect perl exa joe lynx netcat-openbsd &&
-# might want: clang git make nodejs python2 python tracepath
+# might want: clang git make nodejs python2 python tracepath man
 echo alias ls=exa >.bash_profile &&
 cd /data/data/com.termux/files/usr/bin &&
 wget -O ds https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/ds &&
