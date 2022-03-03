@@ -9,20 +9,20 @@
 # 
 All="CedPane PrimerPooler adjuster css-generator web-imap-etc config lexconvert indexer web-typography jianpu-ly mwr2ly midi-beeper scan-reflow bits-and-bobs router-scripts wm6-utils s60-utils gradint yali-voice yali-lower cameron-voice 4dml old-web-access-gateway clara-empricost"
 LabOnly="yinghan"
-IsIn() { N="$1"; shift; for i in $*; do if [ "$i" == "$N" ] ; then return 0; fi; done; false ; }
-if [ "$1" == "" ]; then
+IsIn() { N="$1"; shift; for i in $*; do if [ "$i" = "$N" ] ; then return 0; fi; done; false ; }
+if [ ! "$1" ]; then
     echo "Syntax: repo-setup [--shallow] all | repo names"
     exit 1
-elif [ "$1" == --shallow ]; then
+elif [ "$1" = --shallow ]; then
     export RepoSetupShallowClone="--depth=1"
     shift
-elif ! [ "$RepoSetupShallowClone" == "--depth=1" ]; then
+elif ! [ "$RepoSetupShallowClone" = "--depth=1" ]; then
     unset RepoSetupShallowClone
 fi
-if [ "$1" == all ]; then
+if [ "$1" = all ]; then
     exec "$0" $All
 fi
-while ! [ "$1" == "" ]; do
+while [ "$1" ]; do
   export N=$(echo "$1"|tr -d /) # in case of auto-complete
   if ! [ -e "$N" ]; then git clone $RepoSetupShallowClone git@$(if IsIn $N $LabOnly; then echo gitlab; else echo github; fi).com:ssb22/$N.git || exit 1; fi
   if ! [ -d "$N" ]; then shift; continue; fi # so you can run with * in a dir with files as well

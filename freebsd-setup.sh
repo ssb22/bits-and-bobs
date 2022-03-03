@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2021, public domain
+# Silas S. Brown 2020-2022, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4 & 4.3.40
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -216,4 +216,6 @@ chmod +x .icewm/startup
 wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
 
 echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
+# If need more space for auto-update-system, do first:
+# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/*
 echo "(see also freebsd-update comments in script)"

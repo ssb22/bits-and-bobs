@@ -35,17 +35,17 @@
 # and in China: https://gitee.com/ssb22/bits-and-bobs
 
 unset Day
-if test "a$1" == "a--day"; then Day=1; shift; fi
+if [ "$1" = "--day" ]; then Day=1; shift; fi
 
-if test "a$1" == "a--rewrite"; then # (must be run at top-level of the repo)
+if [ "$1" = "--rewrite" ]; then # (must be run at top-level of the repo)
     mv -i .git/config /tmp/old-git-config || exit 1
     mv -i .git /tmp/old.git
     rm -rf /tmp/old.git &
     git init
     mv /tmp/old-git-config .git/config
-elif test "a$1" == "a--add"; then # (this one may also be run in a subdirectory)
+elif [ "$1" = "--add" ]; then # (this one may also be run in a subdirectory)
     if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then git init; fi
-elif test "a$1" == "a--addpush"; then # (this one may also be run in a subdirectory)
+elif [ "$1" = "--addpush" ]; then # (this one may also be run in a subdirectory)
     if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then echo "ERROR: --addpush requires an already-existing repository"; exit 1; fi
 else
     echo "Run with --rewrite to delete existing history and rewrite from scratch"
@@ -58,14 +58,14 @@ else
     exit 1
 fi
 
-if test "a$2" == "a--day"; then Day=1; fi
+if [ "$2" = "--day" ]; then Day=1; fi
 
 Branch="$(git branch | grep '^\*' | sed -e 's/..//')"
-if test "a$Day" == a1; then
-  if test "a$1" == "a--addpush"; then export ExtraCmd="git push -u origin $Branch"; else unset ExtraCmd; fi
+if [ "$Day" = 1 ]; then
+  if [ "$1" = "--addpush" ]; then export ExtraCmd="git push -u origin $Branch"; else unset ExtraCmd; fi
   find -- * -type f -not -name '*~' -not -name .DS_Store -exec python -c 'import os,sys;a=sys.argv[1];print(str(os.stat(a).st_mtime)+" "+a)' '{}' ';' 2>/dev/null|python -c $'import sys,time,os,pipes\ndef cond(a,b,c):\n if a: return b\n return c\ndf,dt={},{}\nfor d,t,f in sorted([(int(float(l.split()[0])/(24*3600)),float(l.split()[0]),l.split(None,1)[1].rstrip()) for l in sys.stdin]):\n if not d in df: df[d],dt[d]=set(),0\n df[d].add(f);dt[d]=max(dt[d],t)\nfor d in sorted(df.keys()):\n os.environ["GIT_COMMITTER_DATE"]=time.asctime(time.localtime(dt[d]))\n for x in sorted(df[d]): os.system("git add -v "+pipes.quote(x))\n r=os.system("git commit --date=\\"$GIT_COMMITTER_DATE\\" -am \\"add %s\\"" % (cond(len(df[d])>5,"%d files" % len(df[d]),", ".join(sorted(df[d]))),))\n if "ExtraCmd" in os.environ and not r and os.system(os.environ["ExtraCmd"]): raise Exception("git push failed or interrupted")'
   # (if files already added, 'git commit' will fail and 'git push' won't happen; if one 'git push' fails, next one will be larger, so we check for fail so interrupt / resume is easier)
 else
-  if test "a$1" == "a--addpush"; then Extras="-exec git push -u origin $Branch ;"; else unset Extras; fi
+  if [ "$1" = "--addpush" ]; then Extras="-exec git push -u origin $Branch ;"; else unset Extras; fi
   find -- * -type f -not -name '*~' -not -name .DS_Store -exec bash -c 'git add "$1"||exit 1;D="$(date -r "$1" 2>/dev/null || stat -f %Sm "$1")";GIT_COMMITTER_DATE="$D" git commit --date="$D" -am "add $1"' . '{}' ';' $Extras
-fi && if test "a$1" == "a--rewrite"; then git push -f; fi; exit
+fi && if [ "$1" = "--rewrite" ]; then git push -f; fi; exit

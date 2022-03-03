@@ -36,7 +36,7 @@ if [ ! "$1" ]; then
   RH=/System/Library/StagedFrameworks/Safari/Safari.framework/Versions/A/Resources/Reader.html # Safari 6.0
   if [ -e "$RH" ]; then "$0" "$RH" || exit 1; Found=1; fi
 
-  if test $Found == 0; then
+  if [ $Found = 0 ]; then
     echo "Error: cannot find Safari's Reader.html"
     if locate Reader.html|grep Safari; then
       echo "It might be one of the above (update the script?)"
