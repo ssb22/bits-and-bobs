@@ -1,5 +1,6 @@
 # Script to paste into Termux after installing on a new device
 
+echo "deb https://packages-cf.termux.org/apt/termux-main stable main" > /data/data/com.termux/files/usr/etc/apt/sources.list && # replacing https://termux.astra.in.ua/apt/termux-main/
 pkg up &&
 pkg install openssh wget mosh expect perl exa joe lynx netcat-openbsd &&
 # might want: clang git make nodejs python2 python tracepath man
