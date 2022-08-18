@@ -11,7 +11,7 @@ import pty,os,sys,signal,time
 hosts = ["ds1","ds2"] # to be tried round-robin, in case one gets stuck
 p = open(os.environ["HOME"]+"/.ssh/ds").read().strip()
 command = ' '.join(sys.argv[1:])
-if not command: command = 'python2 imapfix.py'
+if not command: command = 'while true; do python2 imapfix.py; sleep 60; done' # in loop as don't need to close down SSH (and possibly all subprocesses) if there's a transient IMAP error
 cmd_keepalive = int(os.environ.get("cmd_keepalive","2000")) # works for imapfix if imapfix_config has quiet=False: IMAP IDLE timeout is lower than this
 # If just a tunnel, could use "while true; do sleep 999;date;done"
 ip_file = os.environ.get("ip_file","") # e.g. ".ip" , to write our IP address when we connect (in place of Dynamic DNS); quote it if necessary
@@ -55,7 +55,7 @@ while True:
           last_activity = time.time()
         elif time.time() > last_activity + cmd_keepalive: raise Exception("Application quiet for too long: stuck?")
         time.sleep(5)
-        if not os.path.exists('dspath'): raise Exception("Not exists from loop")
+        if not os.path.exists('dspath'): raise Exception("Not exists from loop at time=%02d:%02d " % time.localtime()[3:5])
   except SystemExit: raise
   except:
       log("\nException: "+str(sys.exc_info()[1])+"\n")
