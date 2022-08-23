@@ -217,5 +217,7 @@ wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
 
 echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
 # If need more space for auto-update-system, do first:
-# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/*
+# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
+# If still running out of space, do llvm separately:
+# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work;pkg delete -f llvm13;pkg install llvm13;rm /var/cache/pkg/*;auto-update-system;rm -f /var/cache/pkg/* /usr/ports/*/*/work
 echo "(see also freebsd-update comments in script)"
