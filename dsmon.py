@@ -14,7 +14,7 @@ command = ' '.join(sys.argv[1:])
 if not command: command = 'while true; do python2 imapfix.py; sleep 60; done' # in loop as don't need to close down SSH (and possibly all subprocesses) if there's a transient IMAP error
 cmd_keepalive = int(os.environ.get("cmd_keepalive","2000")) # works for imapfix if imapfix_config has quiet=False: IMAP IDLE timeout is lower than this
 # If just a tunnel, could use "while true; do sleep 999;date;done"
-ip_file = os.environ.get("ip_file","") # e.g. ".ip" , to write our IP address when we connect (in place of Dynamic DNS); quote it if necessary
+ip_file = os.environ.get("ip_file","") # e.g. ".ip" , to write our IP address when we connect (in place of Dynamic DNS); quote it if necessary (or use something like ".ip;scp .ip srcf:" if you want it on both machines)
 
 os.chdir("/dev/shm")
 def log(s):
