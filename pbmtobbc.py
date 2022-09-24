@@ -9,7 +9,7 @@
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
-# and in China: git clone https://gitee.com/ssb22/bits-and-bobs
+# and in China: https://gitee.com/ssb22/bits-and-bobs
 
 screenWidth = 40 # text columns (e.g. Mode 4)
 # (If using 20 or 80, might want to account for non-square pixels)

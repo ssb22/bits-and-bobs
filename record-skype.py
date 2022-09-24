@@ -6,7 +6,7 @@
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
-# and in China: git clone https://gitee.com/ssb22/bits-and-bobs
+# and in China: https://gitee.com/ssb22/bits-and-bobs
 
 """Simple "call record" script for Skype using Clisk.
 Silas S. Brown 2013, Public domain, no warranty.

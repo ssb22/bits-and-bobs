@@ -11,7 +11,7 @@
 # and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
 # and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
-# and in China: git clone https://gitee.com/ssb22/bits-and-bobs
+# and in China: https://gitee.com/ssb22/bits-and-bobs
 
 max_chars_per_cell = 80
 
