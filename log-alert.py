@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# (should work in either Python 2 or Pythno 3)
+# (should work in either Python 2 or Python 3)
 
 # Apache log alerts, Silas S. Brown 2019/21, public domain.
 
