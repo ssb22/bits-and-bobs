@@ -1,0 +1,13 @@
+#!/bin/sh
+# Dvorak to QWERTY.
+# Some corporations use a hardware security device
+# called "Yubikey" which acts as a keyboard and
+# 'types' a one-time password when it's pressed,
+# assuming the QWERTY keyboard layout.
+# If you normally type in Dvorak, you either have
+# to change keyboard layout back to QWERTY before
+# pressing the Yubikey, or you can just pipe its
+# output through this before sending to
+# 'anyconnect/bin/vpn -s' or whatever.
+# Public domain.
+exec tr "',.pyfgcrloeuidhtn;qjkxb" "qwertyuiopsdfghjklzxcvbn"
