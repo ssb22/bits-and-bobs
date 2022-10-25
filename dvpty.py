@@ -29,8 +29,8 @@ tab_hack = "--tab-hack" in sys.argv
 import pty,os
 from subprocess import getoutput
 in_csi = False
-From=b'qwertyuiop[]sdfghjkl;\'#~zxcvbn,./qwertyuiop{}sdfghjkl:zxcvbn<>?-=_+'
-To=b"',.pyfgcrl/=oeuidhtns-\\|;qjkxbwvz\"<>pyfgcrl?+oeuidhtns:qjkxbwvz[]{}"
+From=b'qwertyuiop[]sdfghjkl;\'#~zxcvbn,./QWERTYUIOP{}SDFGHJKL:ZXCVBN<>?-=_+'
+To=b"',.pyfgcrl/=oeuidhtns-\\|;qjkxbwvz\"<>PYFGCRL?+OEUIDHTNS:QJKXBWVZ[]{}"
 if US_keyboard:
     From += b"\""
     To   += b"_"
