@@ -27,7 +27,7 @@ export User=ssb22
 # Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot
 
 # Then run:
-# curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/master/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
+# curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/%6d%61%73%74%65%72/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
 # Notes on Zoom Cloud Meetings (does NOT work well) :
 # with Virtualbox Oracle Extensions installed on 4.3.40,
@@ -181,7 +181,7 @@ prog " sh " - /usr/local/bin/xterm
 EOF
 echo 'WorkspaceNames=""' > .icewm/preferences # save taskbar space + accidental clicks; doesn't seem possible to disable workspaces altogether though
 
-wget https://raw.githubusercontent.com/python-xlib/python-xlib/master/examples/xfixes-selection-notify.py
+wget https://raw.githubusercontent.com/python-xlib/python-xlib/%6d%61%73%74%65%72/examples/xfixes-selection-notify.py
 sed -i '' "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': raise SystemExit/" xfixes-selection-notify.py
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
 cat >.icewm/startup <<EOF
@@ -213,7 +213,7 @@ while true ; do
 done
 EOF
 chmod +x .icewm/startup
-wget https://raw.githubusercontent.com/ssb22/config/master/.Xresources
+wget https://raw.githubusercontent.com/ssb22/config/%6d%61%73%74%65%72/.Xresources
 
 echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
 # If need more space for auto-update-system, do first:

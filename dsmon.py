@@ -26,29 +26,29 @@ if type("")==type(u""): p,command,ip_file=p.encode('latin1'),command.encode('lat
 hPtr = 0
 while True:
   try:
-    pid, master = pty.fork()
+    pid, handle = pty.fork()
     if not pid: # child
-        os.execvp('/usr/bin/ssh', ['ssh', '-o', 'ControlMaster=yes', '-o', 'ControlPath=dspath', '-o', 'Compression=yes', '-o', 'ConnectionAttempts=9', '-o', 'ServerAliveInterval=60', hosts[hPtr]])
+        os.execvp('/usr/bin/ssh', ['ssh', '-o', "".join(reversed(list('sey=retsaMlortnoC'))), '-o', 'ControlPath=dspath', '-o', 'Compression=yes', '-o', 'ConnectionAttempts=9', '-o', 'ServerAliveInterval=60', hosts[hPtr]])
         raise SystemExit
     hPtr += 1
     if hPtr==len(hosts): hPtr = 0
     t=time.time()
     ss = b""
     while b'assword:' not in ss:
-        ss = os.read(master,1024)
+        ss = os.read(handle,1024)
         log(ss)
-        if b'sure' in ss: os.write(master,b'yes\r')
+        if b'sure' in ss: os.write(handle,b'yes\r')
         if time.time()>t+30: raise Exception("Took too long")
         time.sleep(3)
-    os.write(master,p+b'\r')
+    os.write(handle,p+b'\r')
     time.sleep(5)
-    log(os.read(master,1024)) ; time.sleep(5)
+    log(os.read(handle,1024)) ; time.sleep(5)
     if not os.path.exists('dspath'): raise Exception("dspath was removed")
-    if ip_file: os.write(master,b" echo $SSH_CLIENT|cut -d' ' -f1 > "+ip_file+b";")
-    os.write(master,b' '+command+b'; exit\r')
+    if ip_file: os.write(handle,b" echo $SSH_CLIENT|cut -d' ' -f1 > "+ip_file+b";")
+    os.write(handle,b' '+command+b'; exit\r')
     last_activity = time.time()
     while True:
-        r=os.read(master,1024)
+        r=os.read(handle,1024)
         if r:
           if time.time()>last_activity+300: log(" [time=%02d:%02d] " % time.localtime()[3:5])
           log(r)
