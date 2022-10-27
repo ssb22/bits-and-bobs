@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 
 """git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021, public domain"""
+Silas S. Brown 2021-22, public domain"""
+
+# Where to find history:
+# on GitHub at https://github.com/ssb22/bits-and-bobs
+# and on GitLab at https://gitlab.com/ssb22/bits-and-bobs
+# and on BitBucket https://bitbucket.org/ssb22/bits-and-bobs
+# and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
+# and in China: https://gitee.com/ssb22/bits-and-bobs
 
 from urllib.request import urlopen
 import re, json, sys
@@ -17,6 +24,8 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
         date = fullDate[:fullDate.index('T')]
         message = commit["commit"]["message"]
         url = commit["html_url"]
+        if message.sartswith("Merge") and "\n\n" in message: message=message[:message.index("\n\n")] # because commits themselves will be listed separately
+        else: message.replace("\n\n","\n",1) # probably "This reverts commit N", don't need blank line before
         commitList.append((date,fullDate,"=> %s %s %s: %s" % (url,date,repository,message)))
     if not max_earliest_date: max_earliest_date = date
     elif date: max_earliest_date = max(date,max_earliest_date)
