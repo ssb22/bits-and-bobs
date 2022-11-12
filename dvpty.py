@@ -4,7 +4,7 @@
 # input so you can type Dvorak on a terminal that
 # won't let you change keyboard layout from QWERTY
 
-# (c) 2022 Silas S. Brown, License: Apache 2
+# v1.1 (c) 2022 Silas S. Brown, License: Apache 2
 
 import sys
 
@@ -19,6 +19,8 @@ do_control_keys = not "--nocontrol" in sys.argv
 # key will give you Ctrl-C instead (annoying).
 # You'll have to think "Ctrl-I" (Ctrl-G) for Tab
 # unless you also set tab_hack below.
+# It'll also mean you can't Ctrl-S (as it's ";")
+# or Ctrl-Z (as it's /), or Ctrl-V or Ctrl-W.
 
 tab_hack = "--tab-hack" in sys.argv
 # if mapping the control keys, map Ctrl-G to
@@ -42,7 +44,7 @@ def convert(k):
     global in_csi
     if k==27: in_csi = True
     elif in_csi:
-        in_csi = not (ord('A')<=k<=ord('Z') or ord('a')<=k<=ord('z')) ; return k
+        in_csi = k==79 or not (ord('A')<=k<=ord('Z') or ord('a')<=k<=ord('z')) ; return k
     if do_control_keys and 1 <= k < 27:
         if tab_hack:
             if k==9: return k
