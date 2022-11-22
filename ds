@@ -12,7 +12,7 @@
 # with password written into .ssh/ds
 # (can be modified to hard-code it here)
 
-# Silas S. Brown 2020-21, public domain, no warranty
+# Silas S. Brown 2020-22, public domain, no warranty
 # Use/modify/keep passwords at your own risk
 
 # Uncomment if you want to keep the password here:
@@ -37,11 +37,18 @@ set dsN [regsub {[-]ssh$} [regsub {.*/} $argv0 ""] ""]
 # Now ready to go.
 # First, find out if we're running in Termux on Android,
 if { [file exists "/data/data/com.termux/files/usr/bin"] } {
-    # in which case we'll need a different PATH setting, and we
+    # in which case we'll need a different PATH setting, and may
     # need to use mosh.pl for --experimental-remote-ip (so it
     # works with ControlPath)
     set ::env(PATH) "/data/data/com.termux/files/usr/bin"
-    set mosh mosh.pl
+    if { [file exists "/data/data/com.termux/files/usr/bin/mosh.pl"] } {
+        set mosh mosh.pl
+    } else {
+        # newer versions of the mosh package don't
+        # have the .pl, but (if using mosh-git) do
+        # support --experimental-remote-ip themselves
+        set mosh mosh
+    }
     set tmp /data/data/com.termux/files/home/.ssh
 } else {
     set mosh mosh
