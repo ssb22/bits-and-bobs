@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021-22, public domain"""
+Silas S. Brown 2021-23, public domain"""
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
@@ -18,8 +18,10 @@ except:
     sys.exit(1)
 max_earliest_date = None ; commitList = []
 for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repos").read()):
+    is_fork = repository["fork"]
     repository = repository["name"]
     for commit in json.loads(urlopen("https://api.github.com/repos/"+user+"/"+repository+"/commits?per_page=100").read()): # 100 is maximum allowed
+        if is_fork and not user in commit["commit"]["committer"]["email"]: continue # don't log other people's commits on our forks (assumes Git username is part of our email)
         fullDate = commit["commit"]["committer"]["date"]
         date = fullDate[:fullDate.index('T')]
         message = commit["commit"]["message"]
