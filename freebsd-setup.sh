@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2022, public domain
+# Silas S. Brown 2020-2023, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4 & 4.3.40
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -18,6 +18,10 @@ export User=ssb22
 # Can then save space with:
 # rm -r /var/db/freebsd-update/files /var/cache/pkg/*.pkg
 # pkg remove lumina-themes # not sure how that got in
+# Then to update from 12.3 to 12.4, it seems sufficient to do:
+# freebsd-update fetch && freebsd-update install ; freebsd-update upgrade -r 12.4-RELEASE && freebsd-update install && shutdown -r now
+
+# Trouble with starting X server noted at https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=265731 and now fixed by another update
 
 # Setup:
 # 8G virtual hdd, 2G RAM (1G insufficient for Firefox on some websites)
