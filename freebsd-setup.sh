@@ -4,62 +4,28 @@
 # for Mac VirtualBox with screen magnification
 # Silas S. Brown 2020-2023, public domain
 
-# Tested on Mac OS 10.7.5, VirtualBox 4.3.4 & 4.3.40
+# Tested on Mac OS 10.7.5, VirtualBox 4.3.4
 # We install 2 Firefox profiles (one with CSS, one w/out)
 # because old Mac OS X can't run latest browsers.
 
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.2/FreeBSD-12.2-RELEASE-amd64-bootonly.iso.xz
-# To update from 12.2 to 12.3, it seems sufficient to do
-# the following AFTER running this script:
-# freebsd-update fetch && freebsd-update install ; freebsd-update upgrade -r 12.3-RELEASE && freebsd-update install && shutdown -r now
-# Can then save space with:
-# rm -r /var/db/freebsd-update/files /var/cache/pkg/*.pkg
-# pkg remove lumina-themes # not sure how that got in
-# Then to update from 12.3 to 12.4, it seems sufficient to do:
-# freebsd-update fetch && freebsd-update install ; freebsd-update upgrade -r 12.4-RELEASE && freebsd-update install && shutdown -r now
-
-# Trouble with starting X server noted at https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=265731 and now fixed by another update
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.4/FreeBSD-12.4-RELEASE-amd64-bootonly.iso.xz
 
 # Setup:
-# 8G virtual hdd, 2G RAM (1G insufficient for Firefox on some websites)
-# 3D acceleration = enabled
-# shared clipboard = bidirectional
-# NAT port forwarding = 22022 to 22
-# Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot
+# type: FreeBSD (64-bit) (ensure to select 64-bit)
+# 2G RAM (1G insufficient for Firefox on some websites)
+# 16G virtual hdd (8G was doable in 12.2 but not 12.4)
+# System/motherboard/enable I/O APIC
+# General/Advanced shared clipboard = bidirectional
+# Display: 3D acceleration = enabled
+# Network/Advanced/port forwarding: host port 22022 to guest port 22 (leave IPs blank)
+# Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot (rm disc)
 
 # Then run:
+# pkg install curl
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/%6d%61%73%74%65%72/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
-
-# Notes on Zoom Cloud Meetings (does NOT work well) :
-# with Virtualbox Oracle Extensions installed on 4.3.40,
-# at runtime: menubar Devices / Webcams / (select one)
-#  (do not just add the USB device on USB 2: that works
-#   for audio but not for video, ditto in Debian 10 if
-#   it's a device like 0ac8:3420),
-#pkg install v4l-utils
-#echo 'cuse_load="YES"' >> /boot/loader.conf
-#echo 'webcamd_enable="YES"' >> /etc/rc.conf
-#service webcamd start
-# then in Firefox with no CSS, go to
-# https://zoom.us/j/<meeting ID goes here>
-# (tries to download Zoom client: scroll down to reveal
-# a link to join from browser instead), CAPTCHA,
-# (as of 2021-01) worked with both audio and video,
-# BUT cpu (2.3GHz i5) cannot keep up with either
-# (and the Firefox tab periodically crashes).
-# Increase 1 CPU to 2 CPUs = no noticeable improvement.
-# Native Zoom client on a separate Debian 10 VM (2 CPU,
-# with 'apt install lxqt-panel' from minimum, ~3G HDD)
-# managed to broadcast 4 to 5 frames/sec with no audio.
-# Zoom say 2.5GHz hard-minimum (before virtualisation),
-# and it's not documented what accelerations they use,
-# so old i5 at 2.3GHz with virtualisation is not enough.
-
-# TODO: how much of the install can we do from pkg only? or are /usr/ports really essential?  (rm after = save 1.7G)
-# TODO: script to ssh in and start browser on a file/url via /mac ?
 
 cd
 cat > auto-ask-responses.txt <<EOF
@@ -79,13 +45,11 @@ edit-xorg|n
 forward-x11|y
 forward-x11-trusted|n
 accept-x11-forward|y
-enable-slim|y
+enable-slim|n
 EOF
-pkg install -y wget joe ncdu ca_root_nss desktop-installer bsdstats firefox fusefs-sshfs xclip py37-xlib telegram-desktop
-# if later want to remove telegram-desktop, can pkg remove alsa-lib enchant2 freeglut glibmm gstreamer1 gstreamer1-plugins hunspell iso-codes jasper lcms libGLU libdbusmenu-qt5 libinotify libmng libmysofa libsigc++ libusrsctp minizip openal-soft openh264 orc pipewire qr-code-generator qt5-declarative qt5-imageformats qt5-sql qt5-wayland rnnoise telegram-desktop webrtc-audio-processing0
+pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py39-xlib telegram-desktop wget xclip
 desktop-installer
-pkg remove cabextract e2fsprogs exfat-utils fusefs-ntfs fusefs-simple-mtpfs libgphoto2 poppler-data py37-cairo py37-dbus py37-qt5-core py37-sip py37-tkinter pydbus-common pygobject3-common qscintilla2-qt5 tk86 webcamd zenity
-pkg install virtualbox-ose-additions-legacy ; pkg remove virtualbox-ose-additions # (Mar2021 main package went to version 6; seems we need version 5 or older for VirtualBox version 4)
+pkg remove cabextract
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
@@ -102,11 +66,6 @@ ln -s /mac/Users/$User/Downloads
 
 ln -s /usr/local/bin/bash /bin/bash
 
-cat >> /usr/local/etc/slim.conf <<EOF
-default_user root
-auto_login yes
-EOF
-rm .xinitrc # save confusion (isn't used by slim)
 chmod +x /usr/local/share/desktop-installer/ICEWM/xinitrc
 mkdir -p .config/autostart .icewm .config/fontconfig
 cat > .config/fontconfig/fonts.conf <<EOF
@@ -212,16 +171,24 @@ xsetroot -solid darkblue # .icewm/preferences DesktopBackgroundImage="" doesn't 
 # probably don't want the vbox to take over as owner and
 # make it plain-text only.)
 while true ; do
-  python3.7 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null
+  python3.9 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null
   xclip -o | xclip -i -selection clipboard
 done
 EOF
 chmod +x .icewm/startup
 wget https://raw.githubusercontent.com/ssb22/config/%6d%61%73%74%65%72/.Xresources
 
-echo "Use auto-update-system for FreeBSD 12 security patches" # until EOL of FreeBSD 12; may not have enough disk space to upgrade to 13, which requires reboots
+pkg remove xdm
+rm -rf /usr/local/etc/X11/xdm/
+echo "autologin: :al=root:tc=Pc:" >> /etc/gettytab
+grep -v ^ttyv0 < /etc/ttys > n
+mv n /etc/ttys
+echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
+echo '[ "$tty" == ttyv0 ] && startx' >> .cshrc
+
+sysrc vboxguest_enable="YES"
+sysrc vboxservice_enable="YES"
+
+echo "Use auto-update-system for security patches" # until EOL of FreeBSD 12
 # If need more space for auto-update-system, do first:
-# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
-# If still running out of space, do llvm separately:
-# rm -r .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work;pkg delete -f llvm13;pkg install llvm13;rm /var/cache/pkg/*;auto-update-system;rm -f /var/cache/pkg/* /usr/ports/*/*/work
-echo "(see also freebsd-update comments in script)"
+# rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
