@@ -30,6 +30,8 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
         url = commit["html_url"]
         if message.startswith("Merge") and "\n\n" in message: message=message[:message.index("\n\n")] # because commits themselves will be listed separately
         else: message = message.replace("\n\n","\n",1) # probably "This reverts commit N", don't need blank line before
+        i=message.find("\nThis reverts commit ")
+        if i>0: message=message[:i]
         commitList.append((date,fullDate,"=> %s %s %s: %s" % (url,date,repository,message)))
     if count>=100 and not is_fork:
         if not max_earliest_date: max_earliest_date = date
