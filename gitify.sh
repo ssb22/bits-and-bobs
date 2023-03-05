@@ -5,7 +5,7 @@
 
 # The reverse of Rodrigo Silva's "git-restore-mtime" script.
 
-# v1.51, Silas S. Brown 2019-22, public domain, no warranty
+# v1.52, Silas S. Brown 2019-23, public domain, no warranty
 
 # Might be useful for "git"ifying historical code, as at
 # least the file's modification time should put an upper
@@ -16,6 +16,12 @@
 
 # Use --add to add to an existing repository,
 # or --rewrite to rewrite all.
+
+# Instead of --rewrite, you might want to keep the
+# git history but unconditionally add a commit of
+# each file to capture its timestamp (to fix some
+# previous commit not preserving true timestamps).
+# To do this, use --restamp
 
 # Use --addpush to behave like --add but do a "git push"
 # after every commit (might be useful on connections that
@@ -43,17 +49,18 @@ if [ "$1" = "--rewrite" ]; then # (must be run at top-level of the repo)
     rm -rf /tmp/old.git &
     git init
     mv /tmp/old-git-config .git/config
-elif [ "$1" = "--add" ]; then # (this one may also be run in a subdirectory)
+elif [ "$1" = "--add" ] || [ "$1" = "--restamp" ]; then # (these may be run at top level or in a subdirectory of the repo)
     if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then git init; fi
-elif [ "$1" = "--addpush" ]; then # (this one may also be run in a subdirectory)
-    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then echo "ERROR: --addpush requires an already-existing repository"; exit 1; fi
+elif [ "$1" = "--addpush" ]; then # (this one may also be run either at top level or in a subdir)
+    if ! git rev-parse --git-dir >/dev/null 2>/dev/null; then echo "ERROR: --addpush requires an already-existing repository"; exit 1; fi # otherwise how will we know where to push it?
 else
     echo "Run with --rewrite to delete existing history and rewrite from scratch"
     echo "(in case you've already created a git repo w/out this script)"
     echo "Run with --add to just add new files to the repo"
     echo "(or --addpush to do this while pushing every commit)"
+    echo "Run with --restamp to copy all timestamps to repo"
     echo
-    echo "You MUST specify either --rewrite or --add or --addpush."
+    echo "You MUST specify one of the above switches."
     echo "You may also specify --day to limit commits to one per day (and to ensure commits are in date order)."
     exit 1
 fi
