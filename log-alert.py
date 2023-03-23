@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# Apache log alerts, Silas S. Brown 2019/21, public domain.
+# Apache log alerts, Silas S. Brown 2019/21/23, public domain.
 
 # In late 2019, various IP addresses in China started downloading
-# the complete (~3M) CedPane file 30,000 times (40x/day/IP), probably
-# due to somebody writing an application very badly.
+# the complete (~3M) CedPane file 30,000 times (40x/day/IP),
+# probably due to somebody writing an application very badly.
 # (Some of the requests stopped short of the full file, so my guess is
 # it's a search application and the full downloads were failed queries.)
 # Furthermore, this client would not negotiate gzip with the HTTP server
@@ -49,7 +49,6 @@ o = []
 for ip in ipBytes.keys():
     if ipBytes[ip] < min_bytes_to_report: continue
     if ipReqs[ip] < min_requests_to_report: continue
-    if all(v<min_sameFile_to_report for v in ipURLCounts[ip].values()): continue
-    if all((sum(v)<min_sameFile_size or ipURLCounts[ip][k]<min_sameFile_to_report) for k,v in ipURLSizes[ip].items()): continue
-    o.append("\n".join(["%s fetched %d bytes in %d reqs:" % (ip,ipBytes[ip],len(ipLog[ip]))]+[getoutput("whois '"+ip.replace("'","")+"'|egrep '^(orgname|descr):'").strip()]+ipLog[ip]))
+    concern = [url for url,counts in ipURLCounts[ip].items() if counts>=min_sameFile_to_report and sum(ipURLSizes[ip][url]) >= min_sameFile_size]
+    if concern: o.append("\n".join(["%s fetched %d bytes in %d reqs" % (ip,ipBytes[ip],len(ipLog[ip]))]+[getoutput("whois '"+ip.replace("'","")+"'|egrep -i '^(orgname|descr):'").strip()]+["URLs of concern:"]+concern+["log entries:"]+ipLog[ip]))
 if o: sys.stdout.write("\n\n".join(["Potential cause for concern: %d IP(s)" % len(o)]+o)+"\n")
