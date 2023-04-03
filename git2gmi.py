@@ -10,6 +10,9 @@ Silas S. Brown 2021-23, public domain"""
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 # and in China: https://gitee.com/ssb22/bits-and-bobs
 
+# Example output: gemini://gemini.ctrl-c.club/~ssb22/git.gmi
+# and gemini://tilde.pink/~ssb22/git.gmi
+
 from urllib.request import urlopen
 import re, json, sys
 try: user = sys.argv[1]
