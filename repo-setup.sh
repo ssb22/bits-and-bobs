@@ -31,6 +31,7 @@ while [ "$1" ]; do
   if IsIn $N $All && ! IsIn $N $LabOnly; then
   git remote set-url origin --push --delete . 2>/dev/null >/dev/null || true
   git remote set-url origin --push git@github.com:ssb22/$N.git || exit 1
+  if [ $N == jianpu-ly ] ; then git remote set-url origin --push --add git@github.com:jianpu-ly/$N.git || exit 1; fi # https://github.com/ssb22/jianpu-ly/issues/26
   git remote set-url origin --push --add git@gitlab.com:ssb22/$N.git || exit 1
   git remote set-url origin --push --add git@gitlab.developers.cam.ac.uk:ssb22/$N.git || exit 1 # (beta service provided to cam.ac.uk members)
   git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
