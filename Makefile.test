@@ -2,3 +2,4 @@
 test:
 	python2 flatplan.py|grep 'line x1="10" y1="0" x2="10" y2="700"' >/dev/null
 	python3 flatplan.py|grep 'line x1="10" y1="0" x2="10" y2="700"' >/dev/null
+.PHONY: test
