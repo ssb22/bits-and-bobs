@@ -20,7 +20,7 @@ except:
     sys.stderr.write(__doc__+"\nNeed GitHub user name as parameter\n")
     sys.exit(1)
 max_earliest_date = None ; commitList = []
-for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repos").read()):
+for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repos?per_page=100").read()):
     is_fork = repository["fork"]
     repository = repository["name"]
     count = 0
