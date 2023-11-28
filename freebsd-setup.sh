@@ -149,7 +149,7 @@ sed -i '' "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': ra
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
 cat >.icewm/startup <<EOF
 #!/bin/sh
-sshfs mac:/ /mac
+sshfs -oHostKeyAlgorithms=+ssh-rsa mac:/ /mac -o exec
 xrdb + .Xresources
 setxkbmap dvorak
 VBoxClient --clipboard # NOT -all (a kernel mismatch can stop mouse working after --vmsvga, which doesn't work anyway on our setup)
@@ -190,5 +190,30 @@ sysrc vboxguest_enable="YES"
 sysrc vboxservice_enable="YES"
 
 echo "Use auto-update-system for security patches" # until EOL of FreeBSD 12
+# (auto-admin "update" basically does this, for
+# the parts we've enabled)
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
+
+# FreeBSD 12 EOL is expected on Dec31 2023.
+
+# Non-working attempted upgrade to FreeBSD 14:
+# freebsd-update -r 14.0-RELEASE upgrade
+# (this can take a long time)
+# vi the /etc files (dd = delete a line, your current version is shown first in the diffs, then :w :q)
+# then: freebsd-update install
+# (then reboot, then freebsd-update install again twice, reboot)
+# but then VBoxClient can't connect to kernel module, and desktop-installer complains of missing SSL libraries
+# Trying to fix:
+# make -C /usr/ports/ports-mgmt/pkg deinstall reinstall clean
+# cd /usr && rm -rf obj && mkdir -p /mac/tmp/obj && ln -s /mac/tmp/obj
+# cd /usr/src && sed -e 's/cp -pf/cp/' < Makefile.inc1 > m && mv m Makefile.inc1
+# make -C /usr/src buildworld buildkernel _COPY_HOST_TOOL=cp
+
+# then gets
+# exec(rm) failed (Operation not permitted)
+# even though we mounted with exec option
+
+# and sshfs needed a password (check id_rsa)
+
+# desktop-installer ld-elf.so.1: Shared object "libssl.so.111" not found, required by "pkg"
