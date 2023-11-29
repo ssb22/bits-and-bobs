@@ -11,7 +11,7 @@
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/12.4/FreeBSD-12.4-RELEASE-amd64-bootonly.iso.xz
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso
 
 # Setup:
 # type: FreeBSD (64-bit) (ensure to select 64-bit)
@@ -21,50 +21,41 @@ export User=ssb22
 # General/Advanced shared clipboard = bidirectional
 # Display: 3D acceleration = enabled
 # Network/Advanced/port forwarding: host port 22022 to guest port 22 (leave IPs blank)
-# Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / mirror (e.g. UK2) / auto, entire disk, mbr, (if on SSD suggest delete swap and expand main partition) / root pwd / time zone / (no services, usrs) / reboot (rm disc)
+# Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / zfs auto, no swap (if on SSD) / install, no redundancy, select HDD (space) / mirror (e.g. UK2) / root pwd / time zone / (no services, extra security or usrs) / reboot (rm disc)
 
 # Then run:
 # pkg install curl
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/%6d%61%73%74%65%72/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
 cd
-cat > auto-ask-responses.txt <<EOF
-inodes-ok|y
-configure-firewall|n
-latest-packages|y
-update-system|n
-disable-write-cache|n
-build-from-source|n
-desktop-selection|7
-install-wireless|n
-guest-additions|y
-use-moused|y
-generate-xorg|y
-swcursor|y
-edit-xorg|n
-forward-x11|y
-forward-x11-trusted|n
-accept-x11-forward|y
-enable-slim|n
-EOF
-pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py39-xlib telegram-desktop wget xclip
+pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py39-python-xlib telegram-desktop wget xclip
+echo Use desktop selection 7;echo Press Enter
+read
 desktop-installer
-pkg remove cabextract
+pkg remove cabextract virtualbox-ose-additions
+cd /usr/ports/emulators/virtualbox-ose-additions-legacy # no longer a package on FreeBSD 14 so install from port (otherwise old VirtualBox won't share clipboard)
+make install # will fail on C++17 due to use of 'register'
+for Type in int uint unsigned PK KA PC RT; do for F in $(grep -lr "register $Type" work); do sed -e "s/register $Type/$Type/g" < $F > n && mv n $F ; done; done # can't just set CXXFLAGS to -Dregister: somehow gets ignored
+for F in $(grep -lr "enum vtype" work); do sed -e "s/enum vtype/int/g" < $F > n && mv n $F ; done # it's in the virtual filesystem (which we don't use anyway) and it's not C++17 compatible
+make install
+cd
 rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
 
 mkdir /mac
 echo 10.0.2.2 mac >> /etc/hosts
 mkdir -p .ssh
+chmod 700 .ssh
 ssh-keygen -f .ssh/id_rsa -N ""
-(echo Host mac;echo User $User) > .ssh/config
+(echo Host mac;echo User $User;echo HostKeyAlgorithms +ssh-rsa;echo PubkeyAcceptedKeyTypes +ssh-rsa) > .ssh/config # (it might be using an old local-only RSA1)
 ssh mac 'cat >> .ssh/authorized_keys' < .ssh/id_rsa.pub
 ssh mac cat .ssh/id_rsa.pub > .ssh/authorized_keys
+chmod 600 .ssh/*
 if ! ssh mac cat .ssh/config | grep 'Host freebsd'; then (echo;echo Host freebsd;echo User root;echo HostName localhost;echo Port 22022) | ssh mac 'cat >> .ssh/config'; fi
 echo PermitRootLogin yes >> /etc/ssh/sshd_config
+echo RequiredRSASize 256 >> /etc/ssh/sshd_config # in case old Mac has short local key
 echo 'sshd_enable="YES"' >> /etc/rc.conf
+service sshd restart
 ln -s /mac/Users/$User/Downloads
-
-ln -s /usr/local/bin/bash /bin/bash
 
 chmod +x /usr/local/share/desktop-installer/ICEWM/xinitrc
 mkdir -p .config/autostart .icewm .config/fontconfig
@@ -149,7 +140,7 @@ sed -i '' "s/print('SetSelectionOwner.*/if not e.owner.get_wm_name()=='main': ra
 mv xfixes-selection-notify.py /usr/local/lib/xfsn.py
 cat >.icewm/startup <<EOF
 #!/bin/sh
-sshfs -oHostKeyAlgorithms=+ssh-rsa mac:/ /mac -o exec
+sshfs mac:/ /mac -o exec
 xrdb + .Xresources
 setxkbmap dvorak
 VBoxClient --clipboard # NOT -all (a kernel mismatch can stop mouse working after --vmsvga, which doesn't work anyway on our setup)
@@ -184,36 +175,8 @@ echo "autologin: :al=root:tc=Pc:" >> /etc/gettytab
 grep -v ^ttyv0 < /etc/ttys > n
 mv n /etc/ttys
 echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
-echo '[ "$tty" == ttyv0 ] && startx' >> .cshrc
+echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 
-sysrc vboxguest_enable="YES"
-sysrc vboxservice_enable="YES"
-
-echo "Use auto-update-system for security patches" # until EOL of FreeBSD 12
-# (auto-admin "update" basically does this, for
-# the parts we've enabled)
+echo "Use auto-update-system for security patches" # until EOL of FreeBSD 14 expected 2028-11
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
-
-# FreeBSD 12 EOL is expected on Dec31 2023.
-
-# Non-working attempted upgrade to FreeBSD 14:
-# freebsd-update -r 14.0-RELEASE upgrade
-# (this can take a long time)
-# vi the /etc files (dd = delete a line, your current version is shown first in the diffs, then :w :q)
-# then: freebsd-update install
-# (then reboot, then freebsd-update install again twice, reboot)
-# but then VBoxClient can't connect to kernel module, and desktop-installer complains of missing SSL libraries
-# Trying to fix:
-# make -C /usr/ports/ports-mgmt/pkg deinstall reinstall clean
-# cd /usr && rm -rf obj && mkdir -p /mac/tmp/obj && ln -s /mac/tmp/obj
-# cd /usr/src && sed -e 's/cp -pf/cp/' < Makefile.inc1 > m && mv m Makefile.inc1
-# make -C /usr/src buildworld buildkernel _COPY_HOST_TOOL=cp
-
-# then gets
-# exec(rm) failed (Operation not permitted)
-# even though we mounted with exec option
-
-# and sshfs needed a password (check id_rsa)
-
-# desktop-installer ld-elf.so.1: Shared object "libssl.so.111" not found, required by "pkg"
