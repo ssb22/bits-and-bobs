@@ -11,7 +11,7 @@
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso.xz
 
 # Setup:
 # type: FreeBSD (64-bit) (ensure to select 64-bit)
