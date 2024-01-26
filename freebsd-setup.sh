@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2023, public domain
+# Silas S. Brown 2020-2024, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -142,7 +142,7 @@ cat >.icewm/startup <<EOF
 #!/bin/sh
 sshfs mac:/ /mac -o exec
 xrdb + .Xresources
-setxkbmap dvorak
+setxkbmap dvorak 2>/dev/null || setxkbmap "us(dvorak)"
 VBoxClient --clipboard # NOT -all (a kernel mismatch can stop mouse working after --vmsvga, which doesn't work anyway on our setup)
 cd .mozilla/firefox/25.CSS25/chrome && wget -N http://ssb22.user.srcf.net/css/25.css ; cd
 firefox -P CSS25 &
