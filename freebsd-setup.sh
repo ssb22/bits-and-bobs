@@ -180,3 +180,5 @@ echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 echo "Use auto-update-system for security patches" # until EOL of FreeBSD 14 expected 2028-11
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
+
+# If the VM gets stuck in a loop booting after auto-update-system, try single-user mode (boot option 2) and Ctrl-D to go back to multi-user mode then repeat auto-update-sytem (worked for me 2024-02)
