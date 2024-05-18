@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# Apache log alerts, Silas S. Brown 2019/21/23, public domain.
+# Apache log alerts, Silas S. Brown 2019/21/23-24, public domain.
 
 # In late 2019, various IP addresses in China started downloading
 # the complete (~3M) CedPane file 30,000 times (40x/day/IP),
@@ -25,7 +25,7 @@
 
 log_file = "/var/log/apache2/user/ssb22/access.log"
 
-min_bytes_to_report = 5000000 # less than this per IP = IP won't be reported no matter how many requests
+min_bytes_to_report = 7000000 # less than this per IP = IP won't be reported no matter how many requests
 min_requests_to_report = 10 # less than this per IP = IP won't be reported no matter how many bytes
 min_sameFile_to_report = 7 # must contain at least N attempts on the same file to be reported
 min_sameFile_size = 1000000 # and in total across all attempts (ignore browsers failing to cache small css files)
