@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021-23, public domain"""
+Silas S. Brown 2021-24, public domain"""
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
@@ -13,8 +13,9 @@ Silas S. Brown 2021-23, public domain"""
 # Example output: gemini://gemini.ctrl-c.club/~ssb22/git.gmi
 # and gemini://tilde.pink/~ssb22/git.gmi
 
+from dateutil import parser # pip install python-dateutil
 from urllib.request import urlopen
-import re, json, sys
+import re, json, sys, time
 try: user = sys.argv[1]
 except:
     sys.stderr.write(__doc__+"\nNeed GitHub user name as parameter\n")
@@ -28,7 +29,7 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
         count += 1
         if is_fork and not user in commit["commit"]["author"]["email"]: continue # don't log other people's commits on our forks (assumes Git username is part of our email)
         fullDate = commit["commit"]["committer"]["date"]
-        date = fullDate[:fullDate.index('T')]
+        date = "%d-%02d-%02d" % time.localtime(parser.parse(fullDate).timestamp())[:3] # parse and re-construct, because UTC vs BST in near-midnight commits can affect the reported date
         message = commit["commit"]["message"]
         url = commit["html_url"]
         if message.startswith("Merge") and "\n\n" in message: message=message[:message.index("\n\n")] # because commits themselves will be listed separately
