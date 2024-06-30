@@ -22,6 +22,7 @@
 
     - Resulting translation still needs extensive
       proofreading and editing :-(
+      (can emit bogus escape codes etc also)
 
 """
 
@@ -34,6 +35,10 @@ def install():
     import argostranslate.package
     argostranslate.package.update_package_index()
     argostranslate.package.install_from_path([x for x in argostranslate.package.get_available_packages() if x.from_code=="en" and x.to_code=="zh"][0].download())
+
+def uninstall_argos_deps():
+    os.system("pip uninstall sentencepiece mpmath typing-extensions tqdm sympy regex numpy networkx joblib fsspec filelock torch sacremoses ctranslate2 stanza") # TODO: more on x86
+    print ("Might also want: rm -rf argos-translate")
 
 import re, sys, os
 
@@ -63,9 +68,10 @@ def test():
     for tag in re.findall(r"(?:<[^>]*>\s*)+",txt,flags=re.DOTALL): e2c[tag] = tag # keep (runs of) tags, TODO: might be better if we don't make them sentence objects
     keyList = sorted(list(e2c.keys()),key=len,reverse=True)
     for i,k in enumerate(keyList): # TODO: this loop is slow: might want to get an annogen-generated annotator to do it (but there's the \b) or make an OR list like the annogen normaliser.  But it's nowhere near the worst bottleneck (argostranslate w/out CUDA)
-        if k.startswith("<"): txt = txt.replace(k," {%d} " % i) # irrespective of word boundaries
+        if k.startswith("<"): txt = txt.replace(k," {%d} " % i) # irrespective of word boundaries.  Spacing important.  "I went to {1}Paris{2} last summer." upsets the model, as does doing it via Tags, as does using letters not numbers in the {}s
         else: txt = re.sub(r"\b"+re.escape(k)+r"\b"," {%d} " % i, txt, flags=0 if re.search("[A-Z]",k) else re.IGNORECASE) # (don't match lower case if we have upper case, as it might be a name or abbreviation that in lower case will be a normal word and not this entry, but do match title case if we are lower case)
     import argostranslate.translate
+    # TODO: might now want FAHClient --send-pause because xlator averages 2.5 cores and can read 3.5 (on a 4-core CPU)
     for sentence in re.findall(r"[^ .!?].*?(?:$|[.!?])(?=$|\s+)",txt,flags=re.DOTALL):
         # print (sentence) # if want to show which phrases are NOT given to the model
         zh = argostranslate.translate.translate(sentence,'en','zh')
