@@ -1,45 +1,30 @@
 #!/usr/bin/env python3
 
 """DAPXlate - Dictionary-Assisted Pretrained Translate
-  v0.1 (c) Silas S. Brown 2024, License: Apache 2
+  v0.2 (c) Silas S. Brown 2024, License: Apache 2
 
-  - Uses a pretrained translator model
-    (currently 2020's OPUS-MT via argostranslate)
+  - Uses a pretrained translator model online
     but adds specialist name translation from
-    (latest) CedPane w/out needing to retrain the
-    model.  Does this by having the model handle
+    CedPane.  Does this by having the model handle
     placeholders for words we're sure we know how
     to translate ourselves from the dictionary.
 
-    (This model can't cope with pre-translated
+    (Models can't always cope with pre-translated
      fragments in the target language, so it's
      necessary to use the placeholders.)
 
   PROBLEMS:
 
-    - Slow.  (15 minutes for a ~5k word document
-              on quad-core ARM w/out CUDA)
+    - Relies on 'service as a software substitute'
+      - and deep_translator appears to be using an
+        undocumented API endpoint that could stop
+        working at any time
 
-    - Resulting translation still needs extensive
-      proofreading and editing :-(
-      (can emit bogus escape codes etc also)
-
+    - Resulting translation still needs editing
 """
 
-def install():
-    os.system("""set -e
-    git clone https://github.com/argosopentech/argos-translate
-    cd argos-translate
-    git checkout f8cadf001224d751a30125193a084670d8026ed1 # the version I tested
-    pip install -e .""") # because pip install argos-translate had an error.  Note that this command links the install to the current "argos-translate" directory, which should then not be removed.
-    import argostranslate.package
-    argostranslate.package.update_package_index()
-    argostranslate.package.install_from_path([x for x in argostranslate.package.get_available_packages() if x.from_code=="en" and x.to_code=="zh"][0].download())
-
-def uninstall_argos_deps():
-    os.system("pip uninstall sentencepiece mpmath typing-extensions tqdm sympy regex numpy networkx joblib fsspec filelock torch sacremoses ctranslate2 stanza") # TODO: more on x86
-    print ("Might also want: rm -rf argos-translate")
-
+from deep_translator import GoogleTranslator as T
+# (you could use another if you have an API key)
 import re, sys, os
 
 def read_CedPane(cedpane_file):
@@ -59,25 +44,23 @@ def read_CedPane(cedpane_file):
             elif not en in dups: e2c[en] = zh
     return e2c
 
-def test():
+def main():
     if sys.stdin.isatty() or len(sys.argv) < 2:
         sys.stderr.write(f"Syntax: {sys.argv[0]} cedpane.txt < input-sentences.txt")
         sys.exit(1)
     e2c = read_CedPane(sys.argv[1])
     txt = sys.stdin.read()
+    trans = T(source='en', target='zh-CN')
     for tag in re.findall(r"(?:<[^>]*>\s*)+",txt,flags=re.DOTALL): e2c[tag] = tag # keep (runs of) tags, TODO: might be better if we don't make them sentence objects
     keyList = sorted(list(e2c.keys()),key=len,reverse=True)
-    for i,k in enumerate(keyList): # TODO: this loop is slow: might want to get an annogen-generated annotator to do it (but there's the \b) or make an OR list like the annogen normaliser.  But it's nowhere near the worst bottleneck (argostranslate w/out CUDA)
-        if k.startswith("<"): txt = txt.replace(k," {%d} " % i) # irrespective of word boundaries.  Spacing important.  "I went to {1}Paris{2} last summer." upsets the model, as does doing it via Tags, as does using letters not numbers in the {}s
+    for i,k in enumerate(keyList): # TODO: this loop is slow: might want to get an annogen-generated annotator to do it (but there's the \b) or make an OR list like the annogen normaliser
+        if k.startswith("<"): txt = txt.replace(k," {%d} " % i) # irrespective of word boundaries
         else: txt = re.sub(r"\b"+re.escape(k)+r"\b"," {%d} " % i, txt, flags=0 if re.search("[A-Z]",k) else re.IGNORECASE) # (don't match lower case if we have upper case, as it might be a name or abbreviation that in lower case will be a normal word and not this entry, but do match title case if we are lower case)
-    import argostranslate.translate
-    # TODO: might now want FAHClient --send-pause because xlator averages 2.5 cores and can read 3.5 (on a 4-core CPU)
-    for sentence in re.findall(r"[^ .!?].*?(?:$|[.!?])(?=$|\s+)",txt,flags=re.DOTALL):
-        # print (sentence) # if want to show which phrases are NOT given to the model
-        zh = argostranslate.translate.translate(sentence,'en','zh')
+    sentences = re.findall(r"[^ .!?].*?(?:$|[.!?])(?=$|\s+)",txt,flags=re.DOTALL)
+    # print("Debugger:",sentences)
+    for zh in trans.translate_batch(sentences):
         for i,k in enumerate(keyList): zh = re.sub((r" *[{]%d[}] *" % i),e2c[k],zh)
         print (zh.replace("?","？").replace(",","，").replace(";","；").replace(":","：").replace(".","。").replace("▁","").replace("(","（").replace(")","）"))
-        # print("") # if printing English above
         sys.stdout.flush() # in case watching
 
-if __name__=="__main__": test()
+if __name__=="__main__": main()
