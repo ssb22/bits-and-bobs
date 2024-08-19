@@ -73,7 +73,7 @@
 # not be complete by the time the login prompt shows, so some extra
 # delay is needed before typing reboot and going into RISC OS.)
 
-# If you wish, you can also create an Obey file in Tasks with
+# If you want, you can also create an Obey file in Tasks with
 # WimpTask Resources:$.Apps.!Alarm
 # or whatever to launch a time display at startup;
 # you might also want to put other startup files here,
