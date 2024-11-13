@@ -11,7 +11,7 @@
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-bootonly.iso.xz
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.1/FreeBSD-14.1-RELEASE-amd64-bootonly.iso.xz
 
 # Setup:
 # type: FreeBSD (64-bit) (ensure to select 64-bit)
@@ -26,6 +26,13 @@ export User=ssb22
 # Then run:
 # pkg install curl
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/%6d%61%73%74%65%72/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
+
+# (If you've previously installed 14.0, upgrade to 14.1 via:
+#   freebsd-update fetch
+#   freebsd-update install
+#   freebsd-update upgrade -r 14.1-RELEASE
+#   freebsd-update install
+# then reboot, then freebsd-update install and reboot)
 
 cd
 pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py39-python-xlib telegram-desktop wget xclip
