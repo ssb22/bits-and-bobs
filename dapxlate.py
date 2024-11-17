@@ -1,83 +1,67 @@
 #!/usr/bin/env python3
 
 """DAPXlate - Dictionary-Assisted Pretrained Translate
-  (or Domain-Adaptation with Placeholders translation)
-  v0.3 (c) Silas S. Brown 2024, License: Apache 2
+  v0.4 - Silas S. Brown 2024 - public domain, no warranty
 
-  - Uses a pretrained translator model online
-    but adds specialist phrase translations.
+  - Prompts an LLM to translate with the aid of
+    pre-provided specialist phrase translations.
     Extracts first draft of these from CedPane
     then lets you edit before re-running with the
-    model.  Does this by having the model handle
-    placeholders for words we're sure we know how
-    to translate ourselves from the dictionary.
+    model.
 
-    (Models can't always cope with pre-translated
-     fragments in the target language, so it's
-     necessary to use the placeholders.)
+  - Resulting translation still needs checking.
 
-  PROBLEMS:
-
-    - Relies on 'service as a software substitute'
-      - and deep_translator appears to be using an
-        undocumented API endpoint that could stop
-        working at any time
-
-    - Extracted list from CedPane very much needs
-      editing before the run
-
-    - Resulting translation still needs editing
+Beware: trust_remote_code=True is set below.
 """
 
-from deep_translator import GoogleTranslator as T
-# (you could use another if you have an API key)
-import re, sys, os, time
+example_setup_on_Ubuntu_2404_with_Nvidia_GPU = """
+# THIS IS NOT YET WORKING on a 2018 laptop with Quadro P1000 GPU
+# (You might be able to get it to work on some other piece of kit)
+
+sudo apt install nvidia-cuda-toolkit
+pip install --break-system-packages torch modelscope transformers sentencepiece sentencepiece accelerate flash-attn
+# torch: 22.04 has package, 24.04 needs pip
+# flash-attn takes ~15 hours to compile: https://github.com/Dao-AILab/flash-attention/issues/1038
+mkdir -p model
+while ! PATH=~/.local/bin:$PATH huggingface-cli download Tele-AI/TeleChat2-115B --local-dir $(pwd)/model; do if df --output=avail -h .|tail -1|[1-9][0-9]*G; then echo Retry in 1 minute; sleep 60; else echo Disk full error; exit 1; fi; done
+# - above is best done on wired network (and don't allow machine to suspend; some implementations even seem to stop the download when screensaver is in use)
+# - and that 115B model is 423 gigabytes (not counting the approximately 15 gigabytes required for the tools) so I hope you have space on your hard drive: a "500G" drive is NOT likely to be sufficient once OS and inode usage is taken out.
+# And it doesn't work anyway:  .cache/huggingface/modules/transformers_modules/model/modeling_telechat.py", line 187, in forward: assert all((i.is_cuda for i in (q, k, v)))
+# (after 1 hour 5 minutes running on a 100Mbps network drive; probably about 14 minutes on a local disk)
+# Meanwhile, donloading a smaller model instead: Tele-AI/telechat-7B (takes 14 gigabytes for the model)
+# gets: RuntimeError: FlashAttention only supports Ampere GPUs or newer.
+"""
+
+example_uninstall = """
+pip uninstall --break-system-packages accelerate einops filelock flash_attn fsspec functorch hopper huggingface_hub modelscope mpmath networkx nvidia safetensors sentencepiece sympy tokenizers torch torchgen tqdm transformers triton typing-extensions $(pip list --user|grep nvidia-|sed -e 's/ .*//')
+sudo apt purge nvidia-cuda-toolkit
+sudo apt --purge autoremove
+# and remove any unwanted models
+"""
+
+import torch, transformers, re, sys
 
 def read_CedPane(cedpane_file):
     "Extract potential specialist translations and names from CedPane, for editing"
-    dups = set() # avoid translating if we're not sure (TODO: sometimes it's OK to pick one)
     e2c = {}
     for en,zh in [l.split("\t")[:2] for l in open(cedpane_file).read().split("\n")[1:-1]]:
         if "translation" in en or "incorrect" in en or re.search(r"\btypo\b",en): continue # alternate translation, old translation, typo, etc
         en = re.sub(" ([^)]*name[^)]*)","",en) # "X (surname)" is ok if X is capitals only
-        if "(" in en: continue # we don't want entries like "notice (on paper)" where the parens indicate it's a specific meaning
-        if re.search("; [^A-Z]",en): continue # "here; in this region" probably shouldn't pull out "here", but ";" + abbreviation is probably OK, as is "Name; Name"
-        for en in [een.strip() for een in re.sub("[(][^)]*[)]","",en).split(';')]: # relevant only if commenting out the "(" continue above
-            if en in e2c:
-                del e2c[en] ; dups.add(en)
-            elif not en in dups: e2c[en] = zh
+        for en in [een.strip() for een in re.sub("[(][^)]*[)]","",en).split(';')]: e2c[en] = zh
     return e2c
 
 def main():
-    if sys.stdin.isatty() and len(sys.argv) < 2:
-        sys.stderr.write(f"Syntax: {sys.argv[0]} cedpane.txt (makes Chinese.tsv)\nor {sys.argv[0]} < input-sentences.txt\n")
+    if len(sys.argv) < 2:
+        sys.stderr.write(f"Syntax: {sys.argv[0]} cedpane.txt < input-sentences.txt\n")
         sys.exit(1)
-    if os.path.exists("Chinese.tsv"): e2c=dict(i.strip().split('\t') for i in open("Chinese.tsv").read().split('\n') if '\t' in i.strip())
-    else: e2c = read_CedPane(sys.argv[1])
+    e2c = read_CedPane(sys.argv[1])
     txt = sys.stdin.read()
-    trans = T(source='en', target='zh-CN')
-    for tag in re.findall(r"(?:<[^>]*>\s*)+",txt,flags=re.DOTALL): e2c[tag] = tag # keep (runs of) tags, TODO: might be better if we don't make them sentence objects
-    keyList = sorted(list(e2c.keys()),key=len,reverse=True)
-    e2c_real = {}
-    t = time.time()
-    for i,k in enumerate(keyList): # TODO: this loop is slow: might want to get an annogen-generated annotator to do it (but there's the \b) or make an OR list like the annogen normaliser
-        if time.time() > t+2:
-            sys.stderr.write(f"\r{i}/{len(keyList)} (found {len(e2c_real)})... ")
-            sys.stderr.flush() ; t = time.time()
-        if k.startswith("<"): txt = txt.replace(k," {%d} " % i) # irrespective of word boundaries
-        else:
-            txt = re.sub(r"\b"+re.escape(k)+r"\b"," {%d} " % i, txt, flags=0 if re.search("[A-Z]",k) else re.IGNORECASE) # (don't match lower case if we have upper case, as it might be a name or abbreviation that in lower case will be a normal word and not this entry (TODO there can be false positives at start of sentences though), but do match title case if we are lower case)
-            if (" {%d} " % i) in txt:
-                e2c_real[k]=e2c[k]
-    if not os.path.exists("Chinese.tsv"): 
-        open("Chinese.tsv","w").write("".join(f"{e}\t{c}\n" for e,c in sorted(e2c_real.items())))
-        print ("Wrote Chinese.tsv: edit it before rerun")
-        return
-    sentences = re.findall(r"[^ .!?].*?(?:$|[.!?])(?=$|\s+)",txt,flags=re.DOTALL) # TODO: at one point didn't include a <p> (prob repr'd as {..}) at start of sentence, regex seems ok, did model drop it?
-    # print("Debugger:",sentences)
-    for zh in trans.translate_batch(sentences):
-        for i,k in enumerate(keyList): zh = re.sub((r" *[{]%d[}] *" % i),e2c[k],zh)
-        print (zh.replace("?","？").replace(",","，").replace(";","；").replace(":","：").replace(".","。").replace("▁","").replace("(","（").replace(")","）"))
+    tokeniser,model,gcfg=transformers.AutoTokenizer.from_pretrained("model",trust_remote_code=True),transformers.AutoModelForCausalLM.from_pretrained("model",device_map="auto",torch_dtype=torch.float16,trust_remote_code=True),transformers.GenerationConfig.from_pretrained("model")
+    sentences = re.findall(r"[^ .!?].*?(?:$|[.!?])(?=$|\s+)",txt,flags=re.DOTALL)
+    history = []
+    for s in sentences:
+        answer,history=model.chat(tokenizer=tokeniser,question=f"请把这个英文句子翻译成汉语：【{s}】做这个翻译，以下个词典条目也许有用：{'；'.join(f'{k}={v}' for k in e2c.items() if k.lower() in s.lower())}",history=history,generation_config=gcfg,stream=False)
+        print (answer)
         sys.stdout.flush() # in case watching
 
 if __name__=="__main__": main()
