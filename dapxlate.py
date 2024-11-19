@@ -6,8 +6,7 @@
   - Prompts an LLM to translate with the aid of
     pre-provided specialist phrase translations.
     Extracts first draft of these from CedPane
-    then lets you edit before re-running with the
-    model.
+    or a file in the same format you've edited.
 
   - Resulting translation still needs checking.
 
@@ -15,8 +14,14 @@ Beware: trust_remote_code=True is set below.
 """
 
 example_setup_on_Ubuntu_2404_with_Nvidia_GPU = """
-# THIS IS NOT YET WORKING on a 2018 laptop with Quadro P1000 GPU
-# (You might be able to get it to work on some other piece of kit)
+# THIS IS NOT YET WORKING on a 2018 laptop with Quadro P1000 GPU.
+# You might be able to get it to work on some other piece of kit,
+# but it might not work anyway: a preliminary session on the character.ai LLM
+# suggests LLMs do not always follow the additional instructions.
+# LLMs are however more likely than NMT to handle pre-substituted L2 phrases in the L1 input,
+# if you're sure of which word to use (not just listing options).
+# There may also be a sentence length limit on LLMs (long sentences need splitting)
+# and yes the output DOES need proofreading.
 
 sudo apt install nvidia-cuda-toolkit
 pip install --break-system-packages torch modelscope transformers sentencepiece sentencepiece accelerate flash-attn
