@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2024, public domain
+# Silas S. Brown 2020-2025, public domain
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -11,7 +11,7 @@
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.1/FreeBSD-14.1-RELEASE-amd64-bootonly.iso.xz
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.2/FreeBSD-14.2-RELEASE-amd64-bootonly.iso.xz
 
 # Setup:
 # type: FreeBSD (64-bit) (ensure to select 64-bit)
@@ -27,26 +27,15 @@ export User=ssb22
 # pkg install curl
 # curl https://raw.githubusercontent.com/ssb22/bits-and-bobs/%6d%61%73%74%65%72/freebsd-setup.sh > freebsd-setup.sh && chmod +x freebsd-setup.sh && ./freebsd-setup.sh
 
-# (If you've previously installed 14.0, upgrade to 14.1 via:
-#   freebsd-update fetch
-#   freebsd-update install
-#   freebsd-update upgrade -r 14.1-RELEASE
-#   freebsd-update install
-# then reboot, then freebsd-update install and reboot)
-
 cd
-pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py39-python-xlib telegram-desktop wget xclip
+set -e
+pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py311-python-xlib telegram-desktop wget xclip
 echo Use desktop selection 7;echo Press Enter
 read
 desktop-installer
 pkg remove cabextract virtualbox-ose-additions
-cd /usr/ports/emulators/virtualbox-ose-additions-legacy # no longer a package on FreeBSD 14 so install from port (otherwise old VirtualBox won't share clipboard)
-make install # will fail on C++17 due to use of 'register'
-for Type in int uint unsigned PK KA PC RT; do for F in $(grep -lr "register $Type" work); do sed -e "s/register $Type/$Type/g" < $F > n && mv n $F ; done; done # can't just set CXXFLAGS to -Dregister: somehow gets ignored
-for F in $(grep -lr "enum vtype" work); do sed -e "s/enum vtype/int/g" < $F > n && mv n $F ; done # it's in the virtual filesystem (which we don't use anyway) and it's not C++17 compatible
-make install
-cd
-rm -rf /usr/ports/*/*/work /var/cache/pkg/*.txz
+pkg install virtualbox-ose-additions-legacy
+rm -f /var/cache/pkg/*.txz
 
 mkdir /mac
 echo 10.0.2.2 mac >> /etc/hosts
@@ -169,7 +158,7 @@ xsetroot -solid darkblue # .icewm/preferences DesktopBackgroundImage="" doesn't 
 # probably don't want the vbox to take over as owner and
 # make it plain-text only.)
 while true ; do
-  python3.9 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null
+  python3.11 /usr/local/lib/xfsn.py CLIPBOARD 2>/dev/null >/dev/null
   xclip -o | xclip -i -selection clipboard
 done
 EOF
@@ -184,8 +173,17 @@ mv n /etc/ttys
 echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
 echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 
-echo "Use auto-update-system for security patches" # until EOL of FreeBSD 14 expected 2028-11
+echo "Use auto-update-system for security patches"
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
 
 # If the VM gets stuck in a loop booting after auto-update-system, try single-user mode (boot option 2) and Ctrl-D to go back to multi-user mode then repeat auto-update-sytem (worked for me 2024-02)
+
+# Also need to follow instructions to upgrade point releases when EOL.
+# Strange thing happened with 14.1:
+# our 16G disk somehow shrank to ~4G
+# (unclear where rest of the space went,
+# some "zroot" trick?  Total size = shared
+# free size + usage, but total use across
+# all mounted parts didn't approach 12G.)
+# Wiped and did fresh install for 14.2
