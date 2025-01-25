@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021-24, public domain"""
+Silas S. Brown 2021-25, public domain"""
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs
@@ -36,7 +36,7 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
         else: message = message.replace("\n\n","\n",1) # probably "This reverts commit N", don't need blank line before
         i=message.find("\nThis reverts commit ")
         if i>0: message=message[:i]
-        commitList.append((date,fullDate,"=> %s %s %s: %s" % (url,date,repository,message)))
+        commitList.append((date,fullDate,"=> %s %s %s: %s" % (url.replace("https://github.com","https://www.github.com",1),date,repository,message))) # .replace() to work around a bug in deedum 2022.0406 for Android: if GitHub's own app is also installed on the same device, deedum says "Cannot find app to handle https://github.com", but with www is OK
     if count>=100 and not is_fork:
         if not max_earliest_date: max_earliest_date = date
         elif date: max_earliest_date = max(date,max_earliest_date)
