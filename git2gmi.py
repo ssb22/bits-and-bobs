@@ -27,7 +27,7 @@ for repository in json.loads(urlopen("https://api.github.com/users/"+user+"/repo
     count = 0
     for commit in json.loads(urlopen("https://api.github.com/repos/"+user+"/"+repository+"/commits?per_page=100").read()): # 100 is maximum allowed
         count += 1
-        if is_fork and not user in commit["commit"]["author"]["email"]: continue # don't log other people's commits on our forks (assumes Git username is part of our email)
+        if not user in commit["commit"]["author"]["email"]: continue # (assumes Git username is part of our email) don't log other people's commits here (if it's a fork, we don't want to log others' commits before we forked, and if it's not a fork, for any pull request we'll see the merge commit, so don't also need to log the history of the branch here)
         fullDate = commit["commit"]["committer"]["date"]
         date = "%d-%02d-%02d" % time.localtime(parser.parse(fullDate).timestamp())[:3] # parse and re-construct, because UTC vs BST in near-midnight commits can affect the reported date
         message = commit["commit"]["message"]
