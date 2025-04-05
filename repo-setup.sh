@@ -23,24 +23,26 @@ if [ "$1" = all ]; then
     exec "$0" $All
 fi
 while [ "$1" ]; do
-  export N=$(echo "$1"|tr -d /) # in case of auto-complete
-  if ! [ -e "$N" ]; then git clone $RepoSetupShallowClone git@$(if IsIn $N $LabOnly; then echo gitlab; else echo github; fi).com:ssb22/$N.git || exit 1; fi
-  if ! [ -d "$N" ]; then shift; continue; fi # so you can run with * in a dir with files as well
-  # Otherwise put the settings in on an already-cloned repo:
-  cd $N || exit 1
-  if IsIn $N $All && ! IsIn $N $LabOnly; then
-  git remote set-url origin --push --delete . 2>/dev/null >/dev/null || true
-  git remote set-url origin --push git@github.com:ssb22/$N.git || exit 1
-  if [ $N == jianpu-ly ] ; then git remote set-url origin --push --add git@github.com:jianpu-ly/$N.git || exit 1; fi # https://github.com/ssb22/jianpu-ly/issues/26
-  git remote set-url origin --push --add git@gitlab.com:ssb22/$N.git || exit 1
-  git remote set-url origin --push --add git@gitlab.developers.cam.ac.uk:ssb22/$N.git || exit 1 # (beta service provided to cam.ac.uk members)
-  git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
-  git remote set-url origin --push --add git@gitee.com:ssb22/$(echo $N|sed -e s/^4/four/).git || exit 1
-  else echo "Not adding mirrors to $N"
+  export N="$(echo "$1"|tr -d /)" # in case of auto-complete
+  if [ -e "$N" ]; then # (you can run with * in a dir with files as well)
+    if [ -d "$N" ]; then cd "$N"; git pull; cd ..; fi # (if already cloned, at least try to make sure up-to-date)
+  else
+    git clone $RepoSetupShallowClone git@$(if IsIn $N $LabOnly; then echo gitlab; else echo github; fi).com:ssb22/$N.git || exit 1
+    cd "$N" || exit 1
+    if IsIn $N $All && ! IsIn $N $LabOnly; then
+      git remote set-url origin --push --delete . 2>/dev/null >/dev/null || true
+      git remote set-url origin --push git@github.com:ssb22/$N.git || exit 1
+      if [ $N == jianpu-ly ] ; then git remote set-url origin --push --add git@github.com:jianpu-ly/$N.git || exit 1; fi # https://github.com/ssb22/jianpu-ly/issues/26
+      git remote set-url origin --push --add git@gitlab.com:ssb22/$N.git || exit 1
+      git remote set-url origin --push --add git@gitlab.developers.cam.ac.uk:ssb22/$N.git || exit 1 # (beta service provided to cam.ac.uk members)
+      git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
+      git remote set-url origin --push --add git@gitee.com:ssb22/$(echo $N|sed -e s/^4/four/).git || exit 1
+    else echo "Not adding mirrors to $N"
+    fi
+    git config user.name "Silas S. Brown"
+    git config user.email ssb22@cam.ac.uk
+    cd ..
+    echo "Set up $N"
   fi
-  git config user.name "Silas S. Brown"
-  git config user.email ssb22@cam.ac.uk
-  cd ..
-  echo "Set up $N"
   shift
 done
