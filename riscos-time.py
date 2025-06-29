@@ -3,7 +3,7 @@
 
 # Sets the time on a RISC PC or a dual-boot Raspberry Pi.
 # For use in offline environments when NTP is not available.
-# Version 1.32 (c) 2007, 2014, 2017, 2019-21 Silas S. Brown.
+# Version 1.33 (c) 2007, 2014, 2017, 2019-21, 2025 Silas S. Brown.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ if risc_ip:
   slowsend('SYS "Territory_SetTime",CHR$(%d)+CHR$(%d)+CHR$(%d)+CHR$(%d)+CHR$(%d)\n' % risc_time())
 else: # Raspberry Pi dual-boot
   filesystem = "/riscos-fat"
-  import sys,commands,os
+  import sys,os
   sys.stderr.write("Writing Territory_SetTime call to $.!Boot.Loader ("+filesystem+") timecode\n")
   try: o=open(filesystem+'/timecode','wb')
   except IOError: # maybe the shutdown process mounted it read-only
