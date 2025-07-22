@@ -21,8 +21,8 @@ MyIP=$(ifconfig "$Eth"|grep 'inet '|sed -e 's/^ *inet //' -e 's/ .*//')
 WifiIP=$(echo $GatewayIP|python3 -c "import sys;ip=[int(i) for i in sys.stdin.read().split('.')];ip[-2]+=1;print('.'.join(str(i) for i in ip))")
 
 # Make sure no network-manager is installed.  It messes up
-# the Raspberry Pi of doing things.  (It does NOT work to do
-# nmcli device wifi hotspot ifname wlan0 ssid X password Y,
+# the Raspberry Pi way of doing things.  (It does NOT work to
+# "nmcli device wifi hotspot ifname wlan0 ssid X password Y"
 # as it may for quick setup on an Ubuntu24 laptop w.dnsmasq)
 apt purge network-manager dnsmasq dhcpd bridge-utils
 apt --purge autoremove
@@ -95,6 +95,9 @@ EOF
 
 # and same with systemd
 # - IPMasquerade tells it we want to do NAT
+# - if you need to see active NAT connections, use
+# sudo apt install tcpdump
+# sudo tcpdump -i wlan0
 cat > /etc/systemd/network/08-wlan0.network <<EOF
 [Match]
 Name=wlan0
