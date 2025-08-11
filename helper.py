@@ -1,7 +1,7 @@
 """Python Helper for Alexa.  Allows a beginner to write Python code
 calling print(), input(), random and time.  Repeats their values as
 necessary to restore state for further interactions.
-(c) Silas S. Brown 2025.  No warranty.
+Version 1.1 (c) Silas S. Brown 2025.  No warranty.
 
 To deploy to your Alexa devices: Go to developer.amazon.com to add
 the developer role to your Amazon account, and under "Alexa Skills
@@ -19,14 +19,16 @@ then under "Interaction Model" choose "JSON Editor" and paste this:
      "prompts":[{"id":"1","variations":[{"type":"PlainText","value":"Waiting for input"}]}],
      "dialog": {"intents": [{"name": "InputIntent","confirmationRequired": false,"prompts": {},"slots":[{"name": "UserInput","type":"AMAZON.SearchQuery","confirmationRequired": false,"elicitationRequired": true,"prompts":{"elicitation":"1"}}]}],"delegationStrategy": "SKILL_RESPONSE"}}}
 
-Save and build, then under "Code" replace all the content with this
-file.  Go to "S3 Storage", "Copy S3 URI" and paste the main part of
-this into the line that sets bucket_name.  Save and Deploy, then
-under Test enable testing and try saying "open Python Helper".  If
-there's an error go back to Code and check under CloudWatch Logs.
+Save and Build, then under "Code" replace all the content with this
+file, Save and Deploy, then under Test enable testing and try saying
+"open Python Helper".
+You should be able to answer your program's questions just by speaking.
+If that doesn't work, try saying the word "answer" before your answer.
+
+If there's an error go back to Code and check under CloudWatch Logs.
 """
 
-import time,random,boto3,json,inspect,sys
+import time,random,inspect,sys
 class FunctionWrapper:
   def __init__(self): self.logs = {}
   def wrapF(self,func,call_real_again = False):
@@ -65,10 +67,8 @@ def wrapPrintInput():
 
 def lambda_handler(event, context):
   fw.outBuf,fw.inputWait,fw.logs = [],False,{}
-  s3_client = boto3.client('s3')
-  key = f"user{event['session']['user']['userId']}_{event['session']['application']['applicationId']}_state.json"
   if event['session'].get('new',False): fw.outBuf=["Python program starting."]
-  else: fw.logs=json.load(s3_client.get_object(Bucket=bucket_name,Key=key)['Body'])
+  else: fw.logs=event['session']['attributes']
   shouldRun = True
   if event['request']['type']=='IntentRequest':
     iName = event['request']['intent']['name']
@@ -83,26 +83,25 @@ def lambda_handler(event, context):
     fw.unwrapM(time),fw.unwrapM(random)
   if fw.inputWait:
     if not fw.outBuf: fw.outBuf=["Waiting"]
-    s3_client.put_object(Bucket=bucket_name,Key=key,Body=json.dumps(fw.logs))
   else: fw.outBuf += ["Program terminated"]
-  r={'version': '1.0',
-     'response': {'outputSpeech': {
-       'type': 'PlainText', 'text':'\n'.join(fw.outBuf)},
-          'shouldEndSession': not fw.inputWait}}
-  if fw.inputWait: r['response']['directives']=[{"type":"Dialog.ElicitSlot","slotToElicit": "UserInput"}]
+  r={'version': '1.0','response':{'outputSpeech': {
+       'type':'PlainText','text':'\n'.join(fw.outBuf)},
+      "reprompt":{"outputSpeech":{"type":"PlainText",
+        "text":'\n'.join([i for i in fw.outBuf if i.strip()][-1:])}},
+      'shouldEndSession': not fw.inputWait}}
+  if fw.inputWait: r['response']['directives'],r['sessionAttributes']=[{"type":"Dialog.ElicitSlot","slotToElicit":"UserInput"}],fw.logs
   return r
-
-bucket_name = "" # You need to set this
 
 user_code = r'''
 
-# Delete this example and paste the beginner's code here
+# Delete this example and paste the child's code here:
 import random, sys
 answer = random.randint(1,10)
 while True:
-  i = int(input("Guess my number between 1 and 10: "))
+  i = int(input("Guess my number: "))
   if i < answer: print("That's too low")
   elif i > answer: print("That's too high")
   else: print("Correct"), sys.exit()
+# End of example.  Please do NOT delete the apostrophes below.
 
 '''
