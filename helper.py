@@ -96,12 +96,100 @@ user_code = r'''
 
 # Delete this example and paste the child's code here:
 import random, sys
-answer = random.randint(1,10)
-while True:
-  i = int(input("Guess my number: "))
-  if i < answer: print("That's too low")
-  elif i > answer: print("That's too high")
-  else: print("Correct"), sys.exit()
+print("Do you want to play Guess my number or House adventure?")
+i = input()
+if "guess" in i:
+  answer = random.randint(1,10)
+  while True:
+    i = int(input("Guess my number: "))
+    if i < answer: print("That's too low")
+    elif i > answer: print("That's too high")
+    else: print("Correct"), sys.exit()
+print("Welcome to House adventure.") # see https://ssb22.user.srcf.net/game/
+class Room:
+    def __init__(new_room, description):
+        new_room.description = description
+        new_room.doors = {}
+        new_room.things = []
+    def connect(this_room, direction, other_room):
+        assert not direction in this_room.doors
+        assert not opposite(direction) in other_room.doors
+        this_room.doors[direction] = other_room
+        other_room.doors[opposite(direction)] = this_room
+    def __str__(this_room):
+        things = " and ".join(this_room.things)
+        if things: things = ".  Things here: " + things
+        return this_room.description + "\n" + \
+            "You can go " + \
+            " or ".join(this_room.doors) + things+"."
+    def special_action(this_room, player, action):
+        return False
+class Landing(Room):
+    def __init__(new_landing):
+        Room.__init__(
+            new_landing,
+            "You are on a landing. The north door has a lock.")
+    def special_action(this_landing, player, action):
+        if action=="unlock door":
+            if 'north' in this_landing.doors:
+                print ("The door is already unlocked.")
+            elif not "key" in player.things:
+                print ("You do not have the key.")
+            else:
+                this_landing.connect('north', secret_room)
+                print ("The door is now unlocked.")
+            return True
+def opposite(direction):
+    return {"north":"south", "south":"north",
+            "east":"west", "west":"east"} [direction]
+def init():
+    bathroom = Room("You are in a bathroom.")
+    bathroom.things.append("towel")
+    bedroom1 = Room("You are in a bedroom.")
+    bedroom1.things.append("key")
+    landing = Landing()
+    landing.connect('south', bathroom)
+    landing.connect('east', bedroom1)
+    landing.connect('west', Room("You are in a bedroom."))
+    global secret_room
+    secret_room = Room("You are in the secret room.")
+    return landing
+class Player:
+    def __init__(new_player, first_room):
+        new_player.in_room = first_room
+        new_player.things = []
+    def have_a_turn(this_player):
+        print (this_player.in_room)
+        what = input("What now? ") ; print()
+        if this_player.in_room.special_action(this_player, what):
+            return
+        what = what.split(None,1)
+        if not what: print("You didn't say anything!")
+        elif what[0]=="get":
+            if len(what)==1:
+                print ("You have to tell me what to get.")
+            elif what[1] in this_player.in_room.things:
+                this_player.in_room.things.remove(what[1])
+                this_player.things.append(what[1])
+                print ("Got it.")
+            elif what[1] in this_player.things:
+                print ("You already had that.")
+            else: print (what[1]+" is not here.")
+        elif what[0]=="drop":
+            if len(what)==1:
+                print ("You have to tell me what to drop.")
+            elif what[1] in this_player.things:
+                this_player.things.remove(what[1])
+                this_player.in_room.things.append(what[1])
+                print ("Dropped it.")
+            else: print (f"You are not carrying {what[1]}.")
+        elif what[0] in this_player.in_room.doors:
+            this_player.in_room = this_player.in_room.doors[what[0]]
+        else: print ("You can't do that now.")
+start_room = init()
+player1 = Player (start_room)
+while True: player1.have_a_turn()
+
 # End of example.  Please do NOT delete the apostrophes below.
 
 '''
