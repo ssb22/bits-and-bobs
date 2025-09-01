@@ -11,7 +11,7 @@
 export User=ssb22
 
 # Setup source:
-# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.2/FreeBSD-14.2-RELEASE-amd64-bootonly.iso.xz
+# https://download.freebsd.org/ftp/releases/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-amd64-bootonly.iso.xz
 
 # Setup:
 # type: FreeBSD (64-bit) (ensure to select 64-bit)
@@ -29,8 +29,9 @@ export User=ssb22
 
 cd
 set -e
-pkg install -y bsdstats ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py311-python-xlib telegram-desktop wget xclip
-echo Use desktop selection 7;echo Press Enter
+pkg install -y ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py311-python-xlib telegram-desktop wget xclip bash
+echo '#!/usr/local/bin/bash' > n && sed -e 's,+%m,+%m|sed -e s/^0//,' < /usr/local/bin/auto-pkg-branch >> n && chmod +x n && mv n /usr/local/bin/auto-pkg-branch
+echo Use desktop selection 7 IceWM;echo Press Enter
 read
 desktop-installer
 pkg remove cabextract virtualbox-ose-additions
@@ -50,6 +51,7 @@ if ! ssh mac cat .ssh/config | grep 'Host freebsd'; then (echo;echo Host freebsd
 echo PermitRootLogin yes >> /etc/ssh/sshd_config
 echo RequiredRSASize 256 >> /etc/ssh/sshd_config # in case old Mac has short local key
 echo 'sshd_enable="YES"' >> /etc/rc.conf
+ssh-keygen -A
 service sshd restart
 ln -s /mac/Users/$User/Downloads
 
@@ -177,13 +179,4 @@ echo "Use auto-update-system for security patches"
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
 
-# If the VM gets stuck in a loop booting after auto-update-system, try single-user mode (boot option 2) and Ctrl-D to go back to multi-user mode then repeat auto-update-sytem (worked for me 2024-02)
-
 # Also need to follow instructions to upgrade point releases when EOL.
-# Strange thing happened with 14.1:
-# our 16G disk somehow shrank to ~4G
-# (unclear where rest of the space went,
-# some "zroot" trick?  Total size = shared
-# free size + usage, but total use across
-# all mounted parts didn't approach 12G.)
-# Wiped and did fresh install for 14.2
