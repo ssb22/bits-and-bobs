@@ -11,7 +11,7 @@ Can restore to a group chat with self, but:
 * old Telegram 1.8.15 on Mac OS 10.7 on old machine whose OS cannot be upgraded won't see the new group chat (messages need forwarding individually to Saved Messages to be available on that)
 """
 
-import re, sys
+import re, sys, time
 def msgs():
     r = [] ; canMatch = True
     for l in sys.stdin:
@@ -22,8 +22,8 @@ def msgs():
         if m:
             if r: yield ''.join(r[:1]+[i+'\n' for i in r[1:]])
             mFrom,mD,mM,mY,mh,mm = m.groups()
-            # TODO: need to translate that time to the *current* time zone.  E.g. if we're now in summer time and that date is winter time, need to + 1 hour, otherwise it will go in as an hour before it really was.  So the season at which the zip is imported (assumed same as when generated?) affects which time we should use.
-            r=[f"[20{mY}/{mM}/{mD}, {mh}:{mm}:00] {mFrom}: "]
+            mY,mM,mD,mh,mm = time.localtime(time.mktime((2000+mY,mM,mD,mh,mm,0,0,0,0))+3600*(time.localtime(time.time()).tm_isdst-time.localtime(time.mktime((2000+mY,mM,mD,mh,mm,0,0,0,0))).tm_isdst)) # need same DST setting as now for Telegram import
+            r=[f"[{mY}/{mM}/{mD}, {mh}:{mm}:00] {mFrom}: "]
         elif r: r.append(l)
     if r: yield ''.join(r[:1]+[i+'\n' for i in r[1:]])
 
