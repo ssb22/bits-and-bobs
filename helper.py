@@ -1,7 +1,7 @@
 """Python Helper for Alexa.  Allows a beginner to write Python code
 calling print(), input(), random and time.  Repeats their values as
 necessary to restore state for further interactions.
-Version 1.1 (c) Silas S. Brown 2025.  No warranty.
+Version 1.2 (c) Silas S. Brown 2025.  No warranty.
 
 To deploy to your Alexa devices: Go to developer.amazon.com to add
 the developer role to your Amazon account, and under "Alexa Skills
@@ -28,7 +28,7 @@ If that doesn't work, try saying the word "answer" before your answer.
 If there's an error go back to Code and check under CloudWatch Logs.
 """
 
-import time,random,inspect,sys
+import time,random,inspect,sys,re
 class FunctionWrapper:
   def __init__(self): self.logs = {}
   def wrapF(self,func,call_real_again = False):
@@ -72,7 +72,7 @@ def lambda_handler(event, context):
   shouldRun = True
   if event['request']['type']=='IntentRequest':
     iName = event['request']['intent']['name']
-    if iName == 'InputIntent': fw.logs.setdefault(__name__+'.input',[]).append(event['request']['intent']['slots'].get('UserInput', {}).get('value',''))
+    if iName == 'InputIntent': fw.logs.setdefault(__name__+'.input',[]).append(re.sub('^[aA]nswer ','',event['request']['intent']['slots'].get('UserInput', {}).get('value','')))
     elif iName == 'AMAZON.HelpIntent': fw.outBuf.append("Speak the input to your program.")
     elif iName == 'AMAZON.StopIntent' or iName == 'AMAZON.CancelIntent': shouldRun = False
   if shouldRun:
