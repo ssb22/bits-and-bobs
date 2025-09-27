@@ -37,7 +37,7 @@ while [ "$1" ]; do
       git remote set-url origin --push --add git@gitlab.developers.cam.ac.uk:ssb22/$N.git || exit 1 # (beta service provided to cam.ac.uk members)
       git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
       git remote set-url origin --push --add git@gitee.com:ssb22/$(echo $N|sed -e s/^4/four/).git || exit 1
-      if [ $N == CedPane ]; then git remote add hf git@hf.co:datasets/real-ssb22/CedPane && git config remote.hf.push master:main ; fi # (this needs a separate 'git push hf', but renaming the legacy branch might cause issues for some?)
+      if IsIn $N CedPane yali-voice yali-lower cameron-voice; then git remote add hf git@hf.co:datasets/real-ssb22/$N && git config remote.hf.push master:main ; fi # (this needs a separate 'git push hf', but renaming the legacy branch might cause issues for some?)
     else echo "Not adding mirrors to $N"
     fi
     git config user.name "Silas S. Brown"
