@@ -5,7 +5,7 @@ Version 1.2 (c) Silas S. Brown 2025.  No warranty.
 
 To deploy to your Alexa devices: Go to developer.amazon.com to add
 the developer role to your Amazon account, and under "Alexa Skills
-Kit" use "Create Skill", name it, set model type to "Custom",
+Kit" Console use "Create Skill", name it, set model type to "Custom",
 hosting type to "Alexa-hosted (Python)", template start from scratch
 then under "Interaction Model" choose "JSON Editor" and paste this:
 
