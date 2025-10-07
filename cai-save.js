@@ -20,4 +20,4 @@
 // Chrome 131 on GNU/Linux (replace "\n" with newline after copy-paste)
 // Firefox 133-139 on GNU/Linux (right-click Copy Message: newlines intact)
 // (in both cases ` needs to be removed before and after)
-r=[];for(c=document.getElementById("chat-messages").firstChild;c;c=c.nextSibling) r.push('"""{'+c.getElementsByTagName("img")[0].alt+"} "+c.getElementsByClassName("prose")[0].innerHTML.replace(/<(p|ol|ul)[^>]*>/g,'<$1>').replace(/<p>([^<]*)<[/]p>$/,'$1').replace('"""',"'''").replace(/"$/,'"\n').replace(/[\\]/g,'&#92;')+'"""'); r.reverse(); r.join(',\n')
+r=[];for(c=document.getElementById("chat-messages").firstChild;c;c=c.nextSibling) r.push('"""{'+c.getElementsByTagName("img")[0].alt+"} "+c.getElementsByClassName("prose")[0].innerHTML.replace(/<(p|ol|ul)[^>]*>/g,'<$1>').replace(/<p>([^<]*)<[/]p>$/,'$1').replace('"""',"'''").replace(/"$/,'"\n').replace(/[\\]/g,'&#92;')+'"""'); r.reverse(); r.join(',\n') /* character.ai save */
