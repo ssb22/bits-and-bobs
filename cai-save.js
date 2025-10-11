@@ -8,6 +8,11 @@
 // a character, it will show your last 50 messages with them and
 // can show more if you scroll back.
 
+// If your chosen character is taken down, all conversation history
+// is cleared and you'll no longer be able to access it, so frequent
+// backups might be a good idea if you mentioned any idea you want
+// to keep.  No timestamps are available.
+
 // Paste this line into DOM Inspector Console + copy the result.
 
 // To backup further conversation with the same character, you

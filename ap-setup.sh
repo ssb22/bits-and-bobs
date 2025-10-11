@@ -2,7 +2,7 @@
 
 # Script to set up an access point on a Raspberry Pi Zero W
 # (a 2.4GHz-only device) with USB Ethernet, tested in PiOS 12
-# - Silas S Brown 2025, public domain, no warranty
+# - Silas S. Brown 2025, public domain, no warranty
 
 set -e
 
