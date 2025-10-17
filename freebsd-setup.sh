@@ -176,6 +176,11 @@ echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
 echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 
 echo "Use auto-update-system for security patches"
+# If get an error about /usr/local/etc/pkg/*.conf, do:
+# mkdir /usr/local/etc/pkg
+# ln -s /etc/pkg /usr/local/etc/pkg/repos
+# auto-update-system
+
 # If need more space for auto-update-system, do first:
 # rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
 
