@@ -2,6 +2,7 @@
 
 # Script to set up an access point on a Raspberry Pi Zero W
 # (a 2.4GHz-only device) with USB Ethernet, tested in PiOS 12
+# (also tested a PiOS 13 upgrade in-place)
 # - Silas S. Brown 2025, public domain, no warranty
 
 set -e
@@ -72,6 +73,7 @@ wpa_key_mgmt=WPA-PSK
 EOF
 
 # Set up /etc/network/interfaces for ifup / ifdown
+apt install ifupdown
 cat > /etc/network/interfaces <<EOF
 iface $Eth inet static
   address $MyIP/24
@@ -119,6 +121,6 @@ echo "denyinterfaces wlan0 $Eth" >> /etc/dhcp/dhcpd.conf
 touch /var/spool/cron/crontabs/root
 grep -v SHELL=/bin/bash < /var/spool/cron/crontabs/root | grep -v "@reboot while ! route" > n && mv n /var/spool/cron/crontabs/root
 echo SHELL=/bin/bash >> /var/spool/cron/crontabs/root
-echo "@reboot while ! route -n | grep $GatewayIP; do /usr/sbin/ifup $Eth; sleep 1; done" >> /var/spool/cron/crontabs/root
+echo "@reboot while ! /usr/sbin/route -n | /usr/bin/grep $GatewayIP; do /usr/sbin/ifup $Eth; /usr/bin/sleep 1; done" >> /var/spool/cron/crontabs/root
 
 echo "All set.  Try rebooting."
