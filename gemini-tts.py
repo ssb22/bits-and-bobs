@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Text-to-Speech Reader using Gemini API and sox
 (sentence by sentence).  Set GEMINI_API_KEY in environment.
-Can get "model overloaded" errors if Google servers are busy."""
+Can get "model overloaded" errors if Google servers are busy.
+
+Run with --all to read all at once instead of sentence by sentence
+(this may work better with prosody instructions but more latency)"""
 
 from google import genai # pip install google-genai
 import nltk # pip install nltk (or apt install python3-nltk)
@@ -22,6 +25,7 @@ def readSentence(text):
         subprocess.run(['play','-q',tmp_file.name],check=True)
     
 def split_into_sentences(text):
+    if '--all' in sys.argv or 'all' in sys.argv: return [text] # if you know you're going to want all of it, the model is better doing the whole thing at once especially if it's performing
     try: return [s.strip() for s in sent_tokenize(text) if s.strip()]
     except: return [s.strip() for s in re.split(r'[.!?。！？]+', text) if s.strip()]
 
