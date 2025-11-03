@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Text-to-Speech Reader using Gemini API and sox
-(sentence by sentence).  Set GEMINI_API_KEY in environment.
-Can get "model overloaded" errors if Google servers are busy.
+"""Text-to-Speech Reader using Gemini API and sox.
+Set GEMINI_API_KEY in environment.
+Can get "model overloaded" errors.
 
 Run with --all to read all at once instead of sentence by sentence
-(this may work better with prosody instructions but more latency)"""
+(this may work better with prosody instructions but more latency).
+
+As of 2025-10, quota limits are more severe with request rate
+than they are with the total number of tokens, so --all is now the
+recommended setting (but it does increase latency).
+"""
 
 from google import genai # pip install google-genai
 import nltk # pip install nltk (or apt install python3-nltk)
