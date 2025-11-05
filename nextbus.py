@@ -34,7 +34,7 @@ def _untracked(m):
     mins = int((time.mktime(time.localtime()[:3]+tuple(int(x) for x in m.group().split(':'))+time.localtime()[5:])-time.time())/60)
     return "untracked "+str(mins)+" minute"+("" if mins==1 else "s")
 def next_buses():
-    return " and ".join(re.sub("^[0-9]+:[0-9][0-9]",_untracked,re.sub(".* (in|at) ","",t.replace("DUE","due").replace("min","minute"))) for t in re.findall('(?<=<p class="Stops">)[^<]*(?=</p>)',requests.get("https://nextbuses.mobi/WebView/BusStopSearch/BusStopSearchResults/"+busStopCode.lower()).content.decode('utf-8'))[:2])
+    return " and ".join(re.sub("^[0-9]+:[0-9][0-9]",_untracked,re.sub(".* DUE","due",re.sub(".* (in|at) ","",t.replace("min","minute")))) for t in re.findall('(?<=<p class="Stops">)[^<]*(?=</p>)',requests.get("https://nextbuses.mobi/WebView/BusStopSearch/BusStopSearchResults/"+busStopCode.lower()).content.decode('utf-8'))[:2])
 
 def lambda_handler(event, context):
     if event['request']['type'] not in ['AMAZON.StopIntent','AMAZON.CancelIntent']:
