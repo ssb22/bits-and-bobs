@@ -142,7 +142,7 @@ sshfs mac:/ /mac -o exec
 xrdb + .Xresources
 setxkbmap dvorak 2>/dev/null || setxkbmap "us(dvorak)"
 VBoxClient --clipboard # NOT -all (a kernel mismatch can stop mouse working after --vmsvga, which doesn't work anyway on our setup)
-cd .mozilla/firefox/25.CSS25/chrome && wget -N http://ssb22.user.srcf.net/css/25.css ; cd
+cd .mozilla/firefox/25.CSS25/chrome && wget -N https://ssb22.user.srcf.net/css/25.css ; cd
 firefox -P CSS25 &
 xsetroot -solid darkblue # .icewm/preferences DesktopBackgroundImage="" doesn't work ?
 

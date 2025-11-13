@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 # Python script to run the simulations for
-# http://ssb22.user.srcf.net/elec/oil.html
+# https://ssb22.user.srcf.net/elec/oil.html
 
 # radiant heat due to lack of loft insulation ?
 # (+ not rm'ing so much moisture & therefore bettr ??)
