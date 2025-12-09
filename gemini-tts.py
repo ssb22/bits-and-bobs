@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Text-to-Speech Reader using Gemini API and sox.
+"""Text-to-Speech Reader using Gemini API.
 Set GEMINI_API_KEY in environment.
 Can get "model overloaded" errors.
 
@@ -35,9 +35,12 @@ def split_into_sentences(text):
     except: return [s.strip() for s in re.split(r'[.!?。！？]+', text) if s.strip()]
 
 def main():
-    text = sys.stdin.read().strip()
-    if 'gradint.py' in sys.argv[0]:
-        language,text = text.split(None,1) # assume we're a Gradint shim expecting justSynthesize line on stdin
+    if 'gradint.py' in sys.argv[0]: # assume we're a Gradint shim expecting justSynthesize line
+        exec(sys.argv[1],globals())
+        text = justSynthesize
+        if text=="-": text = sys.stdin.read().strip()
+        language,text = text.split(None,1)
+    else: text = sys.stdin.read().strip()
     if not text:
         print("No text provided") ; return
     print("Press Ctrl+C to stop")
