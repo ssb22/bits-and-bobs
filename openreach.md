@@ -1,0 +1,82 @@
+
+from https://ssb22.user.srcf.net/setup/openreach.html (also [mirrored on GitLab Pages](https://ssb22.gitlab.io/setup/openreach.html) just in case)
+
+# Openreach broadband providers
+
+Many UK home ADSL Internet contracts are now sold by providers using the Openreach (ex-BT) infrastructure.
+
+The following notes are from our experience; your mileage may vary, and no warranty is implied.
+
+## Sky
+* We used them from mid-2016 to mid-2018
+* They used both IPv6 and IPv4
+* Our Raspberry Pi did work as a home server with Dynamic DNS when configured to use IPv4-only (i.e. we had a public IPv4 address not suppressed by carrier-grade NAT)
+* The supplied router had both [UPnP](https://ssb22.user.srcf.net/setup/upnp.html) and [DMZ](https://ssb22.user.srcf.net/setup/upnp.html#dmz) options for setting up servers, and can reserve DHCP IPs for specific MAC addresses (useful for setting up wireless printers etc)
+* We did not understand Sky’s procedure for returning the router for recycling at the end of our contract, so we kept it (see below)
+* The ISP traffic management included the blocking of outgoing SYN packets when the uplink is loaded—so if a large upload is in progress, you won’t be able to create new connections but can use established SSH tunnels.
+  * It’s a good idea to rate-limit large uploads on the client side anyway, so as to avoid completely saturating the uplink for other users in the home; the uplink is typically about 10 times slower than the downlink. You can ‘throttle’ some uploads with e.g. `pv -L 64k < source | ssh server 'cat > dest'`
+* Sky offered us a large introductory discount for 2016/17 (with no installation fee for the new line), then when we asked to leave at the end of the discounted period, they offered a smaller discount for 2017/18. But the discount they offered us for 2018/19 was smaller still, and switching became noticeably cheaper.
+
+## TalkTalk
+* We used them from mid-2018 to mid-2019
+* They used IPv4
+* Our Raspberry Pi worked as a home server (not suppressed by carrier-grade NAT)
+* TalkTalk’s supplied router was vulnerable to CVE-2018-8898 and we didn’t use it. But the procedure for returning it for recycling at the end of the contract was very straightforward—they automatically sent packaging and a label for us to take to a Post Office.
+* Sky’s router worked with TalkTalk after a simple restart; the only minor issue was its clock was stuck in 1970 because it came ‘hardwired’ to use Sky’s internal NTP servers on startup and these were not available via TalkTalk.
+* TalkTalk’s customer database system was slightly annoying: during sign-up they wrote down my name wrongly, and then they weren’t willing to fix it unless I submitted a certificate of Deed Poll or something (until I pointed out at the end of the contract that they were sending multiple “please renew at a smaller discount” letters with the wrongly-written name—evidently the customer-retentions team had the authority to fix it)
+* and when we left, the synchronisation of our switch date to the end of the discounted contract didn’t quite work and we had to pay a couple of pounds “early exit fee” for being off by a few days
+* They also seemed to get a bit confused by our attempt to give notice to leave. It turns out that if you want to change from one Openreach provider to another at the end of your contract, this is internally called a “working line takeover” and is not to be confused with cancelling the line altogether. So be sure to use the words “working line takeover” when talking about switching.
+
+## Post Office Broadband
+* We used them from mid-2019 to mid-2022
+* In March 2021 they passed the business to Shell Energy but still with Post Office branding
+* They used IPv4 and shared some infrastructure with TalkTalk. Our IP address was changed 4 to 6 times each week, with a few minutes’ outage each time; changes were more frequent when our usage was high (but pre-resetting the router before an expected period of use did not noticeably affect the odds of an outage). Geolocation services mapped these addresses to various towns in East Anglia; I *don’t* recommend submitting updates unless you can cope with potential vigilantes thinking they’ve “tracked down” future users of each IP to your location—you might be OK if it’s a large block of flats.
+* Sky’s router did *not* work with GPO’s service (the latter required a login, which can reportedly be extracted from GPO’s router but cannot then be added in to Sky’s without serious reflashing)
+* but GPO’s own router (a modified AMG1302-T11C) had all necessary UPnP, DMZ, IP-reservation functions etc: we were able to copy over all configuration from Sky’s router, so no change was required on our client devices
+  * Despite being shipped in 2019, the router had no support for the 2018 “WPA3” standard, and its “WPA2” is apparently a WPA1/WPA2 mixed mode, the security of which had been broken (but we weren’t worried with TLS/SSH on top)
+* GPO’s router had a poor WPS implementation: once you add a device (like a wireless printer) via WPS, all non-WPS devices are thrown off the WiFi until you restart the router, whereupon the WPS devices are locked out. So it’s best to leave WPS disabled: use “WiFi Direct” (Simple AP) to access the new device’s HTTP server and go from there.
+* Our Raspberry Pi worked as a home server (not suppressed by carrier-grade NAT), **but** all incoming connections appeared to originate at our home’s external IP address instead of the true outside address (it seems GPO’s router did NAT in *both* directions)—this made server diagnostics (and IP-related rules) more difficult, as none of the logs said where outside connections really came from other than “outside”.
+* GPO’s DNS server returned proxy addresses in TalkTalk/Opal’s 62.24.128.0/17 block for some hosts, including `github.com` (interfering with SSH-based Git cloning), `ssh.st0rage.org` (interfering with SSH logins), and from late 2021 `tilde.pink` (interfering with Gemini protocol experiments). This could sometimes be worked around by setting `.ssh/config` to use alternate hosts (e.g. `st0rage.org` instead of `ssh.st0rage.org`, and `ssh.github.com` instead of `github.com`); it could also be worked around by using a public DNS server, or put the IP address into `.ssh/config` or `/etc/hosts` although this can change so you’ll have to keep it updated. On Android, Termux’s `host` command uses `8.8.8.8` but the Gemini clients don’t, so you’d need to use mobile data instead of WiFi to access `tilde.pink` on that platform.
+* GPO’s contract came with anytime landline calls to other Post Office Home Phone customers, and it was possible to share a referral bonus with one when signing up by telephone. But calls were *not* inclusive in *both* directions: only new customers starting after the end of January 2019 received the anytime inclusive calls to other Post Office numbers; they were *not* automatically granted for customers who’d started their contracts earlier. This led to a minor “bill shock” incident after we mistakenly told a relative that calls between us would be free in either direction.
+  * The inclusive calls must not exceed one hour per call or they start billing extra.
+  * The subset of customers who could make these inclusive calls continued to be able to do so after the Shell takeover in March 2021. We did not test if other customers were retrospectively added as a result of that takeover or not.
+* For renewal in 2020, we received a paper letter 2½ weeks before our end date, inviting us to log in to our account on their website and renew at the same discount given to new customers (unlike Sky and TalkTalk who had offered us a smaller discount than their new customers). Confusingly, the renewal option was called “Upgrade” by the Web interface. GPO’s discounted price had increased by 13% for everyone (but that was still competitive as the whole industry had reduced their discounts), and they offered a 2-year price-fix for an additional 11%, which was worth it if and only if you expected the *following* year’s increase to exceed 22% (because they’d promised no mid-contract rises, making the basic contract a 1-year fix); although we hadn’t seen any publicity about ‘discount erosion’ from the press (which tended to write about *un* discounted prices) we still doubted GPO would think they could get away with a 22% hike one year after a 13% hike, so we went for the 1-year renewal. (As it turned out, the following year had no price increase at all.) We set the “go live” date to the first day after our original contract expired, which resulted in their system generating one un-discounted bill (it processed the billing a few hours before it processed the new contracts) but we were given credit for the overpayment.
+* For the 2021 renewal, the information offered beforehand did not confirm that the free calls to other Post Office numbers would still be included, but a call-centre operator said they would (and the letter sent immediately after listed these first)—but going via the call centre meant we were not controlling the “go live” date ourselves, and the operator set it 13 days too late, increasing one bill by a third.
+* In 2022 we moved, and were told that taking the service with us would require starting a new contract with Shell (not Post Office) and it would be 18 months with a mid-contract price hike, but they’d waive the installation charge. We cancelled this, as for [various reasons](visa.md) we already had a Virgin Broadband contract at the new property with 4 months left on it, and 4 months of a spurious Shell service would exceed the installation charge they were waiving.
+* Failure to return a router is chargeable. We had *two* to return: a new one Shell had sent to our new address, which we returned (using an enclosed return postage label) without taking it out of its box, and the previous one which they said they’d email us a label to print but their system didn’t (even after an operator said he’d overridden it on a 46-minute phone call) but we’ve not yet been charged. They no longer supplied packaging for old routers, changing the Post Office’s condition 7.12.1 “use the pre-paid packaging that we will send you” even though they’d said they’d keep the conditions the same for existing contracts after the takeover.
+
+## Shell Energy Broadband
+* We used them from late 2022 to early 2024 (starting in late 2022 after Virgin failed to retain us at the end of their contract: Virgin did call with an actually-good discount 6 days into our notice period, but the operator was unable to confirm the exit fee would be waived if we moved to a non-Virgin property, which *was* a possibility so we declined). Shell had recently increased prices but were still competitive; they were undercut by the non-fibre version of Now Broadband but that one wouldn’t install a line if you didn’t already have one.
+* Shell’s was an 18-month contract, with a price hike in month 8 that turned out to be 13%.
+* They were able to send an Openreach engineer to connect a new line at no extra cost—but *after* the 14-day “cooling-off” period, so you couldn’t check the line speed first (ours turned out to be *much* slower than that of a flat 300 metres away—the line route may have been less direct than we thought), but they did allow early contract renewal with an upgrade to fibre-to-the-cabinet at ~15% extra cost after another 14-day delay (the switchover itself took about 90 seconds of downtime).
+* They supplied a Technicolor DGA0122NLK (an OpenWrt-based router; we found it more reliable if set to “split” the dual-band and manually set only permanently-nearby devices to 5GHz, although we did find one iPhone 14 worked better when added to both networks)
+* They used IPv4 and shared some infrastructure with TalkTalk. Our Raspberry Pi worked as a home server (not suppressed by carrier-grade NAT), and source IPs of incoming connections were correctly preserved. Their DNS server appeared to be behaving normally, not redirecting GitHub etc.
+* In December 2023 they passed the business to Octopus but still with Shell branding (and in 2024 Octopus sold these customers to TalkTalk, keeping only Shell’s energy customers; TalkTalk then used their own billing system—they were running the back-end infrastructure anyway)
+* Shell had not communicated very well about the contract end date, resulting in our notes being incorrect by 14 days (the cool-off period for the upgrade) so we ended up paying a small early-termination charge having arranged to switch away from them 2 weeks too early. Service was turned off at about 00:02 on the disconnection date.
+* A router return was requested (with a charge for failure to return), and they sent pre-paid packaging.
+
+## Vodafone Broadband
+* We used them starting in early 2024
+* Unlike most providers, they had started to accept PIP as eligibility for their “social” tariff (which was not as low as some other social tariffs but was the only one that accepted PIP)
+* In a 45-minute phone call “to check eligibility” their operator said they wanted to upgrade us to “full fibre” (fibre to the premises) still on that tariff, on a 12-month contract with an early exit option. We thought this move to FTTP would involve an Openreach engineer and another working-line takeover, but Vodafone’s fibre provider in our area turned out to be CityFibre, meaning we’d no longer be using Openreach and had to give notice to cancel that line (see above).
+* Vodafone’s social tariff was being slightly undercut by a promotional tariff from another FTTP supplier called Grain, but there were a couple of reports of Grain installers causing unsafe property damage while installing their large wall-mounted routers, so we didn’t risk that one. CityFibre installed a smaller box next to Openreach’s and connected to the separate router’s WAN port.
+* Although Vodafone used CityFibre in our area, their instructions showed their custom “THG3000” router was also in use in areas where they used Openreach, so I supposed my notes on it can still count as Openreach-provider notes
+* The CityFibre engineer performed a factory reset of Vodafone’s router, undoing all the local network settings changes I had made in advance, which then had to be redone
+* They used both IPv4 and IPv6
+* Our Raspberry Pi worked as a home server (not suppressed by carrier-grade NAT), although there are three ports the router will not forward, including the standard SSH port (which was not a problem for us as we were using a non-standard port with CGI-based access controls for SSH anyway), plus the router’s “DMZ IP” setting can end up incorrect if its static host is not already up before this is set
+* In early 2025 renewal of the social tariff was not automatic and we did not receive any reminders, just a larger bill, but they were able to fix this on the eligibility call when we reapplied. Coincidentally later the same day we were called on by a couple of door-to-door agents whom I verified to be working for an EE contractor, who said we’d also be eligible for the lower social tariff on BT/EE: I pointed out BT’s website did not list PIP in their eligibility criteria, but they and their manager said the website information was incomplete, probably due to the ongoing merger of BT into EE—but when we tried signing up and phoning the next day to get onto *that* tariff, the operator confirmed the website *was* correct not to include PIP in its criteria, so we cancelled the switch and stayed with Vodafone (but I hope those agents were still compensated for the time they’d taken walking me through that sign-up despite the issues with larger fonts on my phone’s browser).
+
+Copyright and Trademarks:
+All material © Silas S. Brown unless otherwise stated.
+Android is a trademark of Google LLC.
+CVE is a registered trademark of The MITRE Corporation.
+Gemini is a trademark of Google LLC when used in the context of LLMs.
+Git is a trademark of the Software Freedom Conservancy.
+GitHub is a trademark of GitHub Inc.
+iPhone is a trademark of Apple in some countries.
+Post Office is a registered trademark of Post Office Limited.
+Raspberry Pi is a trademark of the Raspberry Pi Foundation.
+Technicolor is a registered trademark and trade name of Technicolor Group Company.
+Vodafone is a trademark of Vodafone Group Plc.
+Wi-Fi is a trademark of the Wi-Fi Alliance.
+Any other [trademarks](https://ssb22.user.srcf.net/trademarks.html) I mentioned without realising are trademarks of their respective holders.

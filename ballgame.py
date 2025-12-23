@@ -1,4 +1,5 @@
 # Introductory Python from https://ssb22.user.srcf.net/game/ball.html
+# (or see the second part of oop.md in this repository)
 # (mostly-completed solution for demonstration purposes only)
 
 import pygame
