@@ -9,19 +9,19 @@ For Unix or GNU/Linux users with home server equipment, the obvious setup is an 
 
 This simple script [openid-cli.py](openid-cli.py) can be used with `python-openid`. It expects a file called `openid_config.py` containing something like:
 
-`local_addr = ('localhost', 8100)
+`local_addr = ('localhost', 8100)`
 
-public_endpoint_url = "http://home-server.example.org/openid"
+`public_endpoint_url = "http://home-server.example.org/openid"`
 
-profile = { "fullname":"A. N. Other", "nickname":"A.N.O." }`
+`profile = { "fullname":"A. N. Other", "nickname":"A.N.O." }`
 
 and in your home server’s `/etc/nginx/sites-enabled/default` (or equivalent for Apache),
 
-`location /openid {
+`location /openid {`
 
-proxy_pass http://localhost:8100;
+`proxy_pass http://localhost:8100;`
 
-}`
+`}`
 
 so that requests for `/openid` are sent to the script. Running the script will then prompt you to add the correct markup to your home page’s `<head>` section, whereupon you should be able to use your home page’s URL as an OpenID logon and confirm in the terminal.
 

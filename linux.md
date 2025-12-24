@@ -29,13 +29,13 @@ If your computer is 64-bit capable and can boot from multi-gigabyte media (DVD o
 * If you don’t have a DVD, you can [try “UNetbootin” to set up a USB stick](rising.md), or borrow a USB DVD reader.
 * If, after installing, a laptop fails to activate its graphical display, try logging in on a console (Ctrl-Alt-F2), do `sudo apt install gdm3 lightdm`, and select `lightdm` as the active display manager. For auto-login, create `/etc/lightdm/lightdm.conf` with:
 
-  `[SeatDefaults]
+  `[SeatDefaults]`
 
-  autologin-user=` (your user name)
+  `autologin-user=` (your user name)
 
-  `autologin-user-timeout=0
+  `autologin-user-timeout=0`
 
-  user-session=Lubuntu`
+  `user-session=Lubuntu`
 
   You may now remove the `sddm` package.
 * If the display is stuck on 640x480 resolution, from a terminal (or console) type `sudo nano /etc/default/grub` and uncomment `GRUB_TERMINAL=console` (after saving you will then need to type `sudo update-grub` in the terminal).
@@ -58,15 +58,15 @@ Most ‘consumer’ PCs sold since early 2007 (when Vista was new) can read DVDs
   * **LaTeX users beware:** Do not install the `texlive-full` package if the user is likely to paste Traditional Chinese into LibreOffice. When such pastes occur, LibreOffice looks for the first Chinese font listed, which will be Arphic Simplified if TexLive installed that under ‘A’—but the system fails to select the matching Arphic Traditional font for characters not present in Simplified, instead rendering these in a *non-matching* font which uglifies printouts. So if you do leave TeXLive on the machine, I suggest uninstalling its Arphic fonts if the user won’t be coding for old-style CJK-LaTeX. (If they *will* use CJK-LaTeX *and* paste Traditional Chinese into LibreOffice then you might just have to tell them to correct LibreOffice’s font choice after every paste.)
 * Developers: if you have a 64-bit CPU and want to compile for it (or if you want to run Zoom, which started to require 64-bit after version 5.4), try:
 
-  `dpkg --add-architecture amd64
+  `dpkg --add-architecture amd64`
 
-   apt-get update
+  `apt-get update`
 
-   apt-get install linux-image-generic:amd64
+  `apt-get install linux-image-generic:amd64`
 
-   reboot
+  `reboot`
 
-   apt-get install gcc:amd64 cpp:amd64 gdb:amd64`
+  `apt-get install gcc:amd64 cpp:amd64 gdb:amd64`
 
   If you’ve upgraded to 16.04, you will likely also need `linux-generic-hwe-16.04:amd64 gcc:amd64 cpp:amd64 gcc-5:amd64 cpp-5:amd64 binutils:amd64 g++:amd64 g++-5:amd64 lxrandr:amd64 x11-xserver-utils:amd64` which in 16.04 is somehow incompatible with `libtool` (frequently required by `autogen.sh` files in source packages) so you might need temporarily to switch back to a 32-bit-only compilation environment in those circumstances, or use conan.io etc instead of autogen.
   * If you’ve upgraded to 18.04, you might see an error message from `iucode_tool` updating `initramfs`—this does *not* mean your system is unbootable. The system should still boot without the microcode updater, and it can be restored when the initramfs is updated after next boot.

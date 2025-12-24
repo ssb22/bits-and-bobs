@@ -1687,10 +1687,10 @@ BBC Music Magazine April 2014
 **Alexa, play Shostakovich 5**
 
 Tracks:
-1. 1. Moderato (18:26)
-2. 2. Allegretto (5:43)
-3. 3. Largo (15:39)
-4. 4. Allegro Non Troppo (11:42)
+1. Moderato (18:26)
+2. Allegretto (5:43)
+3. Largo (15:39)
+4. Allegro Non Troppo (11:42)
 
 ## Tessarini: Trio Sonatas Op.12; Sonatas for Flute and Continuo
 
