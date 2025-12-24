@@ -12,22 +12,33 @@ For even-sided polygons, you can at least make a Eulerian path (not a circuit) i
 Since each removed link deprives *two* corners of a connection, the number of links you have to leave out (none of which are connected to each other) is $(n-2)/2 = (1/2)n-1$.
 
 Or to put it another way, the number of links you *can* draw (connecting two corners each time) is 
+```math
+1/2 ((n-2)(n-2) + 2(n-1)) 
+```
 
-$1/2 ((n-2)(n-2) + 2(n-1)) $
+```math
+ = 1/2 (n^2-4n+4 + 2n-2) 
+```
 
-$ = 1/2 (n^2-4n+4 + 2n-2) $
+```math
+ = 1/2(n^2-2n+2) 
+```
 
-$ = 1/2(n^2-2n+2) $
-
-$ = (1/2)n^2-n+1 $
-
+```math
+ = (1/2)n^2-n+1 
+```
 so the number left out is 
+```math
+ (n(n-1)/2) -(1/2)n^2+n-1
+```
 
-$ (n(n-1)/2) -(1/2)n^2+n-1$
+```math
+ = ((n^2 - n - n^2)/2)+n-1
+```
 
-$ = ((n^2 - n - n^2)/2)+n-1$
-
-$ = n-n/2-1 = (1/2)n-1$
+```math
+ = n-n/2-1 = (1/2)n-1
+```
 
 ![eulerian.png](https://ssb22.user.srcf.net/css/eulerian.png)If you are trying to draw this, be careful: once you get to about $n=8$ it can be easy to “hem yourself in” by drawing the lines in the wrong order. To be safe, always go to one of the “least full” vertices. Or choose a direction (e.g. clockwise) and always go to the first one in that direction that is not yet linked from the current one (this will favour “around the edge” links over “across the middle” ones; as demonstrated by a [BBC Micro one-liner](https://ssb22.user.srcf.net/adjuster/twitter.html#eulerian), it results in line-crossings for all $n≥5$, and in regular polygons gives one bisection if and only if $n$ is even).
 
