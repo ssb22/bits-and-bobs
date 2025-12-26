@@ -33,8 +33,27 @@ def _untracked(m):
     # assume clock time means untracked
     mins = int((time.mktime(time.localtime()[:3]+tuple(int(x) for x in m.group().split(':'))+time.localtime()[5:])-time.time())/60)
     return "untracked "+str(mins)+" minute"+("" if mins==1 else "s")
+def dedup(L,maxR=None):
+    r=set()
+    for i in L:
+        if not i in r: yield i
+        r.add(i)
+        if len(r)==maxR: return
 def next_buses():
-    return " and ".join(re.sub("^[0-9]+:[0-9][0-9]",_untracked,re.sub(".* DUE","due",re.sub(".* (in|at) ","",t.replace("min","minute")))) for t in re.findall('(?<=<p class="Stops">)[^<]*(?=</p>)',requests.get("https://nextbuses.mobi/WebView/BusStopSearch/BusStopSearchResults/"+busStopCode.lower()).content.decode('utf-8'))[:2])
+    r=" and ".join(
+        dedup((
+            re.sub(
+                "^[0-9]+:[0-9][0-9]",_untracked,
+                re.sub(
+                    ".* DUE","due",
+                    re.sub(".* (in|at) ","",
+                           t.replace("min","minute"))))
+            for t in re.findall(
+                    '(?<=<p class="Stops">)[^<]*(?=</p>)',
+                    requests.get("https://nextbuses.mobi/WebView/BusStopSearch/BusStopSearchResults/"+busStopCode.lower())
+                    .content.decode('utf-8'))
+            if not "Cancelled" in t), 2))
+    return r if r else "No forthcoming departures"
 
 def lambda_handler(event, context):
     if event['request']['type'] not in ['AMAZON.StopIntent','AMAZON.CancelIntent']:
