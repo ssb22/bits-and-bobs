@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Backport Telegram Desktop's "Export chat history" JSON
 to the format used by a much older version of Telegram Desktop.
+
+(e.g. Telegram Desktop 1.8.15 for Mac, the last version to work
+in Mac OS X 10.7 on an old 2011 Mac Mini: this version stopped
+being able to communicate with Telegram's servers in November 2025.)
+
 Use for when you want to export Saved Messages in the same format
 as before because you have scripts that handle the old format.
 
