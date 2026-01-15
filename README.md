@@ -21,7 +21,8 @@ Miscellaneous scripts etc from https://ssb22.user.srcf.net
 * [macvoices](macvoices.txt): change Mac system voice and language from the command line (see [Mac magnification setup notes](mac.md))
 * [malware blocking nginx configuration](malblock-nginx.conf) (no longer works on Chrome 140 which bypasses the proxy's DNS) see [anatomy of a shady advertising network](shady.md)
 * [narrow-reader](narrow-reader.sh): make Safari 6's "Reader" mode narrower for use with magnification (no longer works on current Macs)
-* [nextbus](nextbus.py): briefly query NextBuses.mobi for a preset nearest stop on your Amazon Alexa devices (developer setup required)
+* [nextbin](nextbin.py): briefly query Cambridge bin collection dates for a preset address on your Amazon Alexa devices (developer setup required) or command line
+* [nextbus](nextbus.py): briefly query NextBuses.mobi for a preset nearest stop on your Amazon Alexa devices (developer setup required) or command line
 * [notesorg](notesorg.py), [notesorg-lua](notesorg_lua.txt), [notesorg-macro](notesorg_macro.txt): batch-categorise notes on Emacs, Psion etc (currently being migrated to the `scan-reflow` repository)
 * [offline-updater](offline-updater.py): see [offline package installation for Debian-based GNU/Linux distributions](offline-updater.md)
 * [oil](oil.py): plot simulations for oil-filled radiators on my [heating a flat discussion](oil.md)
