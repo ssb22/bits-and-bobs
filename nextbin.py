@@ -37,7 +37,9 @@ def next_bins():
         if firstDate and not date==firstDate:
             if firstDate==time.strftime("%A %d %B %Y"): spokenDate = " today"
             elif firstDate==time.strftime("%A %d %B %Y",time.localtime(time.time()+24*3600)): spokenDate = " tomorrow"
-            elif time.mktime(time.strptime(firstDate,"%A %d %B %Y"))-time.time() < 6*24*3600: spokenDate = f" on {firstDate.split()[0]}"
+            elif firstDate==time.strftime("%A %d %B %Y",time.localtime(time.time()-24*3600)): spokenDate = " yesterday" # this can happen (if a collection is delayed?)
+            elif 0 < time.mktime(time.strptime(firstDate,"%A %d %B %Y"))-time.time() < 6*24*3600: spokenDate = f" on {firstDate.split()[0]}"
+            elif -6*24*3600 < time.mktime(time.strptime(firstDate,"%A %d %B %Y"))-time.time() < 0: spokenDate = f" last {firstDate.split()[0]}"
             else: spokenDate = f" on {' '.join(firstDate.split()[:3])}"
             return " and ".join(colours) + spokenDate
         firstDate = date ; colours.append(colour)
