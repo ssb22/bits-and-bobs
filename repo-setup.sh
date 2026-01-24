@@ -7,8 +7,9 @@
 # (all = all public repositories;
 # any NOT in the list is assumed not to have mirrors)
 # 
-All="CedPane PrimerPooler adjuster css-generator web-imap-etc config lexconvert indexer web-typography jianpu-ly mwr2ly midi-beeper scan-reflow bits-and-bobs router-scripts wm6-utils s60-utils gradint yali-voice yali-lower cameron-voice 4dml old-web-access-gateway clara-empricost"
+All="CedPane PrimerPooler adjuster css-generator web-imap-etc config lexconvert indexer web-typography jianpu-ly mwr2ly midi-beeper scan-reflow bits-and-bobs router-scripts phone-utils ssb22 gradint yali-voice yali-lower cameron-voice 4dml old-web-access-gateway clara-empricost"
 LabOnly="yinghan"
+HubLabOnly="ssb22"
 IsIn() { N="$1"; shift; for i in $*; do if [ "$i" = "$N" ] ; then return 0; fi; done; false ; }
 if [ ! "$1" ]; then
     echo "Syntax: repo-setup [--shallow] all | repo names"
@@ -27,17 +28,19 @@ while [ "$1" ]; do
   if [ -e "$N" ]; then # (you can run with * in a dir with files as well)
     if [ -d "$N" ]; then cd "$N"; git pull; cd ..; fi # (if already cloned, at least try to make sure up-to-date)
   else
-    git clone $RepoSetupShallowClone git@$(if IsIn $N $LabOnly; then echo gitlab; else echo github; fi).com:ssb22/$N.git || exit 1
+    git clone $RepoSetupShallowClone git@$(if IsIn "$N" $LabOnly; then echo gitlab; else echo github; fi).com:ssb22/"$N".git || exit 1
     cd "$N" || exit 1
-    if IsIn $N $All && ! IsIn $N $LabOnly; then
+    if IsIn "$N" $All && ! IsIn "$N" $LabOnly; then
       git remote set-url origin --push --delete . 2>/dev/null >/dev/null || true
       git remote set-url origin --push git@github.com:ssb22/$N.git || exit 1
-      if [ $N == jianpu-ly ] ; then git remote set-url origin --push --add git@github.com:jianpu-ly/$N.git || exit 1; fi # https://github.com/ssb22/jianpu-ly/issues/26
+      if [ "$N" == jianpu-ly ] ; then git remote set-url origin --push --add git@github.com:jianpu-ly/$N.git || exit 1; fi # https://github.com/ssb22/jianpu-ly/issues/26
       git remote set-url origin --push --add git@gitlab.com:ssb22/$N.git || exit 1
       git remote set-url origin --push --add git@gitlab.developers.cam.ac.uk:ssb22/$N.git || exit 1 # (beta service provided to cam.ac.uk members)
-      git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo $N|tr A-Z a-z).git || exit 1
-      git remote set-url origin --push --add git@gitee.com:ssb22/$(echo $N|sed -e s/^4/four/).git || exit 1
-      if IsIn $N CedPane yali-voice yali-lower cameron-voice; then git remote add hf git@hf.co:datasets/real-ssb22/$N && git config remote.hf.push master:main ; fi # (this needs a separate 'git push hf', but renaming the legacy branch might cause issues for some?)
+      if ! IsIn "$N" $HubLabOnly; then
+      git remote set-url origin --push --add git@bitbucket.org:ssb22/$(echo "$N"|tr A-Z a-z).git || exit 1
+      git remote set-url origin --push --add git@gitee.com:ssb22/$(echo "$N"|sed -e s/^4/four/).git || exit 1 # no new repositories for international users 2025-12, existing repositories still there
+      if IsIn "$N" CedPane yali-voice yali-lower cameron-voice; then git remote add hf git@hf.co:datasets/real-ssb22/$N && git config remote.hf.push master:main ; fi # (this needs a separate 'git push hf', but renaming the legacy branch might cause issues for some?)
+      fi
     else echo "Not adding mirrors to $N"
     fi
     git config user.name "Silas S. Brown"
