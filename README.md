@@ -23,7 +23,6 @@ Miscellaneous scripts etc from https://ssb22.user.srcf.net
 * [narrow-reader](narrow-reader.sh): make Safari 6's "Reader" mode narrower for use with magnification (no longer works on current Macs)
 * [nextbin](nextbin.py): briefly query Cambridge bin collection dates for a preset address on your Amazon Alexa devices (developer setup required) or command line
 * [nextbus](nextbus.py): briefly query NextBuses.mobi for a preset nearest stop on your Amazon Alexa devices (developer setup required) or command line
-* [notesorg](notesorg.py), [notesorg-lua](notesorg_lua.txt), [notesorg-macro](notesorg_macro.txt): batch-categorise notes on Emacs, Psion etc (currently being migrated to the `scan-reflow` repository)
 * [offline-updater](offline-updater.py): see [offline package installation for Debian-based GNU/Linux distributions](offline-updater.md)
 * [oil](oil.py): plot simulations for oil-filled radiators on my [heating a flat discussion](oil.md)
 * [openid-cli](openid-cli.py): run OpenID with terminal-based authentication (see [documentation](openid-cli.md))
@@ -65,5 +64,6 @@ Miscellaneous scripts etc from https://ssb22.user.srcf.net
 * [UK citizenship application and referee requirements](citizenref.md)
 * [UK passport application questions](passport.md)
 * [Using Microsoft Windows with low vision](windows.md)
+* [Why I don’t mind training “AI”](aitrain.md)
 * [Why I unsubscribe from MailChimp](mailchimp.md)
 * [Why Wi-Fi routers should be left switched on](router.md)
