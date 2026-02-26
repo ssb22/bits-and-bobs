@@ -5,7 +5,7 @@ if all rows contain the same number of columns: a
 it.  This script pads all rows to the number of
 columns of the longest row, as well as deleting
 any completely-blank columns with blank headings.
-Silas S. Brown 2024 - public domain."""
+Silas S. Brown 2024 - public domain - no warranty."""
 
 import sys
 if len(sys.argv) < 2: print ("Need files")

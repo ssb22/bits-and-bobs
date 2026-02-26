@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """git2gmi: summarise commit messages from a user's GitHub repositories as a Gemini markup file
-Silas S. Brown 2021-25, public domain"""
+Silas S. Brown 2021-25, public domain, no warranty"""
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs

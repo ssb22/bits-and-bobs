@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# Apache log alerts, Silas S. Brown 2019/21/23-24, public domain.
+# Apache log alerts, Silas S. Brown 2019/21/23-24, public domain, no warranty.
 
 # In late 2019, various IP addresses in China started downloading
 # the complete (~3M) CedPane file 30,000 times (40x/day/IP),

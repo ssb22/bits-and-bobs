@@ -1,5 +1,5 @@
 // chat.qwen.ai auto-play the TTS in browser
-// Silas S. Brown 2026 - public domain
+// Silas S. Brown 2026 - public domain - no warranty
 
 // Paste this into the Console window
 // Tested in Firefox 147 on Ubuntu GNU/Linux 24.04

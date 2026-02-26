@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# cdrdao track padder, 2012, 2020 Silas S. Brown. Public domain.
+# cdrdao track padder, 2012, 2020 Silas S. Brown. Public domain, no warranty.
 # Version 1.4
 
 # Where to find history:

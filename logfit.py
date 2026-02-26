@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # fit 3 points to A ln (x-B) + C
-# Silas S. Brown 2024 - public domain
+# Silas S. Brown 2024 - public domain - no warranty
 
 import scipy.optimize, re
 from math import log

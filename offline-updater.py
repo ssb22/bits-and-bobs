@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# offline-updater v1.02, Silas S. Brown 2013, public domain
+# offline-updater v1.02, Silas S. Brown 2013, public domain, no warranty
 # - chooses packaged files to copy to an offline system
 
 existing_files = "existing-files" # if this file exists,

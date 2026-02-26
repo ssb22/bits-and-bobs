@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # translate ASCII Braille to Unicode Braille
-# Silas Brown - public domain
+# Silas Brown - public domain - no warranty
 import sys
 print(sys.stdin.read().upper().translate(
     dict((ord(x),y)
