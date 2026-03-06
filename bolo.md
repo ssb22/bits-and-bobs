@@ -455,7 +455,7 @@ In Parts 1 and 2 the score is computed as follows:
 
 > 1000 points,
 
-> + 13 for every ball currently on screen,
+> +13 for every ball currently on screen,
 
 > +18 for every green block currently on screen,
 
