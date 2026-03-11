@@ -53,17 +53,17 @@ Magdalene - Cafeteria - Ramsay Hall. Card reader at entrance allows only College
 
 Murray Edwards (New Hall) - Dome - Pass slope, left, right, up - 12:30-1:30, 6-7:15 - 10% (and bank cards accepted) - £6 - 2023
 
-Newnham - Buttery - Right-hand corridor and keep going - 12:30-1:45 (1:30 Sat), 6:00-7:15, not Sundays - £1.50/person (bank cards accepted) - £6 - 2022
+Newnham - Buttery - Right-hand corridor and keep going - 12:30-1:45 (1:30 Sat), 6:00-7:15, not Sundays - £1.50/person (bank cards accepted, see [menu](https://newn.cam.ac.uk/weekly-menus)) - £6 - 2022
 
 Pembroke - Servery - First left - 11:45-1:30 (1:15 weekends), 5:45-6:45 - 67% and you have to be with a Pembroke member (1 per guest) - £8-9 - 2022
 
 Peterhouse - Hall/Servery - Through arch & 2nd left - 12:30-1:30 (not Sundays), 6-7 - 56% (30%+VAT); non-members allowed only in term time - £6 - 2015
 
-Queens’ - Cafeteria - Back entrance, turn left, protruding doors - 12:30-1:30 (2pm on termtime weekdays), 5:45-7 - 30% (bank cards only) - £5-£6 (see [menu](http://www.queens.cam.ac.uk/life-at-queens/domestic/catering/cafeteria-menu)) - 2024
+Queens’ - Cafeteria - Back entrance, turn left, protruding doors - 12:30-1:30 (2pm on termtime weekdays), 5:45-7 - 30% (bank cards only) - £5-£6 (see [menu](https://www.queens.cam.ac.uk/life-at-queens/domestic/catering/cafeteria-menu)) - 2024
 
-Robinson - Garden Restaurant - Right, past cafe/bar, enter on right at end of alley and downstairs - Mon-Fri 12:20-1:40 & 6-7:15; Sat 12-1:30, Sun 12:30-1:30 (no evening meal at weekends) - Varies (both prices displayed); bank cards accepted - £7 (see [menu](http://www.robinson.cam.ac.uk/college-life/garden-restaurant-menu)) - 2026
+Robinson - Garden Restaurant - Right, past cafe/bar, enter on right at end of alley and downstairs - Mon-Fri 12:20-1:40 & 6-7:15; Sat 12-1:30, Sun 12:30-1:30 (no evening meal at weekends) - Varies (both prices displayed); bank cards accepted - £7 (see [menu](https://www.robinson.cam.ac.uk/college-life/garden-restaurant-menu)) - 2026
 
-Selwyn - Servery in Hall - Stone steps on the right - 12:00-1:30 (weekends 11:30-1), 6-7 - Prices as marked (discount for Selwyn students) - £6-£7 (bank cards only) - 2024
+Selwyn - Servery in Hall - Stone steps on the right - 12:00-1:30 (weekends 11:30-1), 6-7 - Prices as marked (discount for Selwyn students, see [menu](https://www.sel.cam.ac.uk/current-members/hall-menu)) - £6-£7 (bank cards only) - 2024
 
 Sidney Sussex - Hall - Left and on the right-hand side of the court - 12-1:30 (no Sun), 5:45-6:45 (term only) - Both prices displayed on noticeboard + additional tier for non-university members - £6-£7 (bank cards only) - 2024
 
@@ -73,7 +73,7 @@ Trinity Hall - Cafeteria - College members only (cash not accepted) - 2015
 
 University Centre - Main Dining Hall - Second floor - Closed down - 2022
 
-West Hub - Canteen - Ground floor central (not the entrance cafe) - 8-2:30 Mon-Fri - n/a - £7.50 (bank cards accepted) - 2022
+West Hub - Canteen - Ground floor central (not the entrance cafe) - 8-2:30 Mon-Fri - n/a - £7.50 (bank cards accepted, see [menu](https://www.catering.admin.cam.ac.uk/cafes/west-hub-canteen)) - 2022
 
 Wolfson - Cafeteria - building ahead, upstairs - 12:30-2:15 (1:30 Sat), 6-7:30 - college card required - 2015
 
