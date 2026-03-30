@@ -9,7 +9,7 @@ set -e
 cd /tmp
 wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz
 tar -Jxvf Python-2.7.18.tar.xz
-cd Python-2.7-18
+cd Python-2.7.18
 ./configure --prefix=/opt/python2 --enable-optimizations
 # Disable tests that won't pass on Ubuntu 24.04
 # for libraries which you shouldn't be using anyway
@@ -20,4 +20,12 @@ done
 make
 sudo mkdir -p /opt/python2
 sudo make install
+cd ..
+rm -rf Python-2.7.18
 for N in /opt/python2/bin/python2*; do sudo ln -s $N /usr/local/bin/; done
+
+echo "Python 2 set up; now setting up Pip 2"
+curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+sudo python2 get-pip.py
+rm get-pip.py
+sudo ln -s /opt/python2/bin/pip2 /usr/local/bin/
