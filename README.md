@@ -16,6 +16,7 @@ Miscellaneous scripts etc from https://ssb22.user.srcf.net
 * [get-python2](get-python2.sh): set up old python2 for testing
 * [git2gmi](git2gmi.py): summarise recent history from multiple GitHub projects as Gemini Protocol markup
 * [gitify](gitify.sh): create commits from file timestamps
+* [iphone-pics](iphone-pics.sh): move the camera roll off of an iPhone to make space on the device, using GNU/Linux with ifuse
 * [log-alert](log-alert.py): checks Apache logs for people doing too much
 * [logfit](logfit.py): fit log-plot to points
 * [macvoices](macvoices.txt): change Mac system voice and language from the command line (see [Mac magnification setup notes](mac.md))
