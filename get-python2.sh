@@ -6,6 +6,10 @@
 # Tested on Ubuntu 24.04.
 
 set -e
+if which dpkg && ! dpkg -l | grep libbz2-dev >/dev/null; then
+    echo "Installing libbz2-dev to get bz2 module" # otherwise Python2.7 will just compile without it and it's unavailable
+    sudo apt install libbz2-dev
+fi
 cd /tmp
 wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz
 tar -Jxvf Python-2.7.18.tar.xz
