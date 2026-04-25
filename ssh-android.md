@@ -10,7 +10,7 @@ Some Android devices have “USB tether” functions that don’t work.  The fol
 1. You must have a working `adb` command (for example if you’ve installed the Android Developer Tools bundle)
 2. The shell that `adb -d shell` gives you must contain an `ssh` command
 
-Works on Android 4.4 but not on Android 4.1. If your device lacks one and you can’t install it, you might need to use an SSH app with port forwarding (such as ConnectBot or the paid version of JuiceSSH—you’ll now need an older APK of this for devices below Android 8) although you might still be able to adapt some of the script below.
+Works on Android 4.4 but not on Android 4.1. If your device lacks an `ssh` command and you can’t install it, you might need to use an old APK of an SSH app with port forwarding such as VX ConnectBot, although you might still be able to adapt some of the script below.
 
 ## Advantages of SSH command over ADB
 * No “rooting” of the Android device is required
