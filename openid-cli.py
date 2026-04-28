@@ -8,7 +8,7 @@
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 # and in China: https://gitee.com/ssb22/bits-and-bobs
 
-print ("OpenID Command-line Authoriser v1.4, Silas S. Brown 2017, 2020, 2025")
+print ("OpenID Command-line Authoriser v1.5, Silas S. Brown 2017, 2020, 2025-2026")
 print ("(public domain, no warranty)\n")
 
 import sys
@@ -17,7 +17,10 @@ except ImportError: sys.stderr.write("Library not found\nTry: sudo apt-get insta
 try: from openid_config import local_addr, public_endpoint_url, profile
 except: sys.stderr.write("openid_config.py not found, please make one\n"),sys.exit(1)
 print ("Make sure your home page <head> section has:")
+print ('<link rel="openid2.provider" href="'+public_endpoint_url+'" />')
+print ('<link rel="openid2.local_id" href="YOUR_WEBSITE_HERE">')
 print ('<link rel="openid.server" href="'+public_endpoint_url+'" />\n')
+
 sys.stdout.write("Loading... ") ; sys.stdout.flush()
 try: from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler # Python 2
 except: from http.server import HTTPServer, BaseHTTPRequestHandler # Python 3
@@ -46,7 +49,7 @@ class Handler(BaseHTTPRequestHandler):
         self.handleQ(query)
     def log_message(*args): pass # (not needed if nginx is doing it)
     def handleQ(self, query):
-        if type("")==type(u"") and type(list(query.keys())[0])==bytes: query=dict((k.decode('utf-8'),v.decode('utf-8')) for k,v in query.items())
+        if type("")==type(u"") and query.keys() and type(list(query.keys())[0])==bytes: query=dict((k.decode('utf-8'),v.decode('utf-8')) for k,v in query.items())
         try: req = OpenID.decodeRequest(query)
         except server.ProtocolError as e: return self.encodeAndSend(e)
         if req==None: self.send_response(200),self.end_headers()
