@@ -1,8 +1,10 @@
 """
-nextbuses.mobi fetch next 2 buses for specific stop
-Silas S. Brown 2025 - public domain - no warranty
+traveline.info fetch next 2 buses for specific stop
+Silas S. Brown 2026 - public domain - no warranty
 
-You need to set busStopCode below.
+You need to set busStopCode below.  It is different
+from the old nexbuses.mobi code, and the method of
+finding it on traveline.info may require graphical browsing.
 
 You can then use this either on the command line or as an Alexa skill.
 
@@ -32,7 +34,7 @@ import requests, re, time
 def _untracked(m):
     # assume clock time means untracked
     mins = int((time.mktime(time.localtime()[:3]+tuple(int(x) for x in m.group().split(':'))+time.localtime()[5:])-time.time())/60)
-    return "untracked "+str(mins)+" minute"+("" if mins==1 else "s")
+    return ("untracked "+str(mins)+" minute"+("" if mins==1 else "s")) if 0<=mins<200 else m.group()
 def dedup(L,maxR=None):
     r=set()
     for i in L:
@@ -46,11 +48,10 @@ def next_buses():
                 "^[0-9]+:[0-9][0-9]",_untracked,
                 re.sub(
                     ".* DUE","due",
-                    re.sub(".* (in|at) ","",
-                           t.replace("min","minute"))))
+                    t.replace("min", "minute")))
             for t in re.findall(
-                    '(?<=<p class="Stops">)[^<]*(?=</p>)',
-                    requests.get("https://nextbuses.mobi/WebView/BusStopSearch/BusStopSearchResults/"+busStopCode.lower())
+                    '(?<=<div class="single-visit__arrival-time__cell">)[^<]*(?=</div>)',
+                    requests.get("https://www.traveline.info/stops/"+busStopCode)
                     .content.decode('utf-8'))
             if not "Cancelled" in t), 2))
     return r if r else "No forthcoming departures"
