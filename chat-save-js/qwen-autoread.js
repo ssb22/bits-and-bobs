@@ -2,12 +2,12 @@
 // Silas S. Brown 2026 - public domain - no warranty
 
 // Paste this into the Console window
-// Tested in Firefox 147 on Ubuntu GNU/Linux 24.04
+// Tested in Firefox 147-149 on Ubuntu GNU/Linux 24.04 & 26.04
 
 function watchContainer(container) {
     const doneAttr = 'data-auto-tts-processed';
     if (container.hasAttribute(doneAttr)) return;
-    let triesLeft=50;
+    let triesLeft=300; // half-seconds (could be high if "Thinking" and server loaded)
     const check=setInterval(()=>{
         if(container.children.length==6) {
             clearInterval(check);
