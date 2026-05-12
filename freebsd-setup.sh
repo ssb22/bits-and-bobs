@@ -2,7 +2,7 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2025, public domain, no warranty
+# Silas S. Brown 2020-2026, public domain, no warranty
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4
 # We install 2 Firefox profiles (one with CSS, one w/out)
@@ -29,7 +29,7 @@ export User=ssb22
 
 cd
 set -e
-pkg install -y ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py311-python-xlib telegram-desktop wget xclip bash
+pkg install -y ca_root_nss desktop-installer firefox fusefs-sshfs joe ncdu py311-python-xlib telegram-desktop wget xclip bash beadm
 echo '#!/usr/local/bin/bash' > n && sed -e 's,+%m,+%m|sed -e s/^0//,' < /usr/local/bin/auto-pkg-branch >> n && chmod +x n && mv n /usr/local/bin/auto-pkg-branch
 echo Use desktop selection 7 IceWM;echo Press Enter
 read
@@ -175,13 +175,22 @@ mv n /etc/ttys
 echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
 echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 
-echo "Use auto-update-system for security patches"
+cat <<EOF
+For security patches, use: auto-update-system
+
+For point release upgrades e.g. 14.3 to 14.4, use:
+
+    freebsd-update -r 14.4-RELEASE upgrade
+
+(which prompts for freebsd-update install)
+
+The apparent size of the disk will SHRINK with each update
+due to snapshots.  To remove all old snaphots, do:
+
+    for N in $(beadm list|awk 'BEGIN{s=0} /^[1-9]/{if(s)print(s);s=$0}'|sed 's/ .*//'); do beadm destroy $N;done
+
+EOF
 # If get an error about /usr/local/etc/pkg/*.conf, do:
 # mkdir /usr/local/etc/pkg
 # ln -s /etc/pkg /usr/local/etc/pkg/repos
 # auto-update-system
-
-# If need more space for auto-update-system, do first:
-# rm -rf .cache .mozilla/firefox/*/storage /boot.save /var/cache/pkg/* /usr/ports/*/*/work
-
-# Also need to follow instructions to upgrade point releases when EOL.
