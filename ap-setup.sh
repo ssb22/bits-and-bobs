@@ -123,4 +123,10 @@ grep -v SHELL=/bin/bash < /var/spool/cron/crontabs/root | grep -v "@reboot while
 echo SHELL=/bin/bash >> /var/spool/cron/crontabs/root
 echo "@reboot while ! /usr/sbin/route -n | /usr/bin/grep $GatewayIP; do /usr/sbin/ifup $Eth; /usr/bin/sleep 1; done" >> /var/spool/cron/crontabs/root
 
+# Reflect printer discovery (so you can install avahi-daemon
+# on any main-network computer with a CUPS server and iOS can
+# access it via AirPrint when connected to either net's WiFi)
+sudo sed -i s/^#*enable-reflector=no/enable-reflector=yes/ /etc/avahi/avahi-daemon.conf
+sudo systemctl restart avahi-daemon
+
 echo "All set.  Try rebooting."
