@@ -7,4 +7,4 @@
 // Paste this line into DOM Inspector Console + copy the result.
 // Tested in Firefox 144-147 on GNU/Linux
 
-((d)=>{var r=[],i;for(i=0;i<d.length;i++)r.push(((d[i].getAttribute("class").search("user-message")>-1)?"User: ":"Qwen: ")+d[i].innerText);return r.join('\n\n')})(document.querySelectorAll('.chat-user-message-wrapper, .response-message-content')) /* qwen-save */
+((d)=>{var r=[],i;for(i=0;i<d.length;i++)r.push(((d[i].getAttribute("class").search("user-message")>-1)?"User: ":"Qwen: ")+d[i].textContent.replace(/\n/g,'\n\n'));return r.join('\n\n')})(document.querySelectorAll('.chat-user-message-wrapper, .response-message-content')) /* qwen-save */
