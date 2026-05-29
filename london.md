@@ -3,7 +3,7 @@ from https://ssb22.user.srcf.net/cvi/london.html (also [mirrored on GitLab Pages
 
 # Cambridge to London avoiding large stations
 
-Online route planners seem determined to have us do battle with monsters like King’s Cross. These navigational nightmares can be daunting when travelling alone with limited sight, especially now that staff seem to be in shorter supply at large stations (to the point where booked assistance doesn’t always turn up and you can’t find anyone there) and much information is displayed only on distant signage that assumes good vision.
+Online route planners seem determined to have us do battle with monsters like King’s Cross. These navigational nightmares can be daunting when travelling alone with limited sight, especially now that staff seem to be in shorter supply at large stations (to the point where booked assistance doesn’t always turn up and you can’t find anyone there) and much information is displayed only on distant signage that assumes good vision, and in the case of King’s Cross St Pancras underground, their LEDs in 2026 have bad drivers that cause [phantom-array effects](https://ssb22.user.srcf.net/elec/lighting.html) in people with some sight conditions.
 
 I therefore have some notes on alternative routes avoiding these hubs. Medium-sized stations are more doable by yourself *and* can have staff available more readily than at the largest stations.
 
