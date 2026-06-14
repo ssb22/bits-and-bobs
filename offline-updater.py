@@ -1,7 +1,12 @@
 #!/usr/bin/env python2
 
-# offline-updater v1.02, Silas S. Brown 2013, public domain, no warranty
+# offline-updater v1.02 (c) Silas S. Brown 2013, License: Apache 2
 # - chooses packaged files to copy to an offline system
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to adapt this for something at work.)
 
 existing_files = "existing-files" # if this file exists,
 # it's expected to be the output of

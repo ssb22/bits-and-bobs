@@ -9,5 +9,7 @@
 # pressing the Yubikey, or you can just pipe its
 # output through this before sending to
 # 'anyconnect/bin/vpn -s' or whatever.
-# Public domain.
+# (c) Silas S. Brown. License: Apache 2 (just in case your
+# office's legal department doesn't trust public domain even
+# for a trivial script)
 exec tr "',.pyfgcrloeuidhtn;qjkxb" "qwertyuiopsdfghjklzxcvbn"

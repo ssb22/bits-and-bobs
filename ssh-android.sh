@@ -5,7 +5,12 @@
 # with SOCKS port-forwarding and decent terminal settings
 # (Linux users: remove the '--' on the first line above)
 
-# Silas S. Brown 2014-2015, 2019, public domain, no warranty
+# (c) Silas S. Brown 2014-2015, 2019, License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to adapt this for something at work.)
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs

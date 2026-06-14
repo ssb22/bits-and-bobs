@@ -1,4 +1,12 @@
-// c.ai LLM history saver - SSB 2024, public domain, no warranty
+// c.ai LLM history saver
+// (c) Silas S. Brown 2024, License: Apache 2
+// (I did say "public domain no warranty" but apparently
+// some corporate offices don't trust that.  Apache 2 lets
+// them know I don't have a silly patent up my sleeve that
+// I'd try to enforce, so their policy might accept it more
+// easily if you need to use this at work.)
+// This script interacts with services owned by their
+// respective operators; no affiliation is implied.
 
 // Ensure you've scrolled back enough to populate whole history.
 // By default 50 messages are shown when you load the character.

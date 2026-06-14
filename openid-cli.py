@@ -8,8 +8,13 @@
 # and at https://gitlab.developers.cam.ac.uk/ssb22/bits-and-bobs
 # and in China: https://gitee.com/ssb22/bits-and-bobs
 
-print ("OpenID Command-line Authoriser v1.4, Silas S. Brown 2017, 2020, 2025")
-print ("(public domain, no warranty)\n")
+print ("OpenID Command-line Authoriser v1.4 (c) Silas S. Brown 2017, 2020, 2025")
+print ("License: Apache 2\n")
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.)
 
 import sys
 try: import openid

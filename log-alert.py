@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# Apache log alerts, Silas S. Brown 2019/21/23-24, public domain, no warranty.
+# Apache log alerts (c) Silas S. Brown 2019/21/23-24, License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.)
 
 # In late 2019, various IP addresses in China started downloading
 # the complete (~3M) CedPane file 30,000 times (40x/day/IP),

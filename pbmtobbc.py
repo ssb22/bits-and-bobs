@@ -2,7 +2,13 @@
 # (should work in either Python 2 or Python 3)
 
 # Convert ASCII Portable Bitmap (.pbm) files to BBC Micro VDU 23 sequences
-# Silas S. Brown - Version 1.2 - public domain - no warranty
+# Version 1.2 (c) Silas S. Brown, License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.  Would be
+# interested to hear what job you have if you do though.)
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs

@@ -2,7 +2,12 @@
 
 # FreeBSD setup script
 # for Mac VirtualBox with screen magnification
-# Silas S. Brown 2020-2026, public domain, no warranty
+# (c) Silas S. Brown 2020-2026, License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.)
 
 # Tested on Mac OS 10.7.5, VirtualBox 4.3.4
 # We install 2 Firefox profiles (one with CSS, one w/out)

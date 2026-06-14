@@ -3,7 +3,13 @@
 # Script to make Safari 6's "Reader" mode narrower for use with
 # magnification, and to change Reader mode's colours.
 
-# Silas S. Brown 2012,2019,2021-22 - public domain - no warranty
+# (c) Silas S. Brown 2012,2019,2021-22.  License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.  Hopefully your
+# office doesn't still use Safari 6 though.)
 
 # Where to find history:
 # on GitHub at https://github.com/ssb22/bits-and-bobs

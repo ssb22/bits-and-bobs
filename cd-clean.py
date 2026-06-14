@@ -7,9 +7,17 @@
 # collection to rename (in which case you'll also get
 # MiniDLNA-compatible m3u playlists in the current directory)
 
-# Silas S. Brown 2025 - public domain, no warranty.  All
+# (c) Silas S. Brown, License: Apache 2.  All
 # copyrighted CDs should've been legally read for use within the
 # household only and the original physical copies still present.
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work, assuming that is
+# your work premises are licensed with the PRS or whatever
+# is appropriate for your country to give you permission to
+# play CDs there.)
 
 def main():
     if '--pipe' in sys.argv:

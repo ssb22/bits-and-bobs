@@ -5,7 +5,12 @@
 
 # The reverse of Rodrigo Silva's "git-restore-mtime" script.
 
-# v1.55, Silas S. Brown 2019-23, public domain, no warranty
+# v1.55 (c) Silas S. Brown 2019-23, License: Apache 2
+# (I did say "public domain no warranty" but apparently
+# some corporate offices don't trust that.  Apache 2 lets
+# them know I don't have a silly patent up my sleeve that
+# I'd try to enforce, so their policy might accept it more
+# easily if you need to use this at work.)
 
 # Might be useful for "git"ifying historical code, as at
 # least the file's modification time should put an upper
