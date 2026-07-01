@@ -3,7 +3,7 @@ from https://ssb22.user.srcf.net/elec/shead.html (also [mirrored on GitLab Pages
 
 # Shower-head water filter tested
 
-Some Hong Kong emigrants are concerned about a possible increased rate of hair-shaft breakage when washing hair in Britain’s hard water (Cambridge nominally 322 CaCO<sub>3</sub> + 122 Ca mg/L in 2017; HK averaged 56 mg/L in 1999/2000), and they say a shower-head water filter can help.
+Some Hong Kong emigrants are concerned about a possible increased rate of hair-shaft breakage when washing hair in Britain’s hard water (Cambridge nominally 322 CaCO<sub>3</sub> (122 Ca) mg/L in 2017; HK averaged 56 (17) in 1999/2000), and they say a shower-head water filter can help.
 
 While I don’t know enough about hair biochemistry or trichology to evaluate the claim that hard water increases the probability of breakage (or soft water reduces it), we can at least check if a shower-head water filter does indeed reduce the hardness. I was skeptical because I’d seen drinking-water filters operate at a much reduced flow rate, and while I knew reactions can speed up at higher temperatures, and a wider range of reactions are available if the water doesn’t have to be rendered safe to drink, I still wanted to see some evidence that a filter mounted in a shower head really could work well enough at the higher flow-rate.
 
@@ -41,7 +41,7 @@ UK Water Filters were kind enough to send us a response:
 
 > Only a salt based softener will reduce hardness readings because only a salt based product removes the calcium.
 
-> The [SWF1000] filter contains ceramic beads with will oxygenate the water making it feel softer, but it will not remove the calcium from the water.
+> The [SWF1000] filter contains ceramic beads with [sic] will oxygenate the water making it feel softer, but it will not remove the calcium from the water.
 
 We can confirm the water from the SWF1000 does indeed appear more aerated if collected in a glass, but I can’t help wondering if this “filter” really is the best way to build an aerator. After I asked if *any* shower-head filter will actually soften the water they said:
 
@@ -57,7 +57,7 @@ When we were asking about returning the shower head, another employee wrote:
 
 > The shower filters are great for removing chlorine which is good for hair and is the main cause of skin irritations. You would need a proper softener if you need the silky soft feel of water.
 
-But Hong Kong’s chlorine level is about *twice* that of Cambridge. (Cambridge average chlorine concentration in 2016, measurements taken at an area near us, was 0.34 mg/L free chlorine and 0.42 mg/L total, with no chloramine; Hong Kong’s 1999-2000 level averaged 0.7 mg/L free chlorine. In both cases residual chlorine keeps pipes clean.) Swimming-pool chlorine levels are supposed to be 1–3 mg/L (i.e. 3–9 times Cambridge’s tap-water level or 1½–4 times HK’s) and there are concerns that *frequent* swimming can replace the natural sebum and leave the hair more brittle, but it’s difficult to find hard data on how much of a problem this is at the lower chlorine levels of tap water. If a shower-head’s removal of chlorine would explain the reported experience of the Hong Kong emigrants, then we’re looking at a hypothesis along the lines of “the reduction in damage from chlorine removal, counterbalances (the increase in damage from water hardness, less the reduction in damage from there being lower chlorine levels to start with)”. This is hard to test.
+But Hong Kong’s chlorine level is about *twice* that of Cambridge. (Cambridge average chlorine concentration in 2016, measurements taken at an area near us, was 0.34 mg/L free chlorine and 0.42 mg/L total, with no chloramine; previously the emigrants would have been exposed to Hong Kong’s 1999-2000 level which averaged 0.7 mg/L free chlorine. In both cases residual chlorine keeps pipes clean.) Swimming-pool chlorine levels are supposed to be 1–3 mg/L (i.e. 3–9 times Cambridge’s tap-water level or 1½–4 times HK’s) and there are concerns that *frequent* swimming can replace the natural sebum and leave the hair more brittle, but it’s difficult to find hard data on how much of a problem this is at the lower chlorine levels of tap water. If a shower-head’s removal of chlorine would explain the reported experience of the Hong Kong emigrants, then we’re looking at a hypothesis along the lines of “the reduction in damage from chlorine removal, counterbalances (the increase in damage from water hardness, less the reduction in damage from there being lower chlorine levels to start with)”. This is hard to test.
 
 But the rate at which free chlorine escapes from water by off-gassing should increase with temperature and motion, so I’d expect *any* hot shower to deliver a higher percentage of its chlorine as a gas rather than leaving it dissolved in the water. (Some people are more concerned about *inhaling* chlorine than they are about chlorinated water coming into contact with their hair, and in that case you’d have to check how much of any chlorine removed *from the water* still ends up in the *air*—the filter is rather close, and it’s not easy for it to just “hold on” to a gas. Good ventilation is probably the answer to that one.)
 
