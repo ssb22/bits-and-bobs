@@ -137,7 +137,7 @@ The consultant was able to see us before she went home and said the treatment of
 
 My wife had pain urinating that evening, largely replaced the following day by a mild feverish feeling (without actual high temperature) and heavy tiredness in the afternoon which continued a couple more days along with some discharge (although it can take a few months for the body to slough it); energy levels seemed better on day 5.
 
-We hope to update this page as things progress.
+The followup consultation was postponed to 5 and then 6 months after the treatment, just after the morning rush-hour so we felt the most reliable way to get to the hospital on time was via the new Cambridge South railway station on the Addenbrookes site which had opened to the public barely more than a week earlier. The appointment involved a questionnaire which, seeing as it didn’t flag up any relevant symptoms, did not necessitate any further scans to be done. There were other symptoms currently under investigation by our GP, which I asked about because I’d rather err on the side of mentioning too much than accidentally leaving out a detail that turns out to be important, but the consultant was able to rule out these being gynaecological so it didn’t need to stop the fibroid case being closed.
 
 Copyright and Trademarks:
 All material © Silas S. Brown unless otherwise stated.
