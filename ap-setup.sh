@@ -3,7 +3,7 @@
 # Script to set up an access point on a Raspberry Pi Zero W
 # (a 2.4GHz-only device) with USB Ethernet, tested in PiOS 12
 # (also tested a PiOS 13 upgrade in-place)
-# - (c) Silas S. Brown 2025, License: Apache 2
+# - (c) Silas S. Brown 2025-26, License: Apache 2
 # (I did say "public domain no warranty" but apparently
 # some corporate offices don't trust that.  Apache 2 lets
 # them know I don't have a silly patent up my sleeve that
@@ -133,5 +133,12 @@ echo "@reboot while ! /usr/sbin/route -n | /usr/bin/grep $GatewayIP; do /usr/sbi
 # access it via AirPrint when connected to either net's WiFi)
 sudo sed -i s/^#*enable-reflector=no/enable-reflector=yes/ /etc/avahi/avahi-daemon.conf
 sudo systemctl restart avahi-daemon
+
+# Try to avoid SD-card writes by keeping limited logs in RAM
+sudo bash -c '(echo Storage=volatile;echo RuntimeMaxUse=16M)>>/etc/systemd/journald.conf'
+sudo systemctl restart systemd-journald
+sudo rm -rf /var/log/journal
+sudo systemctl disable rsyslog
+sudo bash -c 'for L in syslog messages auth.log daemon.log user.log debug kern.log; do true > /var/log/$L; rm -f /var/log/$L.*; done'
 
 echo "All set.  Try rebooting."
