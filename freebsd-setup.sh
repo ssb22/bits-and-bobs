@@ -24,7 +24,7 @@ export User=ssb22
 # 16G virtual hdd (8G was doable in 12.2 but not 12.4)
 # System/motherboard/enable I/O APIC
 # General/Advanced shared clipboard = bidirectional
-# Display: 3D acceleration = enabled
+# Display: 3D acceleration = disabled (so can run headless, otherwise will need 'VBoxManage modifyvm "FreeBSD" --accelerate3d off || VBoxManage modifyvm "FreeBSD" --accelerate-3d off'; could turn back on when not running headless but rarely useful and there are reports of problems)
 # Network/Advanced/port forwarding: host port 22022 to guest port 22 (leave IPs blank)
 # Install / (Dvorak or whatever keymap) / Continue / hostname / deselect optional components / network (dhcp=y ipv6=n resolver=default) / zfs auto, no swap (if on SSD) / install, no redundancy, select HDD (space) / mirror (e.g. UK2) / root pwd / time zone / (no services, extra security or usrs) / reboot (rm disc)
 
@@ -181,6 +181,15 @@ echo 'ttyv0 "/usr/libexec/getty autologin" xterm on secure' >> /etc/ttys
 echo '[ "$(tty)" == /dev/ttyv0 ] && startx' >> .shrc
 
 cat <<EOF
+You might also want to set up a start-freebsd script like:
+#!/bin/bash
+if [ $(stat -f '%Su' /dev/console) = root ]; then
+  # nobody's logged in: must run headless
+  VBoxManage startvm FreeBSD --type headless
+else
+  VBoxManage startvm "FreeBSD"
+fi
+
 For security patches, use: auto-update-system
 
 For point release upgrades e.g. 14.3 to 14.4, use:
@@ -193,7 +202,6 @@ The apparent size of the disk will SHRINK with each update
 due to snapshots.  To remove all old snaphots, do:
 
     for N in $(beadm list|awk 'BEGIN{s=0} /^[1-9]/{if(s)print(s);s=$0}'|sed 's/ .*//'); do beadm destroy $N;done
-
 EOF
 # If get an error about /usr/local/etc/pkg/*.conf, do:
 # mkdir /usr/local/etc/pkg
