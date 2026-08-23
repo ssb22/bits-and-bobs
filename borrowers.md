@@ -9,6 +9,10 @@ from https://ssb22.user.srcf.net/law/borrowers.html (also [mirrored on GitLab Pa
 
 **警告:** 这个小调查包括与犯罪组织人员聊天。 **劝大家别自己这样做。** 我以前帮了Linux核心开发者找和修个安全漏洞，也认识世界最高保安工程师的一些。如果你没有那样水平， **并不尝试我所做的。**
 
+Since I wrote this page, the Telegram Messenger service has been restricted to users aged 18 or over in UK/EU/AU for unrelated reasons.
+
+自本页面撰写以来，出于无关原因Telegram服务在英国、欧盟及澳大利亚限制未满18岁用户使用。
+
 In August 2023 two of my Chinese friends whom I’d introduced to Telegram Messenger had their accounts temporarily compromised by an organised social-engineering attack. I don’t know if this crime gang has a name, so with a nod to Mary Norton I’m calling them The Telegram Borrowers.
 
 2023年8月，我所推荐他们Telegram软件的两位中国朋友被社会工程团队欺骗而帐户被暂时被泄漏。我不知道这个犯罪集团有没有名字，所以根据玛丽·诺顿的儿童小说，我称他们为《电报地板下的小矮人》。

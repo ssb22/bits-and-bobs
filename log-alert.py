@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # (should work in either Python 2 or Python 3)
 
-# Apache log alerts (c) Silas S. Brown 2019/21/23-24, License: Apache 2
+# Apache log alerts (c) Silas S. Brown 2019/21/23-24/26, License: Apache 2
 # (I did say "public domain no warranty" but apparently
 # some corporate offices don't trust that.  Apache 2 lets
 # them know I don't have a silly patent up my sleeve that
@@ -55,5 +55,5 @@ for ip in ipBytes.keys():
     if ipBytes[ip] < min_bytes_to_report: continue
     if ipReqs[ip] < min_requests_to_report: continue
     concern = [url for url,counts in ipURLCounts[ip].items() if counts>=min_sameFile_to_report and sum(ipURLSizes[ip][url]) >= min_sameFile_size]
-    if concern: o.append("\n".join(["%s fetched %d bytes in %d reqs" % (ip,ipBytes[ip],len(ipLog[ip]))]+[getoutput("whois '"+ip.replace("'","")+"'|egrep -i '^(orgname|descr):'").strip()]+["URLs of concern:"]+concern+["log entries:"]+ipLog[ip]))
+    if concern: o.append("\n".join(["%s fetched %d bytes in %d reqs" % (ip,ipBytes[ip],len(ipLog[ip]))]+[getoutput("whois '"+ip.replace("'","")+"'|egrep -i '^(orgname|descr):'").strip()]+["URLs of concern:"]+[c+(" (might just be a badly-written multi-VM malware scanner)" if c.lower().endswith(".exe") else "") for c in concern]+["log entries:"]+ipLog[ip]))
 if o: sys.stdout.write("\n\n".join(["Potential cause for concern: %d IP(s)" % len(o)]+o)+"\n")
