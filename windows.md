@@ -5,7 +5,7 @@ from https://ssb22.user.srcf.net/setup/windows.html (also [mirrored on GitLab Pa
 
 The following notes are intended for those not in a position to [upgrade to GNU/Linux](linux.md).
 
-Windows 7 and up have bundled full-screen magnifiers (with optional invert colours as an alternative to the Alt-Shift-PrintScreen high-contrast mode); this magnifier is available by pressing **Start-key +** (and Start-key - to reduce). The magnified text can look very blurry on some systems, but it’s not so bad in Windows 10 with the May 2020 update (which also added TTS options to the magnifier, but you may or may not be allowed to use sound if you’re on a public library computer or similar).
+Windows 7 and up have bundled full-screen magnifiers (with optional invert colours as an alternative to the Alt-Shift-PrintScreen high-contrast mode); this magnifier is available by pressing **Start-key +** (and Start-key - to reduce). The magnified text can look very blurry on some systems, but it became less bad after Windows 10’s May 2020 update (which also added TTS options to the magnifier, but you may or may not be allowed to use sound if you’re on a public library computer or similar). Sadly there’s no way to ask it to magnify just the primary monitor if there’s a secondary output to a projector (unless you try to make do with the magnifying window instead of full screen).
 
 ## Older notes
 
