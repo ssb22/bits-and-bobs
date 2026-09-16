@@ -4,6 +4,8 @@ from https://ssb22.user.srcf.net/game/bchess.html (also [mirrored on GitLab Page
 # Solving Micropower Chess (1982)
 
 
+Update: I now have a [specialised disassembler for Micropower Chess](bchess.py) (requires the original disk image). It handles the computed jump and inserts some comments about its workings.
+
 I’m only an intermediate player (Elo perhaps 1500 if given enough time), but I did once checkmate some software that “Micro Power” released in 1982 for the then very new BBC Micro Model B (which it ran in screen mode 1)—and as this program *always* replied to a given sequence of moves in the same way (no random factor), any win against it can be repeated every time and therefore counts as having “weakly solved” that level. I first did this by lasting as long as I could with equal-material exchange, knowing that microcomputers of the time were more likely to play badly in the endgame, but it turns out there are considerably shorter solutions.
 
 ## Confusion about level numbers
