@@ -35,6 +35,19 @@ def main():
             f.write(lines[addr] + "\n")
     print(f"Wrote {len(lines)} lines to chess.asm")
 
+patch = [ # optional patch, referred to in the comments,
+    # to be placed into the (unused on load) high part of
+    # the replay area before 1C00
+    1,1,0,0,0,0,0,0,127,256-9,256-9,256-9,127,0, # envelope
+    0,0,0,0, # filled in with LDX + LDY below
+    0xA9,8, 0x20,0xF1,0xFF, # LDA #8 : JSR osword
+    0xA9,211,0xA2,0,0xA0,0,0x20,0xF4,0xFF, # *FX211,0 (channel 0)
+    0xA9,212,0xA2,0,0xA0,0,0x20,0xF4,0xFF, # *FX212,0 (envelope 1)
+    0xA9,213,0xA2,6,0xA0,0,0x20,0xF4,0xFF, # *FX213,6 (pitch 6, low noise)
+    0xA9,214,0xA2,1,0xA0,0,0x20,0xF4,0xFF, # *FX214,1 (short duration)
+] ; patch_offset = 14
+patch=bytes(patch[:patch_offset]+[0xA2,(0x1C00-len(patch))%256,0xA0,(0x1C00-len(patch))//256]+patch[patch_offset+4:])
+
 comments = {
     0x0E00:"tokenised BASIC CALL for tape version CHAIN to work",
     0x0E20:"start of pawn sprite",
@@ -73,6 +86,7 @@ comments = {
     0x19A0:"Demo data (Fischer-Spassky game 6).  This is overwritten by Replay data when a game is played.  First 2 bytes point to next free slot, then start and destination squares as 10*(rank+1)+file where rank and file start at 1; for castling the king moves first and then rook after a byte 01.",
     0x1A50:"Space for more Replay moves if you have a game longer than the Fischer-Spassky",
     0x1A80:"Still space for more Replay moves; I think we periodically switch between 00 and FF blocks to protect against tape-read glitches (again they could have left a secret message here?) It goes right up to 1C00 giving you 303-ply (with castling counting as 2.5-ply); I saw display bugs if you go over ~260-ply with an unfinished game but not yet seen why in the code",
+    0x1C00-len(patch):f"You can patch your own extra initialisation code into here from disk image offset 0x{256*load_from_sector-0xE00+0x1C00-len(patch):x}, e.g. to make the beep more like a piece thud: {repr(patch)}.  Then ensure it's called by setting 0x{256*load_from_sector-0xE00+0x3046:x} to {repr(bytes([(0x1C00-len(patch)+patch_offset)%256,(0x1C00-len(patch)+patch_offset)//256]))}",
     0x1C00:"main entry point",
     0x1C03:"main menu jump point",
     0x1C05:"fully clear clock string",
@@ -175,6 +189,9 @@ comments = {
     0x1E60:"clear screen and draw board",
     0x1E62:"CLS",
     0x1E65:"draw board",
+    0x1E7A:"file",
+    0x1E7C:"rank",
+    0x1E93:"set square colour/position with alternate colours (?)",
     0x1E9E:"plot square",
     0x1EB2:"set square colour/position",
     0x1ED7:"($60, $61) -> screen memory location of square",
@@ -367,6 +384,7 @@ comments = {
     0x27FF:"'w'",
     0x280C:"check if computer plays white (0) or black ($80)",
     0x280E:"and branch to who should play black",
+    0x281C:"flashing-plot a move",
     0x283F:"handle user takeback",
     0x286E:"read board[square] at $1034+square (as 8B is $10)",
     0x2890:"opening book logic",

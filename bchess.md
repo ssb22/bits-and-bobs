@@ -10,10 +10,10 @@ I’m only an intermediate player (Elo perhaps 1500 if given enough time), but I
 
 ## Confusion about level numbers
 
-MicroPower released *three* versions of Chess that ran on the BBC Micro:
-1. a tape version in 1982, with 6 levels numbered 1 through 6;
+MicroPower released *three* main versions of Chess that ran on the BBC Micro:
+1. a tape version in 1982, with 6 levels numbered 1 through 6 (there was also a rarer “Model A” version of this, with Mode 7 Teletext pixel art because none of the true graphics modes left enough memory for the program on the Model A; it had the same 6 levels numbered 1 through 6);
 2. a tape “Electron” version in 1983, with levels 1, 3, 5, 7 and 9 identical to the first 5 levels of the 1982 version, plus new ‘in-between’ levels that introduced randomness;
-3. a BBC Micro *disk* version (which is what my school had)—this is the 6-level 1982 version plus a relocation loop, but they confused us by adding a loader that explains how level-numbering works **on the Electron version** (oops!) leading us to believe the highest level was 9 when it wasn’t.
+3. a BBC Micro *disk* version (which is what my school had)—this is the 6-level 1982 version plus a relocation loop, but they confused us by adding a loader that explains how level-numbering works **on the Electron version** (oops!) leading us to believe the highest level was 9 when it wasn’t. (The Model A version also had a disk release and its loader didn’t say what the level numbers were. And some later shippings of the Model B disk release actually corrected the instruction screen to say there were 6 levels, but my school ended up with one of the earlier shipments that incorrectly had it as 9.)
 
 This wouldn’t have been so bad if it weren’t for how the response to the “Level?” question is handled by the 1982 version—you’ll find the relevant 6502 code at RAM address `&1DF2` (or `&2DF2` before relocation)—if the key pressed does not fall between digits 1 and 6, it just **sets it to 2** without saying anything.
 
@@ -99,7 +99,7 @@ Moves with discussion and screenshots:
 73. `c7d7` `c2d2`
 74. `d7e7` `d2e2`
 75. `e7f7` `e2f2`
-76. `f7g6` `f2f6` and here we have the BBC’s second great mistake of this endgame: a desperate sacrifice of a rook just for a check, which I believe was due to a horizon effect along with insufficient endgame heuristics. Four-piece tablebases agree this computer’s move changes the evaluation from “draw” to “white mates in 9”. The most obvious way for it to save the draw would have been `f2g2` and `g4f3`—in either order—there are no two responses I can make to prevent its rook capturing my pawn or queen on the third move of that line; the best I can do is make it an exchange and we end up with two lone kings. Preferring `f2f6` to this seemed like a search of 3-ply, as did its Qd3 mistake on move 45, and when I eventually disassembled the code that was confirmed: its *other* moves seemed better than 3-ply because they happened to benefit from extra heuristics in the evaluator that didn’t work everywhere.
+76. `f7g6` `f2f6` and here we have the BBC’s second great mistake of this endgame: a desperate sacrifice of a rook just for a check, which I believe was due to a horizon effect along with insufficient endgame heuristics. Four-piece tablebases agree this computer’s move changes the evaluation from “draw” to “white mates in 9”. The most obvious way for it to save the draw would have been `f2g2` and `g4f3`—in either order—there are no two responses I can make to prevent its rook capturing my pawn or queen on the third move of that line; the best I can do is make it an exchange and we end up with two lone kings. Preferring `f2f6` to this seemed like a search of at most 3-ply, as did its Qd3 mistake on move 45, and when I eventually disassembled the code that was confirmed: Level 2 is 2-ply, and Level 1 is just playing the static evaluator—many moves seem better because they also benefit from its mobility analysis and extra heuristics, but these don’t work everywhere.
 77. `g6f6` `g4f3` ![bchess77.png](https://ssb22.user.srcf.net/game/bchess77.png)
 78. `g7g8` `f3e4` It’s just as well I wanted a queen, as under-promotions are not supported by this program. Checkmate should be easy now, but I still have to *do* it. If this program doesn’t recognise a king-versus-king draw, I wouldn’t expect it to implement any resignation etiquette. Three-piece tablebases say my next play could have been Qd8 to mate in 7, but I was using a simpler heuristic so I called check instead:
 79. `g8g4` `e4d5` and the tablebase says I could then have played Qb4 to mate in 5, but I didn’t see that, so once again I called check:
@@ -189,13 +189,33 @@ Other changes were:
 
 The bugs associated with the Delete key are still present.
 
+## Changing the beep
+
+The “beep” that Chess plays when it makes a move is a `VDU 7` beep, which can be controlled via `*FX` and `ENVELOPE` commands before Chess is run. Something nearer to a modern “piece clacking down onto the board” effect is:
+
+`ENV.1,1,0,0,0,0,0,0,127,-9,-9,-9,127,0
+
+*FX211,0
+
+*FX212,0
+
+*FX213,6
+
+*FX214,1
+
+*RUN CHESS`
+
+which works on both the BBC and the Electron (the Electron has only a single sound channel but its ULA is still put into a noise-generation mode if addressed as Channel 0). For the BBC version my disassembler gives an optional patch to add this to an unused area of the binary.
+
 ## Tube compatibility and other Chess software
 
 The only Chess engine reviewed by Beebug was Martin Bryant’s *Colossus* in 1987 (plays at 12-ply with estimated 1850 Elo if given enough time, and has a monochrome Mode 4 display); this outperformed earlier engines but fewer schools had the disk. Colossus does not always make the same moves, so you won’t be able to “solve” a level with a single win as you can with MicroPower.
 
 Tube compatibility is relevant if you have a “PiTubeDirect” ~140× speed second processor instead of a BBC emulator running at ~15× speed—although both options are now outpaced by Chris Evans’ “BeebJIT” which can achieve 5000+× speed on AMD64 (and has a mode to do so while keeping timers at normal speed, so you don’t have to toggle back to 1× to type as you do with older emulators).
 
-MicroPower Chess is basically Tube-compatible but the chessboard is invisible: you see only the coordinates. Colossus however has more serious Tube problems. Acornsoft Chess (which Arthur Norman helped write) and Computer Concepts Chess (and its Superior re-release, both by David Thompson) have full Tube compatibility and don’t always make the same moves, while Bug-Byte Chess is fully Tube compatible and deterministic (although slow to update the screen)—but it’s less clear what counts as “solving” it as its search parameters may be configured in hundreds of ways (albeit none of them strong by modern standards)—however these programs all use low-resolution Mode 5 pieces that can be hard to tell apart, meaning that, in order to avoid making blunders due to misidentifying an opponent piece, you either have to get used to their odd pixel art or else keep track of the position separately, meaning there’s little advantage over MicroPower’s invisible board; perhaps the lack of Mode 1 graphics contributed to these programs’ being less popular with schools than MicroPower’s.
+MicroPower Chess is basically Tube-compatible but its chessboard is invisible: you see only the coordinates. For the board it tries direct writes to the screen RAM area but gets the wrong processor’s memory map (it’s harmless as that memory’s not otherwise in use, but it’s not displayed). The instructions loader also tries direct writes to the Mode 7 screen, but you can either bypass it via `*RUN CHESS` or just press `N` for no instructions and then play in coordinates. Similarly, the Model A version writes its board directly to the Mode 7 screen but coordinates still output via the OS, and its instructions can’t be bypassed via `N` so just press Space four times or use `*RUN CHESS`.
+
+Colossus however has more serious Tube problems. Acornsoft Chess (which Arthur Norman helped write) and Computer Concepts Chess (and its Superior re-release, both by David Thompson) have full Tube compatibility and don’t always make the same moves, while Bug-Byte Chess is fully Tube compatible and deterministic (although slow to update the screen)—but it’s less clear what counts as “solving” it as its search parameters may be configured in hundreds of ways (albeit none of them strong by modern standards)—however these programs all use low-resolution Mode 5 pieces that can be hard to tell apart, meaning that, in order to avoid making blunders due to misidentifying an opponent piece, you either have to get used to their odd pixel art or else keep track of the position separately, meaning there’s little advantage over MicroPower’s invisible board; perhaps the lack of Mode 1 graphics contributed to these programs’ being less popular with schools than MicroPower’s.
 
 Copyright and Trademarks:
 All material © Silas S. Brown unless otherwise stated.
