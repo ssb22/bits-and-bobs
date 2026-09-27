@@ -99,7 +99,7 @@ Moves with discussion and screenshots:
 73. `c7d7` `c2d2`
 74. `d7e7` `d2e2`
 75. `e7f7` `e2f2`
-76. `f7g6` `f2f6` and here we have the BBC’s second great mistake of this endgame: a desperate sacrifice of a rook just for a check, which I believe was due to a horizon effect along with insufficient endgame heuristics. Four-piece tablebases agree this computer’s move changes the evaluation from “draw” to “white mates in 9”. The most obvious way for it to save the draw would have been `f2g2` and `g4f3`—in either order—there are no two responses I can make to prevent its rook capturing my pawn or queen on the third move of that line; the best I can do is make it an exchange and we end up with two lone kings. Preferring `f2f6` to this seemed like a search of at most 3-ply, as did its Qd3 mistake on move 45, and when I eventually disassembled the code that was confirmed: Level 2 is 2-ply, and Level 1 is just playing the static evaluator—many moves seem better because they also benefit from its mobility analysis and extra heuristics, but these don’t work everywhere.
+76. `f7g6` `f2f6` and here we have the BBC’s second great mistake of this endgame: a desperate sacrifice of a rook just for a check, which I believe was due to a horizon effect along with insufficient endgame heuristics. Four-piece tablebases agree this computer’s move changes the evaluation from “draw” to “white mates in 9”. It could have saved the draw via either `f2g2` and `g4f3` (in either order), or `f2f5` (defended by the king) and `f5g5`—there are no two responses I can make to prevent its rook capturing my pawn or queen on the third move of either line; the best I can do is make it an exchange and we end up with two lone kings. Preferring `f2f6` to this seemed like a search of at most 3-ply, as did its Qd3 mistake on move 45, and when I eventually disassembled the code that was confirmed: Level 2 is 2-ply, and Level 1 is just playing the static evaluator (apart from an extra ply that’s always added if the search ends in a check); many moves seem better than their ply because the evaluator adds mobility and attack analysis plus extra heuristics on top of the material count, effectively a shortcut to increased ply strength but not always. By adding a simple harness to the Py65 6502 emulator to run the engine from this position on *every* level, I found Level 1 plays Rf3 (at least keeping the rook), Level 2 plays this Rf6+ throwing away the rook, and Levels 3 through 6 all find the saving Rf5. This is an example of “game-tree pathology” where increasing the level makes the resulting decision *worse* before further increases make it better (Level 1 doesn’t ‘see’ the impending problem so doesn’t ‘panic’, Level 2 does and harms its position trying, and Level 3 solves it properly).
 77. `g6f6` `g4f3` ![bchess77.png](https://ssb22.user.srcf.net/game/bchess77.png)
 78. `g7g8` `f3e4` It’s just as well I wanted a queen, as under-promotions are not supported by this program. Checkmate should be easy now, but I still have to *do* it. If this program doesn’t recognise a king-versus-king draw, I wouldn’t expect it to implement any resignation etiquette. Three-piece tablebases say my next play could have been Qd8 to mate in 7, but I was using a simpler heuristic so I called check instead:
 79. `g8g4` `e4d5` and the tablebase says I could then have played Qb4 to mate in 5, but I didn’t see that, so once again I called check:
@@ -152,11 +152,12 @@ and then a couple of manual experiments shortened this still further, to a 12-mo
 
 If the exact algorithm is known for a deterministic weaker engine then I suppose a stronger engine could be “tuned” to win faster by laying ‘traps’—non-best moves that result in this particular opponent making an even bigger mistake—by modifying the minimax algorithm in the stronger engine to prune out lines the weaker engine wouldn’t *choose* (e.g. never mind “10. g4 is not as good as Qd3 because the black king *could* go back to g6 and escape our forced mate in 4” if we know it’ll actually go to h4 and we mate in 3). This would probably amount to emulating the weaker engine (with its different static evaluator and search depth) at every candidate ‘opponent to move’ position *instead* of doing alpha-beta pruning (because alpha-beta pruning is not applicable to trees where there’s only ever one opponent move), but you might want to limit this “trap pruning” to upper levels of the tree (probably down to at most the difference between the two engines’ ply depths), and there’ll be places where the simulation of the weak engine can be optimised.
 
-## Higher levels
+## Other levels
 
-Now we know I was actually playing Level 2 (not 9), I suppose for completeness I should also post solutions to the actual higher levels (I took some hints from modern engines to save time).
+Now we know I was actually playing Level 2, I suppose for completeness I should also post solutions to the others (for the higher ones I took some hints from modern engines to save time).
 
 Moves:
+* Level 1: **1.**  e4 e5 **2.**  d4 Nc6 **3.**  d5 Nd4 **4.**  c4 Nf6 **5.**  Nc3 Bd6 **6.**  f3 O-O **7.**  Ng1-e2 c5 **8.**  Nb5 Qd6 **9.**  Ne2xd4 cxd4 **10.**  Bd3 a6 **11.**  Nxd6 Qxd6 **12.**  a4 Re8 **13.**  O-O a5 **14.**  Bd2 Qb6 **15.**  b4 axb4 **16.**  Rb1 b3 **17.**  Rxb3 Qc5 **18.**  Rb5 Qa3 **19.**  Bc2 d3 **20.**  Bb3 Qd6 **21.**  c5 Qc7 **22.**  d6 Qc6 **23.**  Re1 Ra6 **24.**  Bg5 d2 **25.**  Re2 h6 **26.**  Bxf6 gxf6 **27.**  Bd5 Qxb5 **28.**  axb5 Ra1 (I was letting it keep a pawn on d2 to get a mistake like this, which I originally called a “3-ply mistake” but now we know at Level 1 it’s more to do with the evaluator’s mobility and defence analysis) **29.**  Qxa1 Kg7 **30.**  c6 bxc6 **31.**  Bd5xc6 dxc6 **32.**  bxc6 Be6 **33.**  c7 Bc4 **34.**  Rxd2 h5 **35.**  d7 Rh8 **36.**  d8=Q Rxd8 **37.**  cxd8=Q Be6 **38.**  Qa1-a8 h4 **39.**  g4 Bc4 **40.**  g5 fxg5 **41.**  Qxg5+ Kh7 **42.**  Qa8-g8#
 * Level 3 (Electron level 5): 1. e2e4 e7e5, 2. d2d4 d8f6, 3. d4e5 f8b4+, 4. c2c3 f6e5, 5. c3b4 e5e4+, 6. d1e2 e4e2+, 7. f1e2 b8c6, 8. a2a3 g8f6, 9. g1f3 O-O, 10. e1g1 f8e8, 11. b1c3 d7d6, 12. c1g5 c8d7, 13. g5f6 g7f6, 14. f1e1 g8g7, 15. e2d3 a8c8, 16. e1e4 e8e4, 17. d3e4 f6f5, 18. e4d5 c8e8, 19. c3b5 e8e2, 20. a1b1 a7a6, 21. b5c7 f5f4, 22. g1f1 e2e7, 23. b1e1 e7e1+, 24. f1e1 g7f6, 25. e1d2 f6g7, 26. f3g5 f7f6, 27. g5e4 c6d4, 28. d5b7 f6f5, 29. e4d6 d4b5, 30. d6b5 a6b5, 31. b7a6 d7c6, 32. f2f3 g7f6, 33. a6b5 c6b5, 34. c7b5 f6e7, 35. b5d4 e7f6, 36. b4b5 f6e5, 37. b5b6 e5d4, 38. b6b7 d4c5, 39. b7b8 c5d5, 40. b8b6 h7h5, 41. b2b3 d5e5, 43. b6c6 h5h4, 43. h2h3 e5d4, 44. c6d6#
 * Level 4 (Electron level 7): 1. e2e4 e7e5, 2. d2d4 e5d4, 3. c2c3 d8e7, 4. f1d3 b8c6, 5. g1f3 d7d5, 6. e1g1 d5e4, 7. d3e4 d4c3, 8. b1c3 g8f6, 9. e4c6 b7c6, 10. d1a4 a8b8, 11. f1e1 c8e6, 12. f3e5 e7b4, 13. a4c6 e8d8, 14. e5f7 e6f7 (oops I wasn’t paying attention, carried on anyway as the game was likely recoverable), 15. e1d1 f8d6, 16. c1g5 h7h6, 17. g5f6 g7f6, 18. c3e4 d8e7, 19. e4d6 c7d6, 20. c6c7 e7f8, 21. d1d6 b4b2, 22. a1d1 f8g7, 23. d6d7 b2a2, 24. c7g2 g7h7, 25. h2h4 h8c8, 26. g3f4 h7g7, 27. d7d3 a2e6(?), 28. d3e3 e6c6, 29. d1d6 c6c1+, 30. g1h2 c1c4, 31. f4f6 g7g8, 32. e3g3 g8f8, 33. d6d7 c4e6, 34. f6h8 f7g8 (still takes time because the engine *evaluates* every candidate move even when there’s only one option), 35. g3g8 e6g8, 36. h8f6 f8e8, 37. f6e7#
 * Level 5 (Electron level 9): 1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. O-O Nxe4 5. d4 exd4 6. Re1 f5 7. Nxd4 Bc5 8. Rxe4+ fxe4 9. Qh5+ g6 10. Qxc5 Qe7 11. Qc3 Rf8 12. Bh6 Rf7 13. Bc4 g5 14. Nb5 d5 15. Bxd5 Rb8 16. Qh8+ Kd7 17. Bxf7 Qxf7 18. N1c3 a6 19. Rd1+ Ke6 20. Nxe4 Kf5 21. Nbd6+ cxd6 22. Nxd6+ Kg6 23. Nxf7 Kxf7 24. Rd6 Bf5 25. Qg7+ Ke8 26. Qf8#
@@ -178,12 +179,7 @@ As already mentioned, the 1983 re-release “for the Acorn Electron” (althoug
 
 Other changes were:
 1. The Electron version does not use the keyboard buffer, so when playing a deterministic level you cannot enter moves ahead of the computer as you can with the BBC Micro version. This is somewhat made up for by the added ability to continue from any point in a replay.
-2. Support for under-promotion is added (the computer asks “Piece?” when you promote) although only queen promotions are included in the search. To demonstrate this without waiting for the computer too long, here’s a 42-move win against Level 1 that includes two promotions, behaving identically on both versions.
-
-   Moves:
-
-    **1.**  e4 e5 **2.**  d4 Nc6 **3.**  d5 Nd4 **4.**  c4 Nf6 **5.**  Nc3 Bd6 **6.**  f3 O-O **7.**  Ng1-e2 c5 **8.**  Nb5 Qd6 **9.**  Ne2xd4 cxd4 **10.**  Bd3 a6 **11.**  Nxd6 Qxd6 **12.**  a4 Re8 **13.**  O-O a5 **14.**  Bd2 Qb6 **15.**  b4 axb4 **16.**  Rb1 b3 **17.**  Rxb3 Qc5 **18.**  Rb5 Qa3 **19.**  Bc2 d3 **20.**  Bb3 Qd6 **21.**  c5 Qc7 **22.**  d6 Qc6 **23.**  Re1 Ra6 **24.**  Bg5 d2 **25.**  Re2 h6 **26.**  Bxf6 gxf6 **27.**  Bd5 Qxb5 **28.**  axb5 Ra1 (ah yes, I let it keep a pawn on d2 to get a 3-ply mistake like this) **29.**  Qxa1 Kg7 **30.**  c6 bxc6 **31.**  Bd5xc6 dxc6 **32.**  bxc6 Be6 **33.**  c7 Bc4 **34.**  Rxd2 h5 **35.**  d7 Rh8 **36.**  d8=Q Rxd8 **37.**  cxd8=Q Be6 **38.**  Qa1-a8 h4 **39.**  g4 Bc4 **40.**  g5 fxg5 **41.**  Qxg5+ Kh7 **42.**  Qa8-g8#
-
+2. Support for under-promotion is added (the computer asks “Piece?” when you promote) although only queen promotions are included in the search.
 3. When the computer controls the white pieces, the random choice of opening between `d4` and `e4` was fixed on the Electron version so it’s no longer stuck on an `e4` opening like the BBC version (even on the odd-numbered levels that don’t otherwise involve randomness). The opening behaviour when *you* play white is unchanged (`e5` if you first move from `a`, `b`, `c` or `e`, `d5` otherwise).
 4. The menu has fancier formatting, clocks are displayed for both players (not just the user), the “Replay” option prints a scrolling list of moves beside the board and you can continue from any point or save/load the moves, move ‘animations’ are slightly faster (with a slightly longer beep for “illegal move”) and colours are customisable.
 
@@ -193,17 +189,17 @@ The bugs associated with the Delete key are still present.
 
 The “beep” that Chess plays when it makes a move is a `VDU 7` beep, which can be controlled via `*FX` and `ENVELOPE` commands before Chess is run. Something nearer to a modern “piece clacking down onto the board” effect is:
 
-`ENV.1,1,0,0,0,0,0,0,127,-9,-9,-9,127,0
+`ENV.1,1,0,0,0,0,0,0,127,-9,-9,-9,127,0`
 
-*FX211,0
+`*FX211,0`
 
-*FX212,0
+`*FX212,0`
 
-*FX213,6
+`*FX213,6`
 
-*FX214,1
+`*FX214,1`
 
-*RUN CHESS`
+`*RUN CHESS`
 
 which works on both the BBC and the Electron (the Electron has only a single sound channel but its ULA is still put into a noise-generation mode if addressed as Channel 0). For the BBC version my disassembler gives an optional patch to add this to an unused area of the binary.
 
@@ -213,7 +209,7 @@ The only Chess engine reviewed by Beebug was Martin Bryant’s *Colossus* in 19
 
 Tube compatibility is relevant if you have a “PiTubeDirect” ~140× speed second processor instead of a BBC emulator running at ~15× speed—although both options are now outpaced by Chris Evans’ “BeebJIT” which can achieve 5000+× speed on AMD64 (and has a mode to do so while keeping timers at normal speed, so you don’t have to toggle back to 1× to type as you do with older emulators).
 
-MicroPower Chess is basically Tube-compatible but its chessboard is invisible: you see only the coordinates. For the board it tries direct writes to the screen RAM area but gets the wrong processor’s memory map (it’s harmless as that memory’s not otherwise in use, but it’s not displayed). The instructions loader also tries direct writes to the Mode 7 screen, but you can either bypass it via `*RUN CHESS` or just press `N` for no instructions and then play in coordinates. Similarly, the Model A version writes its board directly to the Mode 7 screen but coordinates still output via the OS, and its instructions can’t be bypassed via `N` so just press Space four times or use `*RUN CHESS`.
+MicroPower Chess is basically Tube-compatible but its chessboard is invisible: you see only the coordinates. For the board it tries direct writes to the screen RAM area but gets the wrong processor’s memory map (it’s harmless as that memory’s not otherwise in use, but it’s not displayed). The instructions loader also tries direct writes to the Mode 7 screen, but you can either bypass it via `*RUN CHESS` or just press `N` for no instructions and then play in coordinates. Similarly, the Model A version writes its board directly to the Mode 7 screen but coordinates are still output via the OS, and its instructions can’t be bypassed via `N` so just press Space four times or use `*RUN CHESS`.
 
 Colossus however has more serious Tube problems. Acornsoft Chess (which Arthur Norman helped write) and Computer Concepts Chess (and its Superior re-release, both by David Thompson) have full Tube compatibility and don’t always make the same moves, while Bug-Byte Chess is fully Tube compatible and deterministic (although slow to update the screen)—but it’s less clear what counts as “solving” it as its search parameters may be configured in hundreds of ways (albeit none of them strong by modern standards)—however these programs all use low-resolution Mode 5 pieces that can be hard to tell apart, meaning that, in order to avoid making blunders due to misidentifying an opponent piece, you either have to get used to their odd pixel art or else keep track of the position separately, meaning there’s little advantage over MicroPower’s invisible board; perhaps the lack of Mode 1 graphics contributed to these programs’ being less popular with schools than MicroPower’s.
 

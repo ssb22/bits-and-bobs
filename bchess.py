@@ -20,10 +20,14 @@ original analytical comments for educational and historical study.
 """
 
 chess_disk = "chess.ssd"
-load_from_sector = 0x21
+
 binary_size = 0x2280
 loadTo = 0xE00 # loads at 1E00 but relocates to E00
 entryPoint = 0x3000 # disk version's relocator (runs at 0x4000, then calls 1C00)
+
+# load_from_sector = 0x21
+# In case there are variants of the instructions loader:
+load_from_sector = [cat[256+i*8+7] for cat in [open("chess.ssd","rb").read(512)] for i in range(32) if cat[i*8:i*8+7].lower()==b"chess  "][0]
 
 def main():
     data=open(chess_disk,"rb").read()[load_from_sector*256:load_from_sector*256+binary_size]
