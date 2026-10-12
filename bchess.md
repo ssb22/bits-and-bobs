@@ -4,9 +4,9 @@ from https://ssb22.user.srcf.net/game/bchess.html (also [mirrored on GitLab Page
 # Solving Micropower Chess (1982)
 
 
-Update: I’ve now made a [specialised disassembler for Micropower Chess](bchess.py) (requires original disk image). Handles the computed jump and inserts comments about its workings.
+Here is a [specialised disassembler for Micropower Chess](bchess.py) (requires original disk image)—handles the computed jump and inserts comments about its workings.
 
-I’m only an intermediate player (Elo perhaps 1500 if given enough time), but I did once checkmate some software that “Micro Power” released in 1982 for the then very new BBC Micro Model B (which it ran in screen mode 1)—and as this program *always* replied to a given sequence of moves in the same way (no random factor), any win against it can be repeated every time and therefore counts as having “weakly solved” that level. I first did this by lasting as long as I could with equal-material exchange, knowing that microcomputers of the time were more likely to play badly in the endgame, but it turns out there are considerably shorter solutions.
+I’m only an intermediate player (Elo perhaps 1500 if given enough time), but I did once checkmate this software that “Micro Power” aka “Program Power” released in 1982 for the then very new BBC Micro Model B (which it ran in screen mode 1)—and as that version *always* replied to a given sequence of moves in the same way (no random factor), any win against it can be repeated every time and therefore counts as having “weakly solved” that level. I first did this by lasting as long as I could with equal-material exchange, knowing that microcomputers of the time were more likely to play badly in the endgame, but it turns out there are considerably shorter solutions, and some interesting finds in the disassembly (see comment strings in the Python script above).
 
 ## Confusion about level numbers
 
@@ -167,7 +167,7 @@ Moves:
 
 MicroPower’s “Replay” feature normally plays back the last-played game. The limit is 150 moves each (actually it’s 303 ply but castling counts as 2½ ply); Replay also has display bugs if you’ve played 130-odd moves and left the game unfinished.
 
-If you choose Replay *before* any game has been played, it gives you a 41-move sample game that seems incomplete. Moves are stored in RAM at `&19A0` (relocated from `&29A0`, from file `CHESS` offset `BA0`, from disk-image offset `1FA0`); the first two bytes point to the next free slot, then start and destination squares are encoded as `10*(rank+1)+file` where `rank` and `file` start at 1; for castling the king’s move is coded first and then the rook’s after a byte `01`.
+If you choose Replay *before* any game has been played, it gives you a 41-move sample game that seems incomplete. Moves are stored in RAM at `&19A0` (relocated from `&29A0`, from file `CHESS` offset `BA0`); the first two bytes point to the next free slot, then start and destination squares are encoded as `10*(rank+1)+file` where `rank` and `file` start at 1; for castling the king’s move is coded first and then the rook’s after a byte `01`.
 
 This turns out to be a copy of Fischer versus Spassky, Reykjavik world championships (Iceland), 7 January 1972 round 6. It’s “incomplete” because Spassky resigned after Fischer’s 41. Qf4—the computer doesn’t tell you this and just returns to the menu. (Modern engines tend to checkmate black within 7 moves, e.g. ...Qg8 42. Qe5 Rh7 43. e7 Qxg2+ 44. Kxg2 Rg7+ 45. Kf3 Kh7 46. Bd3+ Rg6 47. Rxg6 Rc8 48. Rg5#)
 
@@ -213,7 +213,10 @@ MicroPower Chess is basically Tube-compatible but its chessboard is invisible: 
 
 Colossus however has more serious Tube problems. Acornsoft Chess (which Arthur Norman helped write) and Computer Concepts Chess (and its Superior re-release, both by David Thompson) have full Tube compatibility and don’t always make the same moves, while Bug-Byte Chess is fully Tube compatible and deterministic (although slow to update the screen)—but it’s less clear what counts as “solving” it as its search parameters may be configured in hundreds of ways (albeit none of them strong by modern standards)—however these programs all use low-resolution Mode 5 pieces that can be hard to tell apart, meaning that, in order to avoid making blunders due to misidentifying an opponent piece, you either have to get used to their odd pixel art or else keep track of the position separately, meaning there’s little advantage over MicroPower’s invisible board; perhaps the lack of Mode 1 graphics contributed to these programs’ being less popular with schools than MicroPower’s.
 
+Micropower’s program was not credited to an individual at the time, but they later named a John Haig who subsequently wrote racing games. Not to be confused with Sussex university mathematician John Haigh, although it would have made sense for Arthur Norman not to be the only early Chess programmer to be a lecturer. I couldn’t locate copies of contemporary books like the first edition of *Chess Skill in Man and Machine* to see what was covered at the time, but I’m not sure other engines took quite the same approach to the static evaluator.
+
 Copyright and Trademarks:
 All material © Silas S. Brown unless otherwise stated.
 Apple is a trademark of Apple Inc.
+Python is a trademark of the Python Software Foundation.
 Any other [trademarks](https://ssb22.user.srcf.net/trademarks.html) I mentioned without realising are trademarks of their respective holders.
