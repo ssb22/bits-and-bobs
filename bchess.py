@@ -25,10 +25,12 @@ binary_size = 0x2280
 loadTo = 0xE00 # loads at 1E00 but relocates to E00
 entryPoint = 0x3000 # disk version's relocator (runs at 0x4000, then calls 1C00)
 
-load_from_sector = [cat[256+i*8+7] for cat in [open("chess.ssd","rb").read(512)] for i in range(32) if cat[i*8:i*8+7].lower()==b"chess  "][0]
+load_from_sector = [cat[256+i*8+7]+256*(cat[256+i*8+6]&3) for cat in [open(chess_disk,"rb").read(512)] for i in range(32) if cat[i*8:i*8+7].lower()==b"chess  "][0]
 
 def main():
+    print(f"Loading chess binary from sector {load_from_sector}")
     data=open(chess_disk,"rb").read()[load_from_sector*256:load_from_sector*256+binary_size]
+    if not data[0x1D95-loadTo:].startswith(b'h\x857h\x858\x98H\xa0\x00\xf0\x03'): print("This is not the Model B Chess program"),exit(1) # exit early to save confusion due to comments being in the wrong place especially the string-print (we could just drop to being a general disassembler, but less useful for other versions of the Chess program that have inline-print routines at different addresses)
     mem = bytearray(loadTo+len(data))
     for i in range(len(data)): mem[loadTo+i] = data[i]
     lines = disasm(mem)
@@ -124,7 +126,7 @@ comments = {
     0x1CDC:"if not, return character we read",
     0x1CDE:"clear the Escape condition",
     0x1CE6:"check key while clock running",
-    0x1CE8:"osbyte $81 = INKEY, 10 centiseconds (0.1s) doubles as the clock timer",
+    0x1CE8:"osbyte $81 = INKEY, 10 centiseconds (0.1s) doubles as the clock timer (interrupted early so average 0.05s skipped per keypress, ~8sec over 40 moves)",
     0x1CF1:"handles Escape",
     0x1CF6:"handles normal keypresses",
     0x1CF8:"tenths of a second column",
